@@ -114,29 +114,58 @@ window.updateCartBadge = updateCartBadge;
    - Logged in → link points to customer-dashboard.html,
      icon turns blue, title shows user email
    ============================================================ */
+/* ============================================================
+   3a. PROFILE ICON HELPERS
+   ============================================================ */
+function _setProfileLoggedIn(btn, email) {
+  btn.setAttribute('href', 'customer-dashboard.html');
+  btn.setAttribute('title', email || 'My Account');
+  btn.style.color      = '#1A5FA8';
+  btn.style.background = '#E8F1FB';
+}
+function _setProfileLoggedOut(btn) {
+  var returnTo = encodeURIComponent(window.location.href);
+  btn.setAttribute('href', 'customer-auth.html?returnTo=' + returnTo);
+  btn.setAttribute('title', 'My Account');
+  btn.style.color      = '';
+  btn.style.background = '';
+}
+
 function updateProfileIcon() {
   var btn = document.getElementById('navProfileBtn');
   if (!btn) return;
+
+  /* Step 1: Render immediately from localStorage (no flash / layout shift) */
+  var loggedInFromCache = false;
   try {
     var raw = localStorage.getItem('azzurra_customer_session');
     if (raw) {
-      var user = JSON.parse(raw);
-      if (user && (user.email || user.signedIn)) {
-        btn.setAttribute('href', 'customer-dashboard.html');
-        btn.setAttribute('title', user.email || 'My Account');
-        btn.style.color = '#1A5FA8';
-        /* Add a subtle filled background to indicate logged-in */
-        btn.style.background = '#E8F1FB';
-        return;
+      var cached = JSON.parse(raw);
+      if (cached && (cached.email || cached.signedIn)) {
+        _setProfileLoggedIn(btn, cached.email);
+        loggedInFromCache = true;
       }
     }
   } catch(e) {}
-  
-  /* Default: not logged in */
-  btn.setAttribute('href', 'customer-auth.html');
-  btn.setAttribute('title', 'My Account');
-  btn.style.color   = '';
-  btn.style.background = '';
+
+  if (!loggedInFromCache) {
+    _setProfileLoggedOut(btn);
+  }
+
+  /* Step 2: Async Supabase session check to clear any stale localStorage.
+     Runs after immediate paint so there is no perceptible delay. */
+  if (typeof window.getCustomerSession === 'function') {
+    window.getCustomerSession().then(function(session) {
+      if (session && session.user) {
+        var email = session.user.email || '';
+        _setProfileLoggedIn(btn, email);
+        try { localStorage.setItem('azzurra_customer_session', JSON.stringify({ email: email, signedIn: true })); } catch(_) {}
+      } else {
+        try { localStorage.removeItem('azzurra_customer_session'); } catch(_) {}
+        _setProfileLoggedOut(btn);
+      }
+    }).catch(function() { /* network error - preserve cached state */ });
+  }
 }
 window.updateProfileIcon = updateProfileIcon;
 

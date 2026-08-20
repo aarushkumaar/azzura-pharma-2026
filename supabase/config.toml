@@ -51,3 +51,6 @@ verify_jwt = false   # Payment callback comes from Razorpay, not a logged-in use
 
 [functions.initiateRefund]
 verify_jwt = false   # Admin check is done inside the function
+
+[functions.webhookRazorpay]
+verify_jwt = false   # Razorpay webhook has no JWT, we verify via HMAC signature
