@@ -1,0 +1,471 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Essential Immuno-Plus — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Essential Immuno-Plus by Azzurra — high-dose immune nutrition with arginine, omega-3, and nucleotides, designed for pre/post-surgical and critical care recovery." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/cart.css" />
+  <style>
+    /* ── Product detail page layout ──────────────────────── */
+    body { background: #f9f9ff; font-family: 'Inter', sans-serif; }
+
+    /* Use main site navbar — push content below fixed bar */
+    .pd-breadcrumb {
+      padding: 100px 40px 16px;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #6B7280;
+    }
+    .pd-breadcrumb a { color: #1A5FA8; font-weight: 500; text-decoration: none; }
+    .pd-breadcrumb a:hover { text-decoration: underline; }
+    .pd-breadcrumb .sep { color: #D1E3F8; }
+
+    .pd-main {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 40px 96px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: start;
+    }
+    @media (max-width: 768px) {
+      .pd-main { grid-template-columns: 1fr; gap: 32px; }
+      .pd-breadcrumb, .pd-main { padding-left: 20px; padding-right: 20px; }
+    }
+
+    /* Left: gallery column */
+    .pd-images { position: sticky; top: 90px; }
+
+    /* Right: info */
+    .pd-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #E8F1FB; color: #1A5FA8;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .pd-name {
+      font-size: clamp(24px, 4vw, 36px);
+      color: #1A1A2E; font-weight: 700; line-height: 1.15; margin-bottom: 12px;
+    }
+    .pd-price { font-size: 30px; color: #1A5FA8; font-weight: 700; margin-bottom: 6px; }
+    .pd-stock {
+      display: inline-block; background: #f0fdf4; color: #166534;
+      font-size: 12px; font-weight: 700; padding: 4px 12px;
+      border-radius: 100px; margin-bottom: 20px;
+    }
+    .pd-desc { font-size: 16px; color: #6B7280; line-height: 1.8; margin-bottom: 28px; }
+
+    /* Quantity */
+    .pd-qty-row { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .pd-qty-label { font-size: 14px; font-weight: 600; color: #1A1A2E; }
+    .pd-qty-ctrl {
+      display: flex; align-items: center;
+      border: 1.5px solid #D1E3F8; border-radius: 100px; overflow: hidden;
+    }
+    .pd-qty-btn {
+      width: 36px; height: 36px; background: none; border: none;
+      font-size: 18px; font-family: inherit; cursor: pointer;
+      color: #1A5FA8; transition: background 0.2s, color 0.2s;
+    }
+    .pd-qty-btn:hover { background: #1A5FA8; color: #fff; }
+    .pd-qty-num {
+      min-width: 36px; text-align: center;
+      font-weight: 700; font-size: 15px; color: #1A1A2E;
+    }
+
+    /* CTA buttons */
+    .pd-ctas { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+    .pd-btn-primary {
+      flex: 1; min-width: 140px;
+      background: #1A5FA8; color: #fff; border: none;
+      padding: 14px 24px; border-radius: 100px;
+      font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .pd-btn-primary:hover { background: #134a87; transform: scale(1.02); }
+    .pd-btn-outline {
+      flex: 1; min-width: 140px;
+      background: transparent; color: #1A5FA8;
+      border: 2px solid #1A5FA8; padding: 14px 24px;
+      border-radius: 100px; font-size: 15px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pd-btn-outline:hover { background: #1A5FA8; color: #fff; }
+
+    /* Trust badges */
+    .pd-trust { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
+    .pd-trust-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #6B7280; }
+
+    /* Tabs */
+    .pd-tabs {
+      border-bottom: 1px solid #D1E3F8; margin-bottom: 20px;
+      display: flex; gap: 4px; flex-wrap: wrap;
+    }
+    .pd-tab {
+      padding: 10px 18px; border-radius: 100px;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      cursor: pointer; border: none; background: none; color: #6B7280;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pd-tab.active { background: #1A5FA8; color: #fff; }
+    .pd-tab-content { color: #6B7280; font-size: 15px; line-height: 1.7; }
+    .pd-tab-content ul {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .pd-tab-content li { display: flex; align-items: flex-start; gap: 10px; }
+    .pd-tab-content li::before {
+      content: '✓'; color: #1A5FA8; font-weight: 700;
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* Related */
+    .pd-related { max-width: 1200px; margin: 0 auto 96px; padding: 0 40px; }
+    @media (max-width: 768px) { .pd-related { padding: 0 20px; } }
+    .pd-related-title {
+      font-size: 28px; color: #1A1A2E; font-weight: 700; margin-bottom: 32px;
+    }
+    .pd-related-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    @media (max-width: 768px) { .pd-related-grid { grid-template-columns: 1fr; } }
+    .pd-related-card {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      border: 1.5px solid #D1E3F8; cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .pd-related-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,95,168,0.15); }
+    .pd-related-img { aspect-ratio: 4/3; overflow: hidden; background: #E8F1FB; }
+    .pd-related-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+    .pd-related-card:hover .pd-related-img img { transform: scale(1.05); }
+    .pd-related-body { padding: 16px; }
+    .pd-related-name { font-size: 17px; color: #1A1A2E; font-weight: 600; margin-bottom: 6px; }
+    .pd-related-price { color: #1A5FA8; font-weight: 700; font-size: 15px; }
+
+    /* Scroll progress indicator (matches main site) */
+    #scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: var(--color-primary, #1A5FA8); width: 0%; z-index: 2000;
+      transition: width 0.1s linear;
+    }
+  </style>
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+
+  <!-- Scroll progress bar -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ========================================================
+       NAVBAR — consistent with main site, active: Shop
+       ======================================================== -->
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn active">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html" class="active">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="pd-breadcrumb" aria-label="Breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a href="productss.html">Shop</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span aria-current="page">Essential Immuno-Plus</span>
+  </nav>
+
+  <!-- Main Product Section -->
+  <main class="pd-main" role="main">
+
+    <!-- Left: Full Image Gallery -->
+    <div class="pd-images">
+      <!-- AzzurraGallery mounts here -->
+      <div id="az-gallery-root"></div>
+    </div>
+
+    <!-- Right: Product Details -->
+    <div class="pd-info">
+      <span class="pd-badge">Essential Series</span>
+      <h1 class="pd-name">Essential Immuno-Plus</h1>
+      <div class="pd-price">₹2,200</div>
+      <span class="pd-stock">✓ In Stock</span>
+
+      <p class="pd-desc">
+        A high-dose immune nutrition formula designed for pre-surgical conditioning and post-surgical recovery. Enriched with arginine, omega-3 fatty acids, and nucleotides — key immunomodulatory nutrients clinically shown to reduce infection risk and accelerate wound healing in hospitalised patients.
+      </p>
+
+      <!-- Quantity -->
+      <div class="pd-qty-row">
+        <span class="pd-qty-label">Quantity</span>
+        <div class="pd-qty-ctrl">
+          <button class="pd-qty-btn" id="qty-dec" aria-label="Decrease quantity">−</button>
+          <span class="pd-qty-num" id="qty-display">1</span>
+          <button class="pd-qty-btn" id="qty-inc" aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="pd-ctas">
+        <button class="pd-btn-primary" id="add-to-cart-btn">🛒 Add to Cart</button>
+        <button class="pd-btn-outline" id="buy-now-btn">Buy Now</button>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="pd-trust">
+        <span class="pd-trust-item">🚚 Free Shipping</span>
+        <span class="pd-trust-item">🔬 Clinically Tested</span>
+        <span class="pd-trust-item">🏭 Made in India</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="pd-tabs" role="tablist">
+        <button class="pd-tab active" data-tab="benefits"    role="tab" aria-selected="true">Benefits</button>
+        <button class="pd-tab"        data-tab="ingredients" role="tab" aria-selected="false">Ingredients</button>
+        <button class="pd-tab"        data-tab="usage"       role="tab" aria-selected="false">Usage</button>
+      </div>
+      <div class="pd-tab-content" id="tab-content" role="tabpanel">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Related Products -->
+  <section class="pd-related" aria-labelledby="related-heading">
+    <h2 class="pd-related-title" id="related-heading">You May Also Like</h2>
+    <div class="pd-related-grid" id="related-grid">
+      <!-- Rendered by JS -->
+    </div>
+  </section>
+
+  <!-- Footer (same as main site) -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
+        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="about.html"     class="footer__link">About</a></li>
+          <li><a href="science.html"   class="footer__link">Science</a></li>
+          <li><a href="productss.html" class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Product Series</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="productss.html" class="footer__link">Essential Series</a></li>
+          <li><a href="productss.html" class="footer__link">Vital Series</a></li>
+          <li><a href="productss.html" class="footer__link">Max Series</a></li>
+          <li><a href="productss.html" class="footer__link">Provit Series</a></li>
+          <li><a href="productss.html" class="footer__link">Lifeline Series</a></li>
+          <li><a href="productss.html" class="footer__link">Oral Series</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Contact</h3>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📍</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF,<br />Faridabad (NCR-Delhi) — 121006, India</p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <p class="footer__contact-text"><a href="tel:+919871648649">+91 98 71 648 649</a></p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">✉️</span>
+          <p class="footer__contact-text"><a href="mailto:info@azzurrapharmaconutrition.com">info@azzurrapharmaconutrition.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script src="assets/js/cart-utils.js"></script>
+  <script src="assets/js/products-data.js"></script>
+  <script src="assets/js/product-gallery.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+  /* ============================================================
+     ESSENTIAL IMMUNO-PLUS — Product Detail Page Logic
+     ============================================================ */
+  (function () {
+
+    var PRODUCT_ID = 4;
+
+    var product = (typeof PRODUCTS !== 'undefined')
+      ? PRODUCTS.find(function(p) { return p.id === PRODUCT_ID; })
+      : null;
+
+    /* Fallback if PRODUCTS not loaded */
+    if (!product) {
+      product = {
+        id:        4,
+        name:      'Essential Immuno-Plus',
+        price:     2200,
+        series:    'Essential Series',
+        images:    [],
+        imagePath: ''
+      };
+    }
+
+    var TAB_DATA = {
+      benefits: [
+        'Stimulates immune cell proliferation and reduces post-surgical infection risk',
+        'Arginine supports nitrogen balance and promotes wound healing',
+        'Omega-3 fatty acids modulate inflammatory response in critical care',
+        'Nucleotides enhance T-lymphocyte function and gut mucosal integrity',
+        'Designed per ESPEN guidelines for immunonutrition in surgical patients',
+        'Low osmolarity formula — suitable for nasogastric and oral administration'
+      ],
+      ingredients: [
+        'L-Arginine HCl (4.5g per serving) — nitric oxide precursor for immune modulation',
+        'EPA + DHA (Omega-3 Fish Oil, 1.5g) — anti-inflammatory eicosanoids',
+        'Nucleotides blend (RNA/DNA precursors, 500mg) — lymphocyte support',
+        'Glutamine (3g) — intestinal barrier integrity and immune fuel',
+        'Vitamins A, C, D, E, Zinc, Selenium — essential antioxidant micronutrients',
+        'MCT oil — rapidly absorbed caloric substrate, nitrogen-sparing'
+      ],
+      usage: [
+        'Administer 2 servings (scoops) per day mixed in 150ml warm water',
+        'Pre-surgical: Begin 5–7 days before operation for immunonutrition conditioning',
+        'Post-surgical: Continue for minimum 7 days or as directed by clinician',
+        'Can be given orally or via nasogastric/nasojejunal tube',
+        'Store in a cool, dry place below 30°C; discard 30 days after opening',
+        'For use under medical supervision in clinical settings'
+      ]
+    };
+
+    var currentTab = 'benefits';
+    var qty = 1;
+
+    /* ── Gallery ── */
+    if (typeof AzzurraGallery !== 'undefined') {
+      AzzurraGallery.init({
+        images:      product.images || [],
+        productName: product.name,
+        containerId: 'az-gallery-root'
+      });
+    }
+
+    /* ── Tab rendering ── */
+    function renderTab(tab) {
+      currentTab = tab;
+      var items = TAB_DATA[tab] || [];
+      document.getElementById('tab-content').innerHTML =
+        '<ul>' + items.map(function(i) { return '<li>' + i + '</li>'; }).join('') + '</ul>';
+      document.querySelectorAll('.pd-tab').forEach(function(btn) {
+        var active = btn.getAttribute('data-tab') === tab;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', active);
+      });
+    }
+
+    /* ── Quantity controls ── */
+    document.getElementById('qty-inc').addEventListener('click', function() {
+      qty = Math.min(qty + 1, 20);
+      document.getElementById('qty-display').textContent = qty;
+    });
+    document.getElementById('qty-dec').addEventListener('click', function() {
+      qty = Math.max(qty - 1, 1);
+      document.getElementById('qty-display').textContent = qty;
+    });
+
+    /* ── Tab clicks ── */
+    document.querySelectorAll('.pd-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() { renderTab(btn.getAttribute('data-tab')); });
+    });
+
+    /* ── Add to cart ── */
+    document.getElementById('add-to-cart-btn').addEventListener('click', function() {
+      if (typeof window.azzuraAddToCart === 'function') {
+        window.azzuraAddToCart(product, qty);
+      }
+    });
+
+    /* ── Buy now ── */
+    document.getElementById('buy-now-btn').addEventListener('click', function() {
+      if (typeof window.azzuraAddToCart === 'function') {
+        window.azzuraAddToCart(product, qty);
+      }
+      location.href = 'checkout.html';
+    });
+
+    /* ── Related products ── */
+    function renderRelated() {
+      var relatedGrid = document.getElementById('related-grid');
+      if (!relatedGrid || typeof PRODUCTS === 'undefined') return;
+      var others = PRODUCTS.filter(function(p) { return p.id !== PRODUCT_ID; }).slice(0, 3);
+      relatedGrid.innerHTML = others.map(function(p) {
+        var imgSrc = (p.images && p.images[0])
+          ? p.images[0].replace('/image/upload/', '/image/upload/f_auto,q_auto,w_400/')
+          : '';
+        var imgTag = imgSrc
+          ? '<img src="' + imgSrc + '" alt="' + p.name + '" loading="lazy" />'
+          : '<div style="width:100%;height:100%;background:#E8F1FB;display:flex;align-items:center;justify-content:center;color:#1A5FA8;font-weight:800;opacity:0.4;font-size:14px;">AZZURRA</div>';
+        return '<div class="pd-related-card" onclick="location.href=\'' + p.detailPage + '\'">' +
+          '<div class="pd-related-img">' + imgTag + '</div>' +
+          '<div class="pd-related-body">' +
+            '<p class="pd-related-name">' + p.name + '</p>' +
+            '<p class="pd-related-price">₹' + p.price.toLocaleString('en-IN') + '</p>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    /* ── Init ── */
+    renderTab('benefits');
+    renderRelated();
+
+  }());
+  </script>
+
+</body>
+</html>

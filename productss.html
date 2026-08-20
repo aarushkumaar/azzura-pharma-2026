@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Browse Azzurra's clinically formulated pharmaconutrition products. Essential Series, Vital Series, Max Series and more — research-backed nutrition for recovery and clinical care." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/shop-new.css" />
+  <link rel="stylesheet" href="assets/css/cart.css" />
+  <style>
+    /* Notify Me inline form styles */
+    .shop-card__notify-btn { width:100%;padding:10px;background:#E2E8F0;color:#4A5568;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;font-family:inherit; }
+    .shop-card__notify-btn:hover { background:#CBD5E0; }
+    .shop-card__notify-form { padding-top:8px; }
+    .shop-card__notify-email { width:100%;padding:8px 10px;border:1.5px solid #D1E3F8;border-radius:5px;box-sizing:border-box;margin-bottom:6px;font-size:13px;font-family:inherit;outline:none; }
+    .shop-card__notify-email:focus { border-color:#1A5FA8; }
+    .shop-card__notify-submit { width:100%;padding:8px;background:#1A5FA8;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit; }
+    .shop-card__notify-msg { display:block;font-size:12px;margin-top:5px;min-height:16px; }
+  </style>
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+
+  <!-- Scroll progress bar -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ========================================================
+       NAVBAR — identical to index.html, active: Shop
+       ======================================================== -->
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn active">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html" class="active">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       SHOP HERO
+       ======================================================== -->
+  <header class="shop-hero">
+
+    <!-- Floating Background Medical Shapes -->
+    <div class="floating-shapes-container" aria-hidden="true">
+      <!-- Hexagon -->
+      <svg class="floating-shape float-slow-up" style="top: 10%; left: 4%; width: 45px; height: 45px;" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="50,1 93,25 93,75 50,99 7,75 7,25"/>
+      </svg>
+      <!-- Medical Cross -->
+      <svg class="floating-shape floating-shape--cyan float-medium-down" style="top: 70%; left: 88%; width: 50px; height: 50px;" viewBox="0 0 100 100" fill="currentColor">
+        <path d="M35 15h30v20h20v30h-20v20h-30v-20h-20v-30h20z"/>
+      </svg>
+      <!-- Capsule/Pill -->
+      <svg class="floating-shape floating-shape--white float-fast-up" style="top: 20%; left: 82%; width: 55px; height: 55px;" viewBox="0 0 100 100" fill="currentColor">
+        <rect x="15" y="30" width="70" height="40" rx="20" ry="20" transform="rotate(-45 50 50)"/>
+      </svg>
+      <!-- Molecule -->
+      <svg class="floating-shape float-slow-diag" style="top: 80%; left: 12%; width: 60px; height: 60px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8">
+        <circle cx="25" cy="25" r="12" fill="currentColor"/>
+        <circle cx="75" cy="35" r="10" fill="currentColor"/>
+        <circle cx="50" cy="75" r="14" fill="currentColor"/>
+        <line x1="25" y1="25" x2="75" y2="35"/>
+        <line x1="75" y1="35" x2="50" y2="75"/>
+        <line x1="50" y1="75" x2="25" y2="25"/>
+      </svg>
+      <!-- DNA Inspired Element -->
+      <svg class="floating-shape floating-shape--cyan float-slow-up" style="top: 45%; left: 2%; width: 70px; height: 70px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6">
+        <path d="M10,30 Q25,70 50,30 T90,70" />
+        <path d="M10,70 Q25,30 50,70 T90,30" stroke-dasharray="4,4"/>
+        <line x1="20" y1="42" x2="20" y2="58" />
+        <line x1="35" y1="38" x2="35" y2="62" />
+        <line x1="50" y1="30" x2="50" y2="70" />
+        <line x1="65" y1="38" x2="65" y2="62" />
+        <line x1="80" y1="42" x2="80" y2="58" />
+      </svg>
+    </div>
+    <div class="shop-hero__inner">
+      <div class="shop-hero__badge">
+        <span class="shop-hero__badge-dot"></span>
+        Clinical Excellence
+      </div>
+      <h1 class="shop-hero__heading">Pharmaconutrition<br />Products</h1>
+      <p class="shop-hero__sub">
+        Precision-engineered, research-backed nutritional formulations designed for clinical recovery and comprehensive patient care.
+      </p>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       SHOP MAIN — sidebar + product grid
+       ======================================================== -->
+  <main class="shop-main" role="main">
+
+    <!-- Floating Background Medical Shapes -->
+    <div class="floating-shapes-container" aria-hidden="true">
+      <!-- Hexagon -->
+      <svg class="floating-shape float-slow-up" style="top: 10%; left: 4%; width: 45px; height: 45px;" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="50,1 93,25 93,75 50,99 7,75 7,25"/>
+      </svg>
+      <!-- Medical Cross -->
+      <svg class="floating-shape floating-shape--cyan float-medium-down" style="top: 70%; left: 88%; width: 50px; height: 50px;" viewBox="0 0 100 100" fill="currentColor">
+        <path d="M35 15h30v20h20v30h-20v20h-30v-20h-20v-30h20z"/>
+      </svg>
+      <!-- Capsule/Pill -->
+      <svg class="floating-shape floating-shape--white float-fast-up" style="top: 20%; left: 82%; width: 55px; height: 55px;" viewBox="0 0 100 100" fill="currentColor">
+        <rect x="15" y="30" width="70" height="40" rx="20" ry="20" transform="rotate(-45 50 50)"/>
+      </svg>
+      <!-- Molecule -->
+      <svg class="floating-shape float-slow-diag" style="top: 80%; left: 12%; width: 60px; height: 60px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8">
+        <circle cx="25" cy="25" r="12" fill="currentColor"/>
+        <circle cx="75" cy="35" r="10" fill="currentColor"/>
+        <circle cx="50" cy="75" r="14" fill="currentColor"/>
+        <line x1="25" y1="25" x2="75" y2="35"/>
+        <line x1="75" y1="35" x2="50" y2="75"/>
+        <line x1="50" y1="75" x2="25" y2="25"/>
+      </svg>
+      <!-- DNA Inspired Element -->
+      <svg class="floating-shape floating-shape--cyan float-slow-up" style="top: 45%; left: 2%; width: 70px; height: 70px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6">
+        <path d="M10,30 Q25,70 50,30 T90,70" />
+        <path d="M10,70 Q25,30 50,70 T90,30" stroke-dasharray="4,4"/>
+        <line x1="20" y1="42" x2="20" y2="58" />
+        <line x1="35" y1="38" x2="35" y2="62" />
+        <line x1="50" y1="30" x2="50" y2="70" />
+        <line x1="65" y1="38" x2="65" y2="62" />
+        <line x1="80" y1="42" x2="80" y2="58" />
+      </svg>
+    </div>
+    <div class="shop-layout">
+
+      <!-- ── LEFT: Filter Sidebar ─────────────────────────── -->
+      <aside class="shop-sidebar" aria-label="Product filters">
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">Filter Products</h2>
+          <button class="sidebar-clear-all" id="clear-all-filters" aria-label="Clear all filters">Clear All</button>
+        </div>
+
+
+        <!-- Availability and Clinical Use filters remain; Series is internal-only -->
+
+        <!-- Category: Availability -->
+        <div class="filter-category open" id="filter-stock">
+          <div class="filter-category__header" role="button" tabindex="0" aria-expanded="true" aria-controls="filter-stock-opts">
+            <span class="filter-category__label">Availability</span>
+            <div class="filter-category__meta">
+              <span class="filter-arrow">
+                <svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6" /></svg>
+              </span>
+            </div>
+          </div>
+          <div class="filter-options" id="filter-stock-opts" role="group" aria-label="Filter by availability">
+            <div class="filter-option active" data-filter="stock" data-value="all">
+              <span class="filter-option__text">All Products</span>
+            </div>
+            <div class="filter-option" data-filter="stock" data-value="instock">
+              <span class="filter-option__text">In Stock Only</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category: Tags -->
+        <div class="filter-category" id="filter-tags">
+          <div class="filter-category__header" role="button" tabindex="0" aria-expanded="false" aria-controls="filter-tags-opts">
+            <span class="filter-category__label">Clinical Use</span>
+            <div class="filter-category__meta">
+              <span class="filter-arrow">
+                <svg viewBox="0 0 16 16"><polyline points="4,6 8,10 12,6" /></svg>
+              </span>
+            </div>
+          </div>
+          <div class="filter-options" id="filter-tags-opts" role="group" aria-label="Filter by clinical use">
+            <div class="filter-option" data-filter="tag" data-value="protein">
+              <span class="filter-option__text">Protein</span>
+            </div>
+            <div class="filter-option" data-filter="tag" data-value="immune">
+              <span class="filter-option__text">Immune Support</span>
+            </div>
+            <div class="filter-option" data-filter="tag" data-value="recovery">
+              <span class="filter-option__text">Recovery</span>
+            </div>
+            <div class="filter-option" data-filter="tag" data-value="renal">
+              <span class="filter-option__text">Renal Care</span>
+            </div>
+            <div class="filter-option" data-filter="tag" data-value="elemental">
+              <span class="filter-option__text">Elemental Nutrition</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── RIGHT: Product Grid ───────────────────────────── -->
+      <div class="shop-grid-area">
+
+        <!-- Search bar -->
+        <div style="margin-bottom:16px;">
+          <input
+            type="search"
+            id="shop-search"
+            placeholder="Search products..."
+            aria-label="Search products"
+            style="width:100%;padding:10px 16px;border:1.5px solid #D1E3F8;border-radius:100px;font-size:14px;font-family:inherit;outline:none;color:#1A1A2E;background:#fff;box-sizing:border-box;"
+          />
+        </div>
+
+        <!-- Top bar: count + sort + view toggle -->
+        <div class="shop-topbar">
+          <p class="shop-product-count" id="shop-product-count">
+            Showing <span id="showing-count">0</span> of <span id="total-count">0</span> products
+          </p>
+          <div class="shop-topbar-right">
+            <div class="shop-sort">
+              <label for="shop-sort-select">Sort:</label>
+              <select id="shop-sort-select" aria-label="Sort products">
+                <option value="featured">Featured First</option>
+                <option value="name-asc">Name A–Z</option>
+                <option value="name-desc">Name Z–A</option>
+              </select>
+            </div>
+            <div class="view-toggle" role="group" aria-label="View layout">
+              <button class="view-btn active" id="view-grid-btn" aria-label="Grid view" title="Grid view">⊞</button>
+              <button class="view-btn" id="view-list-btn" aria-label="List view" title="List view">☰</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skeleton loading cards (shown briefly on page load) -->
+        <div class="shop-grid" id="skeleton-grid" aria-hidden="true">
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--medium"></div><div class="skeleton-line skeleton-line--full"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--medium"></div><div class="skeleton-line skeleton-line--full"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--short"></div><div class="skeleton-line skeleton-line--medium"></div><div class="skeleton-line skeleton-line--full"></div></div></div>
+        </div>
+
+        <!-- Real product grid (injected after skeleton delay) -->
+        <div class="shop-grid" id="shop-grid" style="display:none;" aria-label="Products">
+          <!-- Rendered by JS -->
+        </div>
+
+      </div><!-- /shop-grid-area -->
+    </div><!-- /shop-layout -->
+  </main>
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
+        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="about.html"     class="footer__link">About</a></li>
+          <li><a href="science.html"   class="footer__link">Science</a></li>
+          <li><a href="productss.html" class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Product Series</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="productss.html" class="footer__link">Essential Series</a></li>
+          <li><a href="productss.html" class="footer__link">Vital Series</a></li>
+          <li><a href="productss.html" class="footer__link">Max Series</a></li>
+          <li><a href="productss.html" class="footer__link">Provit Series</a></li>
+          <li><a href="productss.html" class="footer__link">Lifeline Series</a></li>
+          <li><a href="productss.html" class="footer__link">Oral Series</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Contact</h3>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📍</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF,<br />Faridabad (NCR-Delhi) — 121006, India</p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <p class="footer__contact-text"><a href="tel:+919818999863">+91 9818999863</a></p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">✉️</span>
+          <p class="footer__contact-text"><a href="mailto:info@azzurrapharmaconutrition.com">info@azzurrapharmaconutrition.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button id="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+  <!-- Scripts -->
+  <script src="assets/js/cart-utils.js"></script>
+  <script src="assets/js/products-data.js"></script>
+  <script src="assets/js/supabase-products.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+  /* ============================================================
+     SHOP PAGE — Product rendering, filters, sort, view toggle
+     ============================================================ */
+  (function initShopPage() {
+
+    /* ── Cloudinary URL transformer ── */
+    function cldUrl(url, transform) {
+      if (!url) return '';
+      if (url.indexOf('res.cloudinary.com') === -1) return url;
+      return url.replace('/image/upload/', '/image/upload/' + transform + '/');
+    }
+
+    /* ── State ── */
+    var state = {
+      /* NOTE: series is an internal field — not exposed as a public filter */
+      activeStockFilter:  'all',  /* 'all' | 'instock' */
+      activeTagFilter:    null,   /* null = all tags */
+      sortOrder:          'featured',
+      searchText:         '',
+      viewMode:           'grid'  /* 'grid' | 'list' */
+    };
+
+    /* ── Search bar ── */
+    var searchInput = document.getElementById('shop-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        state.searchText = this.value.trim().toLowerCase();
+        renderProducts();
+      });
+    }
+
+    var grid       = document.getElementById('shop-grid');
+    var countNumEl = document.getElementById('count-num');
+
+    /* Series is an internal classification — not surfaced as a public filter.
+       buildSeriesFilter() removed intentionally. */
+
+    /* ── Get filtered + sorted products ── */
+    function getFilteredProducts() {
+      var result = PRODUCTS.slice();
+
+      /* Stock filter */
+      if (state.activeStockFilter === 'instock') {
+        result = result.filter(function(p) { return p.inStock || p.in_stock; });
+      }
+
+      /* Tag / clinical use filter */
+      if (state.activeTagFilter) {
+        result = result.filter(function(p) {
+          return p.tags && p.tags.indexOf(state.activeTagFilter) > -1;
+        });
+      }
+
+      /* Text search — name + description */
+      if (state.searchText) {
+        var q = state.searchText;
+        result = result.filter(function(p) {
+          var desc = (p.shortDescription || p.short_description || p.description || '').toLowerCase();
+          return p.name.toLowerCase().indexOf(q) > -1 || desc.indexOf(q) > -1;
+        });
+      }
+
+      /* Sort */
+      if (state.sortOrder === 'featured') {
+        result.sort(function(a, b) {
+          return ((b.isFeatured || b.is_featured) ? 1 : 0) - ((a.isFeatured || a.is_featured) ? 1 : 0);
+        });
+      } else if (state.sortOrder === 'name-asc') {
+        result.sort(function(a, b) { return a.name.localeCompare(b.name); });
+      } else if (state.sortOrder === 'name-desc') {
+        result.sort(function(a, b) { return b.name.localeCompare(a.name); });
+      }
+
+      return result;
+    }
+
+    /* ── Render product card HTML ── */
+    function renderCard(product) {
+      var div = document.createElement('div');
+      div.className = 'shop-product-card fade-up';
+      div.setAttribute('data-product-id', product.id);
+
+      var addBtnId    = 'add-btn-' + product.id;
+      var outOfStock  = !product.inStock;
+      var images      = product.images || [];
+      /* Images already have f_auto,q_auto — just add w_400 */
+      var img0 = images[0] ? images[0].replace('f_auto,q_auto/', 'f_auto,q_auto,w_400/') : '';
+      var img1 = images[1] ? images[1].replace('f_auto,q_auto/', 'f_auto,q_auto,w_400/') : '';
+      /* Stagger index for animation */
+      var cardIndex = renderCard._count = (renderCard._count || 0) + 1;
+      var isEager   = cardIndex <= 6;
+
+      /* ── Image area ── */
+      var imgAreaHtml;
+      if (img0) {
+        imgAreaHtml =
+          '<div class="shop-card__img-inner">' +
+            '<img class="shop-card__img-primary" src="' + img0 + '"' +
+              ' alt="' + product.name + '"' +
+              ' loading="' + (isEager ? 'eager' : 'lazy') + '"' +
+              (isEager ? ' fetchpriority="high"' : '') +
+            ' />' +
+            (img1
+              ? '<img class="shop-card__img-hover" src="' + img1 + '"' +
+                  ' alt="' + product.name + ' alternate view" loading="lazy" aria-hidden="true" />'
+              : '') +
+          '</div>';
+      } else {
+        imgAreaHtml =
+          '<div class="shop-card__img-placeholder">' +
+            '<span class="shop-card__img-placeholder-logo">AZZURRA</span>' +
+          '</div>';
+      }
+
+      var stockBadge = outOfStock
+        ? '<span class="shop-card__badge" style="background:#888;">Out of Stock</span>'
+        : '<span class="shop-card__badge">In Stock</span>';
+
+      var addBtnHtml = outOfStock
+        ? '<div class="shop-card__notify-container">' +
+            '<button class="shop-card__notify-btn" id="' + addBtnId + '" aria-label="Notify me when ' + product.name + ' is back in stock">Notify Me</button>' +
+            '<div class="shop-card__notify-form" id="notify-form-' + product.id + '" style="display:none;" onclick="event.stopPropagation();">' +
+              '<input type="email" class="shop-card__notify-email" placeholder="Enter email" onclick="event.stopPropagation();" />' +
+              '<button class="shop-card__notify-submit" onclick="event.stopPropagation();">Submit</button>' +
+              '<div class="shop-card__notify-msg"></div>' +
+            '</div>' +
+          '</div>'
+        : '<button class="shop-card__add-btn" id="' + addBtnId + '" aria-label="Add ' + product.name + ' to cart">🛒 Add to Cart</button>';
+
+      /* Price display — use price_inr from Supabase mapping */
+      var priceDisplay = (product.price_inr && Number(product.price_inr) > 0)
+        ? '\u20b9' + Number(product.price_inr).toLocaleString('en-IN')
+        : (product.price && Number(product.price) > 0
+            ? '\u20b9' + Number(product.price).toLocaleString('en-IN')
+            : 'Contact for Price');
+
+      /* Description — try several field names the mapper may use */
+      var descText = product.description || product.shortDescription || product.short_description || '';
+
+      div.innerHTML =
+        '<div class="shop-card__img">' +
+          imgAreaHtml +
+          '<div class="shop-card__quick-view" onclick="event.stopPropagation(); location.href=\'' + product.detailPage + '\'">' +
+            '<span>Quick View</span>' +
+          '</div>' +
+          stockBadge +
+        '</div>' +
+        '<div class="shop-card__body">' +
+          '<h3 class="shop-card__name">' + product.name + '</h3>' +
+          '<p class="shop-card__desc">' + descText + '</p>' +
+          (product.tags && product.tags.length
+            ? '<div class="shop-card__tags">' +
+                product.tags.map(function(t) { return '<span class="shop-card__tag">' + t + '</span>'; }).join('') +
+              '</div>'
+            : '') +
+          '<div class="shop-card__footer">' +
+            '<span class="shop-card__price">' + priceDisplay + '</span>' +
+            addBtnHtml +
+          '</div>' +
+        '</div>';
+
+      /* Navigate to detail on card click (not on add-to-cart, notify-me button or notify-me form) */
+      div.addEventListener('click', function(e) {
+        if (e.target.closest('.shop-card__add-btn') || 
+            e.target.closest('.shop-card__quick-view') || 
+            e.target.closest('.shop-card__notify-btn') || 
+            e.target.closest('.shop-card__notify-form')) return;
+        location.href = product.detailPage;
+      });
+
+      /* Add to cart or Notify Me logic */
+      if (!outOfStock) {
+        var btn = div.querySelector('#' + addBtnId);
+        if (btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            /* Store Cloudinary URL (images[0]) in cart for correct display */
+            if (typeof window.azzuraAddToCart === 'function') {
+              window.azzuraAddToCart({
+                id:        product.id,
+                name:      product.name,
+                price:     product.price_inr || 0,
+                image:     images[0] || '',
+                series:    product.series
+              }, 1);
+            }
+            btn.textContent = '✓ Added';
+            btn.classList.add('added');
+            setTimeout(function() {
+              btn.innerHTML = '🛒 Add to Cart';
+              btn.classList.remove('added');
+            }, 1500);
+          });
+        }
+      } else {
+        var notifyBtn = div.querySelector('#' + addBtnId);
+        var notifyForm = div.querySelector('#notify-form-' + product.id);
+        if (notifyBtn && notifyForm) {
+          notifyBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isHidden = notifyForm.style.display === 'none';
+            notifyForm.style.display = isHidden ? 'block' : 'none';
+          });
+
+          var submitBtn = notifyForm.querySelector('.shop-card__notify-submit');
+          var emailInput = notifyForm.querySelector('.shop-card__notify-email');
+          var msgEl = notifyForm.querySelector('.shop-card__notify-msg');
+
+          if (submitBtn) {
+            submitBtn.addEventListener('click', async function(e) {
+              e.stopPropagation();
+              var email = emailInput.value.trim();
+              if (!email || email.indexOf('@') === -1) {
+                msgEl.textContent = 'Please enter a valid email.';
+                msgEl.style.color = '#FC8181';
+                return;
+              }
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Sending...';
+              msgEl.textContent = '';
+              
+              var success = false;
+              if (window.submitNotifyMe) {
+                var pId = product._supabaseId || product.id;
+                success = await window.submitNotifyMe(pId, product.name, email);
+              }
+              
+              if (success) {
+                msgEl.textContent = '✓ Notification saved!';
+                msgEl.style.color = '#48BB78';
+                emailInput.value = '';
+                setTimeout(function() {
+                  notifyForm.style.display = 'none';
+                  notifyBtn.textContent = '✓ Notified';
+                  notifyBtn.disabled = true;
+                }, 1500);
+              } else {
+                msgEl.textContent = 'Failed. Try again.';
+                msgEl.style.color = '#FC8181';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+              }
+            });
+          }
+        }
+      }
+
+      return div;
+    }
+
+    /* ── Render products to grid ── */
+    function renderProducts() {
+      var products = getFilteredProducts();
+      grid.innerHTML = '';
+      renderCard._count = 0;   /* reset eager-load counter */
+
+      /* Update showing count */
+      var showingEl = document.getElementById('showing-count');
+      var totalEl   = document.getElementById('total-count');
+      if (showingEl) showingEl.textContent = products.length;
+      if (totalEl)   totalEl.textContent   = PRODUCTS.length;
+
+      if (products.length === 0) {
+        grid.innerHTML =
+          '<div class="shop-empty" style="grid-column:1/-1">' +
+            '<div class="shop-empty__icon">🔍</div>' +
+            '<p class="shop-empty__msg">No products match your filters</p>' +
+            '<p class="shop-empty__sub">Try adjusting your search or clearing filters.</p>' +
+            '<button onclick="clearAllFilters()" style="margin-top:16px;padding:10px 24px;background:#1A5FA8;color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;">Clear All Filters</button>' +
+          '</div>';
+      } else {
+        products.forEach(function(p, i) {
+          var card = renderCard(p);
+          /* Stagger: each card delays by 60ms */
+          card.style.animationDelay = (i * 60) + 'ms';
+          grid.appendChild(card);
+        });
+      }
+
+      if (countNumEl) countNumEl.textContent = products.length;
+
+      /* Trigger IntersectionObserver fade-in */
+      if (typeof window.initFadeUp === 'function') window.initFadeUp();
+    }
+
+    /* Exposed so empty-state button can call it */
+    window.clearAllFilters = function() {
+      state.activeTagFilter    = null;
+      state.activeStockFilter  = 'all';
+      state.searchText         = '';
+      if (searchInput) searchInput.value = '';
+      document.querySelectorAll('.filter-option').forEach(function(o) { o.classList.remove('active'); });
+      var allStock = document.querySelector('[data-filter="stock"][data-value="all"]');
+      if (allStock) allStock.classList.add('active');
+      var clearBtn2 = document.getElementById('clear-all-filters');
+      if (clearBtn2) clearBtn2.classList.remove('visible');
+      renderProducts();
+    };
+
+    /* ── Filter option click handler ── */
+    function onFilterClick(e) {
+      var opt = e.target.closest('.filter-option');
+      if (!opt) return;
+
+      var filterType = opt.getAttribute('data-filter');
+      var value      = opt.getAttribute('data-value');
+
+      /* series filter is removed from public UI — only stock and tag remain */
+      if (filterType === 'stock') {
+        state.activeStockFilter = value;
+        document.querySelectorAll('[data-filter="stock"]').forEach(function(o) {
+          o.classList.toggle('active', o.getAttribute('data-value') === value);
+        });
+      } else if (filterType === 'tag') {
+        if (state.activeTagFilter === value) {
+          state.activeTagFilter = null;
+          opt.classList.remove('active');
+        } else {
+          state.activeTagFilter = value;
+          document.querySelectorAll('[data-filter="tag"]').forEach(function(o) {
+            o.classList.toggle('active', o.getAttribute('data-value') === value);
+          });
+        }
+      }
+
+      var clearBtn  = document.getElementById('clear-all-filters');
+      var hasFilters = state.activeTagFilter || state.activeStockFilter !== 'all';
+      if (clearBtn) clearBtn.classList.toggle('visible', !!hasFilters);
+
+      renderProducts();
+    }
+
+    /* ── Collapsible filter category headers ── */
+    function initFilterToggles() {
+      document.querySelectorAll('.filter-category__header').forEach(function(header) {
+        header.addEventListener('click', function() {
+          var category = header.closest('.filter-category');
+          category.classList.toggle('open');
+          header.setAttribute('aria-expanded', category.classList.contains('open'));
+        });
+        header.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); header.click(); }
+        });
+      });
+    }
+
+    /* ── Clear all filters ── */
+    var clearBtn = document.getElementById('clear-all-filters');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        state.activeTagFilter    = null;
+        state.activeStockFilter  = 'all';
+        document.querySelectorAll('.filter-option').forEach(function(o) { o.classList.remove('active'); });
+        var allStock = document.querySelector('[data-filter="stock"][data-value="all"]');
+        if (allStock) allStock.classList.add('active');
+        clearBtn.classList.remove('visible');
+        renderProducts();
+      });
+    }
+
+    /* ── Sort ── */
+    var sortSelect = document.getElementById('shop-sort-select');
+    if (sortSelect) {
+      /* Ensure dropdown reflects current options (no series) */
+      sortSelect.innerHTML =
+        '<option value="featured">Featured First</option>' +
+        '<option value="name-asc">Name A–Z</option>' +
+        '<option value="name-desc">Name Z–A</option>';
+      sortSelect.addEventListener('change', function() {
+        state.sortOrder = this.value;
+        renderProducts();
+      });
+    }
+
+    /* ── View toggle ── */
+    var gridBtn = document.getElementById('view-grid-btn');
+    var listBtn = document.getElementById('view-list-btn');
+    if (gridBtn && listBtn) {
+      gridBtn.addEventListener('click', function() {
+        state.viewMode = 'grid';
+        grid.classList.remove('list-view');
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+      });
+      listBtn.addEventListener('click', function() {
+        state.viewMode = 'list';
+        grid.classList.add('list-view');
+        listBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+      });
+    }
+
+    /* ── Attach filter click listeners ── */
+    document.querySelector('.shop-sidebar').addEventListener('click', onFilterClick);
+
+    /* ── Boot sequence: load Supabase products, then render ── */
+    function boot() {
+      var start = function () {
+        /* Note: buildSeriesFilter() removed — series not in public UI */
+        initFilterToggles();
+        setTimeout(function () {
+          var skeleton = document.getElementById('skeleton-grid');
+          if (skeleton) skeleton.style.display = 'none';
+          grid.style.display = '';
+          renderProducts();
+        }, 400);
+      };
+
+      if (typeof loadProductsFromSupabase === 'function') {
+        loadProductsFromSupabase().finally(start);
+      } else {
+        start();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+
+  }());
+  </script>
+</body>
+</html>

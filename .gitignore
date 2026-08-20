@@ -1,0 +1,23 @@
+# Local-only overrides (optional secrets not in committed config.js)
+config.local.js
+
+# env-config.js holds real API keys — NEVER commit this file
+assets/js/env-config.js
+
+# Local Deno cache
+.deno_cache/
+deno.lock
+
+# Node
+node_modules/
+
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp

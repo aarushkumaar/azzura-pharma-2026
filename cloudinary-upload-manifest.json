@@ -1,0 +1,914 @@
+[
+  {
+    "productFolder": "ABC_PROTEIN_10x32G",
+    "baseName": "FRONT",
+    "publicId": "azzura_products/ABC_PROTEIN_10x32G/FRONT",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ABC_PROTEIN_10x32G/FRONT"
+  },
+  {
+    "productFolder": "ABC_PROTEIN_10x32G",
+    "baseName": "Text",
+    "publicId": "azzura_products/ABC_PROTEIN_10x32G/Text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ABC_PROTEIN_10x32G/Text"
+  },
+  {
+    "productFolder": "ABC_PROTEIN_10x32G",
+    "baseName": "text1",
+    "publicId": "azzura_products/ABC_PROTEIN_10x32G/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ABC_PROTEIN_10x32G/text1"
+  },
+  {
+    "productFolder": "azo_husk_blue",
+    "baseName": "DSC07506",
+    "publicId": "azzura_products/azo_husk_blue/DSC07506",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/azo_husk_blue/DSC07506"
+  },
+  {
+    "productFolder": "azo_husk_blue",
+    "baseName": "DSC07507",
+    "publicId": "azzura_products/azo_husk_blue/DSC07507",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/azo_husk_blue/DSC07507"
+  },
+  {
+    "productFolder": "azo_husk_blue",
+    "baseName": "DSC07508",
+    "publicId": "azzura_products/azo_husk_blue/DSC07508",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/azo_husk_blue/DSC07508"
+  },
+  {
+    "productFolder": "azo_husk_blue",
+    "baseName": "DSC07509",
+    "publicId": "azzura_products/azo_husk_blue/DSC07509",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/azo_husk_blue/DSC07509"
+  },
+  {
+    "productFolder": "azo_husk_blue",
+    "baseName": "DSC07511",
+    "publicId": "azzura_products/azo_husk_blue/DSC07511",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/azo_husk_blue/DSC07511"
+  },
+  {
+    "productFolder": "EG_IMMUNE_GUMMIES_30_MANGO",
+    "baseName": "Front",
+    "publicId": "azzura_products/EG_IMMUNE_GUMMIES_30_MANGO/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/EG_IMMUNE_GUMMIES_30_MANGO/Front"
+  },
+  {
+    "productFolder": "EG_IMMUNE_GUMMIES_30_MANGO",
+    "baseName": "text",
+    "publicId": "azzura_products/EG_IMMUNE_GUMMIES_30_MANGO/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/EG_IMMUNE_GUMMIES_30_MANGO/text"
+  },
+  {
+    "productFolder": "EG_IMMUNE_GUMMIES_30_MANGO",
+    "baseName": "text1",
+    "publicId": "azzura_products/EG_IMMUNE_GUMMIES_30_MANGO/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/EG_IMMUNE_GUMMIES_30_MANGO/text1"
+  },
+  {
+    "productFolder": "EG_SLEEP_ROSE_30GUMMIES",
+    "baseName": "Front",
+    "publicId": "azzura_products/EG_SLEEP_ROSE_30GUMMIES/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/EG_SLEEP_ROSE_30GUMMIES/Front"
+  },
+  {
+    "productFolder": "EG_SLEEP_ROSE_30GUMMIES",
+    "baseName": "text",
+    "publicId": "azzura_products/EG_SLEEP_ROSE_30GUMMIES/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/EG_SLEEP_ROSE_30GUMMIES/text"
+  },
+  {
+    "productFolder": "EG_SLEEP_ROSE_30GUMMIES",
+    "baseName": "text1",
+    "publicId": "azzura_products/EG_SLEEP_ROSE_30GUMMIES/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/EG_SLEEP_ROSE_30GUMMIES/text1"
+  },
+  {
+    "productFolder": "enpedia_peptide-plus_yellow",
+    "baseName": "DSC07559",
+    "publicId": "azzura_products/enpedia_peptide-plus_yellow/DSC07559",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide-plus_yellow/DSC07559"
+  },
+  {
+    "productFolder": "enpedia_peptide-plus_yellow",
+    "baseName": "DSC07560",
+    "publicId": "azzura_products/enpedia_peptide-plus_yellow/DSC07560",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide-plus_yellow/DSC07560"
+  },
+  {
+    "productFolder": "enpedia_peptide-plus_yellow",
+    "baseName": "DSC07562",
+    "publicId": "azzura_products/enpedia_peptide-plus_yellow/DSC07562",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide-plus_yellow/DSC07562"
+  },
+  {
+    "productFolder": "enpedia_peptide-plus_yellow",
+    "baseName": "DSC07564",
+    "publicId": "azzura_products/enpedia_peptide-plus_yellow/DSC07564",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide-plus_yellow/DSC07564"
+  },
+  {
+    "productFolder": "enpedia_peptide-plus_yellow",
+    "baseName": "DSC07565",
+    "publicId": "azzura_products/enpedia_peptide-plus_yellow/DSC07565",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide-plus_yellow/DSC07565"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07548",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07548",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07548"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07549",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07549",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07549"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07550",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07550",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07550"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07552",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07552",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07552"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07553",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07553",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07553"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07554",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07554",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07554"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07555",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07555",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07555"
+  },
+  {
+    "productFolder": "enpedia_peptide_blue",
+    "baseName": "DSC07556",
+    "publicId": "azzura_products/enpedia_peptide_blue/DSC07556",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/enpedia_peptide_blue/DSC07556"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07570",
+    "publicId": "azzura_products/essential-oxy_white/DSC07570",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07570"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07573",
+    "publicId": "azzura_products/essential-oxy_white/DSC07573",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07573"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07574",
+    "publicId": "azzura_products/essential-oxy_white/DSC07574",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07574"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07577",
+    "publicId": "azzura_products/essential-oxy_white/DSC07577",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07577"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07580",
+    "publicId": "azzura_products/essential-oxy_white/DSC07580",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07580"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07581",
+    "publicId": "azzura_products/essential-oxy_white/DSC07581",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07581"
+  },
+  {
+    "productFolder": "essential-oxy_white",
+    "baseName": "DSC07584",
+    "publicId": "azzura_products/essential-oxy_white/DSC07584",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential-oxy_white/DSC07584"
+  },
+  {
+    "productFolder": "ESSENTIAL_2.25_VANILLA",
+    "baseName": "image",
+    "publicId": "azzura_products/ESSENTIAL_2.25_VANILLA/image",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_2.25_VANILLA/image"
+  },
+  {
+    "productFolder": "ESSENTIAL_2.25_VANILLA",
+    "baseName": "text 1",
+    "publicId": "azzura_products/ESSENTIAL_2.25_VANILLA/text_1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_2.25_VANILLA/text_1"
+  },
+  {
+    "productFolder": "ESSENTIAL_2.25_VANILLA",
+    "baseName": "text 2",
+    "publicId": "azzura_products/ESSENTIAL_2.25_VANILLA/text_2",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_2.25_VANILLA/text_2"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_CHOCOLATE_350",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_CHOCOLATE_350/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_CHOCOLATE_350/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_CHOCOLATE_350",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_CHOCOLATE_350/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_CHOCOLATE_350/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_CHOCOLATE_350",
+    "baseName": "text2",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_CHOCOLATE_350/text2",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_CHOCOLATE_350/text2"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_MANGO_350G_YELLOW",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_MANGO_350G_YELLOW/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_MANGO_350G_YELLOW/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_MANGO_350G_YELLOW",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_MANGO_350G_YELLOW/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_MANGO_350G_YELLOW/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_VANILLA_350_PINK",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_VANILLA_350_PINK/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_VANILLA_350_PINK/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_BLCD_VANILLA_350_PINK",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_BLCD_VANILLA_350_PINK/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_BLCD_VANILLA_350_PINK/text"
+  },
+  {
+    "productFolder": "essential_dls_maroon",
+    "baseName": "DSC07481",
+    "publicId": "azzura_products/essential_dls_maroon/DSC07481",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon/DSC07481"
+  },
+  {
+    "productFolder": "essential_dls_maroon",
+    "baseName": "DSC07482",
+    "publicId": "azzura_products/essential_dls_maroon/DSC07482",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon/DSC07482"
+  },
+  {
+    "productFolder": "essential_dls_maroon",
+    "baseName": "DSC07483",
+    "publicId": "azzura_products/essential_dls_maroon/DSC07483",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon/DSC07483"
+  },
+  {
+    "productFolder": "essential_dls_maroon",
+    "baseName": "DSC07484",
+    "publicId": "azzura_products/essential_dls_maroon/DSC07484",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon/DSC07484"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07597",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07597",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07597"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07598",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07598",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07598"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07599",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07599",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07599"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07600",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07600",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07600"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07601",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07601",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07601"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07605",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07605",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07605"
+  },
+  {
+    "productFolder": "essential_dls_maroon_1kg",
+    "baseName": "DSC07606",
+    "publicId": "azzura_products/essential_dls_maroon_1kg/DSC07606",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_dls_maroon_1kg/DSC07606"
+  },
+  {
+    "productFolder": "ESSENTIAL_DM_1KG_VANILLA",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_DM_1KG_VANILLA/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_DM_1KG_VANILLA/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_DM_1KG_VANILLA",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_DM_1KG_VANILLA/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_DM_1KG_VANILLA/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_DM_1KG_VANILLA",
+    "baseName": "text2",
+    "publicId": "azzura_products/ESSENTIAL_DM_1KG_VANILLA/text2",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_DM_1KG_VANILLA/text2"
+  },
+  {
+    "productFolder": "essential_epa_yelloish",
+    "baseName": "DSC07607",
+    "publicId": "azzura_products/essential_epa_yelloish/DSC07607",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yelloish/DSC07607"
+  },
+  {
+    "productFolder": "essential_epa_yelloish",
+    "baseName": "DSC07610",
+    "publicId": "azzura_products/essential_epa_yelloish/DSC07610",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yelloish/DSC07610"
+  },
+  {
+    "productFolder": "essential_epa_yelloish",
+    "baseName": "DSC07612",
+    "publicId": "azzura_products/essential_epa_yelloish/DSC07612",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yelloish/DSC07612"
+  },
+  {
+    "productFolder": "essential_epa_yellowish",
+    "baseName": "DSC07531",
+    "publicId": "azzura_products/essential_epa_yellowish/DSC07531",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yellowish/DSC07531"
+  },
+  {
+    "productFolder": "essential_epa_yellowish",
+    "baseName": "DSC07532",
+    "publicId": "azzura_products/essential_epa_yellowish/DSC07532",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yellowish/DSC07532"
+  },
+  {
+    "productFolder": "essential_epa_yellowish",
+    "baseName": "DSC07533",
+    "publicId": "azzura_products/essential_epa_yellowish/DSC07533",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yellowish/DSC07533"
+  },
+  {
+    "productFolder": "essential_epa_yellowish",
+    "baseName": "DSC07534",
+    "publicId": "azzura_products/essential_epa_yellowish/DSC07534",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yellowish/DSC07534"
+  },
+  {
+    "productFolder": "essential_epa_yellowish",
+    "baseName": "DSC07535",
+    "publicId": "azzura_products/essential_epa_yellowish/DSC07535",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_epa_yellowish/DSC07535"
+  },
+  {
+    "productFolder": "essential_hepatic_1.75_green",
+    "baseName": "DSC07486",
+    "publicId": "azzura_products/essential_hepatic_1.75_green/DSC07486",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_hepatic_1.75_green/DSC07486"
+  },
+  {
+    "productFolder": "essential_hepatic_1.75_green",
+    "baseName": "DSC07489",
+    "publicId": "azzura_products/essential_hepatic_1.75_green/DSC07489",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_hepatic_1.75_green/DSC07489"
+  },
+  {
+    "productFolder": "essential_hepatic_1.75_green",
+    "baseName": "DSC07490",
+    "publicId": "azzura_products/essential_hepatic_1.75_green/DSC07490",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_hepatic_1.75_green/DSC07490"
+  },
+  {
+    "productFolder": "essential_hepatic_1.75_green",
+    "baseName": "DSC07491",
+    "publicId": "azzura_products/essential_hepatic_1.75_green/DSC07491",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_hepatic_1.75_green/DSC07491"
+  },
+  {
+    "productFolder": "essential_hepatic_1.75_green",
+    "baseName": "DSC07492",
+    "publicId": "azzura_products/essential_hepatic_1.75_green/DSC07492",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_hepatic_1.75_green/DSC07492"
+  },
+  {
+    "productFolder": "essential_peptide-p_purple_white",
+    "baseName": "DSC07522",
+    "publicId": "azzura_products/essential_peptide-p_purple_white/DSC07522",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide-p_purple_white/DSC07522"
+  },
+  {
+    "productFolder": "essential_peptide-p_purple_white",
+    "baseName": "DSC07523",
+    "publicId": "azzura_products/essential_peptide-p_purple_white/DSC07523",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide-p_purple_white/DSC07523"
+  },
+  {
+    "productFolder": "essential_peptide-p_purple_white",
+    "baseName": "DSC07524",
+    "publicId": "azzura_products/essential_peptide-p_purple_white/DSC07524",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide-p_purple_white/DSC07524"
+  },
+  {
+    "productFolder": "essential_peptide-p_purple_white",
+    "baseName": "DSC07526",
+    "publicId": "azzura_products/essential_peptide-p_purple_white/DSC07526",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide-p_purple_white/DSC07526"
+  },
+  {
+    "productFolder": "essential_peptide-p_purple_white",
+    "baseName": "DSC07528",
+    "publicId": "azzura_products/essential_peptide-p_purple_white/DSC07528",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide-p_purple_white/DSC07528"
+  },
+  {
+    "productFolder": "essential_peptide-p_purple_white",
+    "baseName": "DSC07530",
+    "publicId": "azzura_products/essential_peptide-p_purple_white/DSC07530",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide-p_purple_white/DSC07530"
+  },
+  {
+    "productFolder": "essential_peptide_almost_Pink",
+    "baseName": "DSC07538",
+    "publicId": "azzura_products/essential_peptide_almost_Pink/DSC07538",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_almost_Pink/DSC07538"
+  },
+  {
+    "productFolder": "essential_peptide_almost_Pink",
+    "baseName": "DSC07540",
+    "publicId": "azzura_products/essential_peptide_almost_Pink/DSC07540",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_almost_Pink/DSC07540"
+  },
+  {
+    "productFolder": "essential_peptide_almost_Pink",
+    "baseName": "DSC07543",
+    "publicId": "azzura_products/essential_peptide_almost_Pink/DSC07543",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_almost_Pink/DSC07543"
+  },
+  {
+    "productFolder": "essential_peptide_almost_Pink",
+    "baseName": "DSC07544",
+    "publicId": "azzura_products/essential_peptide_almost_Pink/DSC07544",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_almost_Pink/DSC07544"
+  },
+  {
+    "productFolder": "essential_peptide_almost_Pink",
+    "baseName": "DSC07546",
+    "publicId": "azzura_products/essential_peptide_almost_Pink/DSC07546",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_almost_Pink/DSC07546"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07617",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07617",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07617"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07618",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07618",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07618"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07619",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07619",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07619"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07620",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07620",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07620"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07621",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07621",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07621"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07622",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07622",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07622"
+  },
+  {
+    "productFolder": "essential_peptide_redish",
+    "baseName": "DSC07624",
+    "publicId": "azzura_products/essential_peptide_redish/DSC07624",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/essential_peptide_redish/DSC07624"
+  },
+  {
+    "productFolder": "ESSENTIAL_PLUS_VANILLA_YELLOW",
+    "baseName": "Front",
+    "publicId": "azzura_products/ESSENTIAL_PLUS_VANILLA_YELLOW/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_PLUS_VANILLA_YELLOW/Front"
+  },
+  {
+    "productFolder": "ESSENTIAL_PLUS_VANILLA_YELLOW",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_PLUS_VANILLA_YELLOW/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_PLUS_VANILLA_YELLOW/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_PLUS_VANILLA_YELLOW",
+    "baseName": "texte1",
+    "publicId": "azzura_products/ESSENTIAL_PLUS_VANILLA_YELLOW/texte1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_PLUS_VANILLA_YELLOW/texte1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_BLUE",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_BLUE/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_BLUE/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_BLUE",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_BLUE/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_BLUE/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_BLUE",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_BLUE/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_BLUE/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_BROWN",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_BROWN/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_BROWN/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_BROWN",
+    "baseName": "Text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_BROWN/Text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_BROWN/Text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_BROWN",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_BROWN/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_BROWN/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_CYAN",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_CYAN/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_CYAN/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_CYAN",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_CYAN/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_CYAN/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_CYAN",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_CYAN/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_CYAN/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_DARK_BLUE",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_DARK_BLUE/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_DARK_BLUE/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_DARK_BLUE",
+    "baseName": "tex1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_DARK_BLUE/tex1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_DARK_BLUE/tex1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_DARK_BLUE",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_DARK_BLUE/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_DARK_BLUE/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_DARK_GREEN",
+    "baseName": "Front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_DARK_GREEN/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_DARK_GREEN/Front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_DARK_GREEN",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_DARK_GREEN/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_DARK_GREEN/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_DARK_GREEN",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_DARK_GREEN/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_DARK_GREEN/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_GREEN",
+    "baseName": "image",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_GREEN/image",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_GREEN/image"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_GREEN",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_GREEN/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_GREEN/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_GREEN",
+    "baseName": "text2",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_GREEN/text2",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_GREEN/text2"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_PINK",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_PINK/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_PINK/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_PINK",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_PINK/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_PINK/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_PINK",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_PINK/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_PINK/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_RED",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_RED/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_RED/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_RED",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_RED/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_RED/text1"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_YELLOW",
+    "baseName": "front",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_YELLOW/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_YELLOW/front"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_YELLOW",
+    "baseName": "text",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_YELLOW/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_YELLOW/text"
+  },
+  {
+    "productFolder": "ESSENTIAL_VANILLA_YELLOW",
+    "baseName": "text1",
+    "publicId": "azzura_products/ESSENTIAL_VANILLA_YELLOW/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/ESSENTIAL_VANILLA_YELLOW/text1"
+  },
+  {
+    "productFolder": "FIBERO_ESSENTIAL_TF",
+    "baseName": "front",
+    "publicId": "azzura_products/FIBERO_ESSENTIAL_TF/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/FIBERO_ESSENTIAL_TF/front"
+  },
+  {
+    "productFolder": "FIBERO_ESSENTIAL_TF",
+    "baseName": "text",
+    "publicId": "azzura_products/FIBERO_ESSENTIAL_TF/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/FIBERO_ESSENTIAL_TF/text"
+  },
+  {
+    "productFolder": "FIBERO_ESSENTIAL_TF",
+    "baseName": "text1",
+    "publicId": "azzura_products/FIBERO_ESSENTIAL_TF/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/FIBERO_ESSENTIAL_TF/text1"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07495",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07495",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07495"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07496",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07496",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07496"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07497",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07497",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07497"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07498",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07498",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07498"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07499",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07499",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07499"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07500",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07500",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07500"
+  },
+  {
+    "productFolder": "glutamax-el-blue-box",
+    "baseName": "DSC07503",
+    "publicId": "azzura_products/glutamax-el-blue-box/DSC07503",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/glutamax-el-blue-box/DSC07503"
+  },
+  {
+    "productFolder": "GLUTAMAX_EL_10x15GM_ORANGE",
+    "baseName": "Front",
+    "publicId": "azzura_products/GLUTAMAX_EL_10x15GM_ORANGE/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/GLUTAMAX_EL_10x15GM_ORANGE/Front"
+  },
+  {
+    "productFolder": "GLUTAMAX_EL_10x15GM_ORANGE",
+    "baseName": "text",
+    "publicId": "azzura_products/GLUTAMAX_EL_10x15GM_ORANGE/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/GLUTAMAX_EL_10x15GM_ORANGE/text"
+  },
+  {
+    "productFolder": "GLUTAMAX_EL_10x15GM_ORANGE",
+    "baseName": "text1",
+    "publicId": "azzura_products/GLUTAMAX_EL_10x15GM_ORANGE/text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/GLUTAMAX_EL_10x15GM_ORANGE/text1"
+  },
+  {
+    "productFolder": "MICROEG-ALL-GUMMIES_30_ROSE",
+    "baseName": "Front",
+    "publicId": "azzura_products/MICROEG-ALL-GUMMIES_30_ROSE/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICROEG-ALL-GUMMIES_30_ROSE/Front"
+  },
+  {
+    "productFolder": "MICROEG-ALL-GUMMIES_30_ROSE",
+    "baseName": "Text",
+    "publicId": "azzura_products/MICROEG-ALL-GUMMIES_30_ROSE/Text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICROEG-ALL-GUMMIES_30_ROSE/Text"
+  },
+  {
+    "productFolder": "MICROEG-ALL-GUMMIES_30_ROSE",
+    "baseName": "text2",
+    "publicId": "azzura_products/MICROEG-ALL-GUMMIES_30_ROSE/text2",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICROEG-ALL-GUMMIES_30_ROSE/text2"
+  },
+  {
+    "productFolder": "MICRO_ESSENTIAL_ALL_60CAP",
+    "baseName": "front",
+    "publicId": "azzura_products/MICRO_ESSENTIAL_ALL_60CAP/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICRO_ESSENTIAL_ALL_60CAP/front"
+  },
+  {
+    "productFolder": "MICRO_ESSENTIAL_ALL_60CAP",
+    "baseName": "text",
+    "publicId": "azzura_products/MICRO_ESSENTIAL_ALL_60CAP/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICRO_ESSENTIAL_ALL_60CAP/text"
+  },
+  {
+    "productFolder": "MICRO_ESSENTIAL_B12_60CAP",
+    "baseName": "front",
+    "publicId": "azzura_products/MICRO_ESSENTIAL_B12_60CAP/front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICRO_ESSENTIAL_B12_60CAP/front"
+  },
+  {
+    "productFolder": "MICRO_ESSENTIAL_B12_60CAP",
+    "baseName": "text",
+    "publicId": "azzura_products/MICRO_ESSENTIAL_B12_60CAP/text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICRO_ESSENTIAL_B12_60CAP/text"
+  },
+  {
+    "productFolder": "MICRO_ESSENTIAL_B12_60CAP",
+    "baseName": "text2",
+    "publicId": "azzura_products/MICRO_ESSENTIAL_B12_60CAP/text2",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/MICRO_ESSENTIAL_B12_60CAP/text2"
+  },
+  {
+    "productFolder": "NEU_DLS_ORANGE",
+    "baseName": "DSC07513",
+    "publicId": "azzura_products/NEU_DLS_ORANGE/DSC07513",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/NEU_DLS_ORANGE/DSC07513"
+  },
+  {
+    "productFolder": "NEU_DLS_ORANGE",
+    "baseName": "DSC07514",
+    "publicId": "azzura_products/NEU_DLS_ORANGE/DSC07514",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/NEU_DLS_ORANGE/DSC07514"
+  },
+  {
+    "productFolder": "NEU_DLS_ORANGE",
+    "baseName": "DSC07516",
+    "publicId": "azzura_products/NEU_DLS_ORANGE/DSC07516",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/NEU_DLS_ORANGE/DSC07516"
+  },
+  {
+    "productFolder": "NEU_DLS_ORANGE",
+    "baseName": "DSC07517",
+    "publicId": "azzura_products/NEU_DLS_ORANGE/DSC07517",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/NEU_DLS_ORANGE/DSC07517"
+  },
+  {
+    "productFolder": "NEU_DLS_ORANGE",
+    "baseName": "DSC07519",
+    "publicId": "azzura_products/NEU_DLS_ORANGE/DSC07519",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/NEU_DLS_ORANGE/DSC07519"
+  },
+  {
+    "productFolder": "neu_dls_plantbased_yellowish",
+    "baseName": "DSC07586",
+    "publicId": "azzura_products/neu_dls_plantbased_yellowish/DSC07586",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/neu_dls_plantbased_yellowish/DSC07586"
+  },
+  {
+    "productFolder": "neu_dls_plantbased_yellowish",
+    "baseName": "DSC07587",
+    "publicId": "azzura_products/neu_dls_plantbased_yellowish/DSC07587",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/neu_dls_plantbased_yellowish/DSC07587"
+  },
+  {
+    "productFolder": "neu_dls_plantbased_yellowish",
+    "baseName": "DSC07589",
+    "publicId": "azzura_products/neu_dls_plantbased_yellowish/DSC07589",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/neu_dls_plantbased_yellowish/DSC07589"
+  },
+  {
+    "productFolder": "neu_dls_plantbased_yellowish",
+    "baseName": "DSC07590",
+    "publicId": "azzura_products/neu_dls_plantbased_yellowish/DSC07590",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/neu_dls_plantbased_yellowish/DSC07590"
+  },
+  {
+    "productFolder": "neu_dls_plantbased_yellowish",
+    "baseName": "DSC07593",
+    "publicId": "azzura_products/neu_dls_plantbased_yellowish/DSC07593",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/neu_dls_plantbased_yellowish/DSC07593"
+  },
+  {
+    "productFolder": "THIOEG_GUMMIES_GUAVA_FLAVOUR",
+    "baseName": "Front",
+    "publicId": "azzura_products/THIOEG_GUMMIES_GUAVA_FLAVOUR/Front",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/THIOEG_GUMMIES_GUAVA_FLAVOUR/Front"
+  },
+  {
+    "productFolder": "THIOEG_GUMMIES_GUAVA_FLAVOUR",
+    "baseName": "Text",
+    "publicId": "azzura_products/THIOEG_GUMMIES_GUAVA_FLAVOUR/Text",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/THIOEG_GUMMIES_GUAVA_FLAVOUR/Text"
+  },
+  {
+    "productFolder": "THIOEG_GUMMIES_GUAVA_FLAVOUR",
+    "baseName": "Text1",
+    "publicId": "azzura_products/THIOEG_GUMMIES_GUAVA_FLAVOUR/Text1",
+    "url": "https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto/azzura_products/THIOEG_GUMMIES_GUAVA_FLAVOUR/Text1"
+  }
+]

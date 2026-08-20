@@ -1,0 +1,36 @@
+{
+  "name": "azzura-backend",
+  "version": "1.0.0",
+  "description": "Backend for Azzura eCommerce - Razorpay Integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "serve": "node dev-server.js",
+    "migrate": "node db/migrate.js",
+    "upload-images": "node scripts/upload-to-cloudinary.js",
+    "upload-new-images": "node scripts/upload-new-images.js",
+    "sync-products": "node scripts/sync-to-supabase.js",
+    "upload-and-sync": "node scripts/upload-to-cloudinary.js && node scripts/sync-to-supabase.js",
+    "seed-products": "node scripts/seed-products.js",
+    "fix-products": "node scripts/fix-product-grouping.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.2",
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.3.1",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.5",
+    "helmet": "^7.1.0",
+    "pg": "^8.12.0",
+    "razorpay": "^2.9.4",
+    "sharp": "^0.35.2",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

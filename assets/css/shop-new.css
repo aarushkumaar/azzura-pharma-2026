@@ -1,0 +1,774 @@
+/* ============================================================
+   AZZURRA PHARMACONUTRITION — SHOP PAGE STYLES (Custom CSS)
+   Premium redesign matching the main design system
+   ============================================================ */
+
+/* ============================================================
+   SHOP HERO / PAGE HEADER
+   ============================================================ */
+.shop-hero {
+  padding: 130px 40px 60px;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.shop-hero__inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.shop-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 20px;
+}
+
+.shop-hero__badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.shop-hero__heading {
+  font-family: var(--font-heading);
+  font-size: clamp(32px, 5vw, 52px);
+  color: var(--color-dark);
+  font-weight: 400;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  max-width: 600px;
+}
+
+.shop-hero__sub {
+  font-size: 17px;
+  color: var(--color-grey);
+  line-height: 1.7;
+  max-width: 520px;
+}
+
+/* ============================================================
+   SHOP LAYOUT — 4-column grid (sidebar + products)
+   ============================================================ */
+.shop-main {
+  padding: 64px 40px 96px;
+  background: #f7f9fc;
+}
+
+.shop-layout {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* ============================================================
+   FILTER SIDEBAR
+   ============================================================ */
+.shop-sidebar {
+  background: var(--color-white);
+  border-radius: 20px;
+  border: 1.5px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  overflow: hidden;
+  position: sticky;
+  top: 100px;
+}
+
+.sidebar-header {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--color-dark);
+  font-weight: 400;
+}
+
+.sidebar-clear-all {
+  font-size: 12px;
+  color: var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  transition: color var(--ease);
+  padding: 0;
+  text-decoration: underline;
+  display: none; /* Shown by JS when filters are active */
+}
+
+.sidebar-clear-all.visible {
+  display: block;
+}
+
+.sidebar-clear-all:hover {
+  color: var(--color-primary-dark);
+}
+
+/* Filter category */
+.filter-category {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filter-category:last-child {
+  border-bottom: none;
+}
+
+.filter-category__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: background var(--ease);
+  user-select: none;
+}
+
+.filter-category__header:hover {
+  background: var(--color-primary-light);
+}
+
+.filter-category__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-dark);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.filter-category__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-count-badge {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+/* Animated arrow */
+.filter-arrow {
+  width: 16px;
+  height: 16px;
+  color: var(--color-grey);
+  transition: transform 0.25s ease;
+}
+
+.filter-arrow svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.filter-category.open .filter-arrow {
+  transform: rotate(180deg);
+}
+
+/* Filter options list */
+.filter-options {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.filter-category.open .filter-options {
+  max-height: 300px;
+}
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 24px;
+  cursor: pointer;
+  transition: background var(--ease);
+}
+
+.filter-option:hover {
+  background: var(--color-primary-light);
+}
+
+/* Active filter — shows blue dot before label */
+.filter-option.active::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.filter-option:not(.active)::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0; /* keep alignment */
+}
+
+.filter-option__text {
+  font-size: 14px;
+  color: var(--color-grey);
+  transition: color var(--ease);
+}
+
+.filter-option.active .filter-option__text {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.filter-option:hover .filter-option__text {
+  color: var(--color-dark);
+}
+
+/* ============================================================
+   PRODUCT GRID AREA
+   ============================================================ */
+.shop-grid-area {
+  min-width: 0;
+}
+
+/* Top bar: product count + sort + view toggle */
+.shop-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.shop-product-count {
+  font-size: 15px;
+  color: var(--color-grey);
+  font-weight: 500;
+}
+
+.shop-product-count span {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.shop-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Sort dropdown */
+.shop-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shop-sort label {
+  font-size: 13px;
+  color: var(--color-grey);
+  white-space: nowrap;
+}
+
+.shop-sort select {
+  background: var(--color-white);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: var(--color-dark);
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--ease);
+}
+
+.shop-sort select:focus {
+  border-color: var(--color-primary);
+}
+
+/* View toggle buttons */
+.view-toggle {
+  display: flex;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--color-white);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--color-grey);
+  transition: background var(--ease), color var(--ease);
+}
+
+.view-btn.active {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.view-btn:hover:not(.active) {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+/* ============================================================
+   SKELETON SHIMMER (loading state)
+   ============================================================ */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.skeleton-card {
+  background: var(--color-white);
+  border-radius: 16px;
+  border: 1.5px solid var(--color-border);
+  overflow: hidden;
+}
+
+.skeleton-img {
+  aspect-ratio: 4/3;
+  background: linear-gradient(90deg, #f0f4fa 25%, #e4ecf7 50%, #f0f4fa 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.skeleton-body {
+  padding: 24px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #f0f4fa 25%, #e4ecf7 50%, #f0f4fa 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+  margin-bottom: 10px;
+}
+
+.skeleton-line--short { width: 50%; }
+.skeleton-line--medium { width: 75%; }
+.skeleton-line--full { width: 100%; }
+
+/* ============================================================
+   SHOP PRODUCT CARDS
+   ============================================================ */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+/* List view */
+.shop-grid.list-view {
+  grid-template-columns: 1fr;
+}
+
+.shop-grid.list-view .shop-product-card {
+  flex-direction: row;
+  max-height: none;
+}
+
+.shop-grid.list-view .shop-card__img {
+  width: 200px;
+  flex-shrink: 0;
+  aspect-ratio: auto;
+  height: 200px;
+}
+
+.shop-grid.list-view .shop-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.shop-grid.list-view .shop-card__desc {
+  display: block; /* Always show description in list view */
+  -webkit-line-clamp: unset;
+  max-height: none;
+}
+
+/* Card base */
+.shop-product-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.shop-product-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: 0 12px 40px rgba(26,95,168,0.15);
+}
+
+/* Image container — same background as card body for seamless look.
+   Using object-fit: contain so the full product (often a transparent PNG)
+   is always visible without cropping or distortion. */
+.shop-card__img {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: #ffffff;   /* matches card body — no visible box around image */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shop-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* show full product, never crop */
+  object-position: center;
+  transition: opacity 0.25s ease;
+}
+
+/* Subtle fade on hover instead of scale (scale + contain looks bad) */
+.shop-product-card:hover .shop-card__img img {
+  opacity: 0.92;
+}
+
+/* Quick view overlay */
+.shop-card__quick-view {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 42, 70, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.shop-product-card:hover .shop-card__quick-view {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.shop-card__quick-view span {
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 2px solid rgba(255,255,255,0.7);
+  padding: 8px 20px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+
+.shop-card__quick-view span:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* Card badge */
+.shop-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  z-index: 1;
+}
+
+/* Card body — explicit white so it is the same as the image area above.
+   This makes the card feel like one continuous surface. */
+.shop-card__body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-top: 1px solid var(--color-border);
+}
+
+.shop-card__series {
+  font-size: 11px;
+  color: var(--color-primary);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.shop-card__name {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  color: var(--color-dark);
+  font-weight: 400;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+
+.shop-card__desc {
+  font-size: 13px;
+  color: var(--color-grey);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.shop-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.shop-card__price {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--color-primary);
+  font-weight: 400;
+}
+
+/* Add to cart button */
+.shop-card__add-btn {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: 100px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background var(--ease), transform var(--ease), box-shadow var(--ease);
+  white-space: nowrap;
+}
+
+.shop-card__add-btn:hover {
+  background: var(--color-primary-dark);
+  transform: scale(1.04);
+  box-shadow: 0 4px 14px rgba(26,95,168,0.3);
+}
+
+.shop-card__add-btn.added {
+  background: #2d8a4e;
+}
+
+/* Out of stock label */
+.shop-card__out-of-stock {
+  font-size: 12px;
+  color: var(--color-grey);
+  font-style: italic;
+  padding: 10px 0;
+}
+
+/* ============================================================
+   EMPTY STATE (no products match filter)
+   ============================================================ */
+.shop-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--color-grey);
+}
+
+.shop-empty__icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+  opacity: 0.4;
+}
+
+.shop-empty__msg {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+
+.shop-empty__sub {
+  font-size: 14px;
+  color: var(--color-grey);
+}
+
+/* ============================================================
+   RESPONSIVE — Shop
+   ============================================================ */
+@media (max-width: 1024px) {
+  .shop-layout {
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .shop-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-sidebar {
+    position: static;
+  }
+
+  .shop-hero, .shop-main {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .shop-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   SHOP CARD — Cloudinary dual-image hover crossfade
+   images[0] is always visible; images[1] fades in on hover.
+   ============================================================ */
+
+/* Inner wrapper sits inside .shop-card__img */
+.shop-card__img-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.shop-card__img-primary,
+.shop-card__img-hover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.45s ease, transform 0.4s ease;
+}
+
+.shop-card__img-hover {
+  opacity: 0;
+}
+
+/* On card hover: primary fades slightly, hover image fades in */
+.shop-product-card:hover .shop-card__img-primary {
+  opacity: 0.0;
+  transform: scale(1.04);
+}
+
+.shop-product-card:hover .shop-card__img-hover {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+/* If only one image (no hover image), restore normal zoom */
+.shop-product-card:hover .shop-card__img-primary:only-child {
+  opacity: 1;
+}
+
+/* ── No-image placeholder (when images array is empty) ── */
+.shop-card__img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--color-primary-light);
+}
+
+.shop-card__img-placeholder-logo {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  opacity: 0.4;
+}
+
+/* ── Tag pills on product cards ─────────────────────────── */
+.shop-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.shop-card__tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: var(--color-primary-light, #E8F1FB);
+  color: var(--color-primary, #1A5FA8);
+  letter-spacing: 0.04em;
+}
+
+/* ── Staggered fade-in for product cards ────────────────── */
+@keyframes cardFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.shop-product-card.fade-up {
+  opacity: 0;
+  animation: cardFadeIn 0.5s ease forwards;
+}
+
+/* ── Search input focus ring ────────────────────────────── */
+#shop-search:focus {
+  outline: none;
+  border-color: var(--color-primary, #1A5FA8);
+  box-shadow: 0 0 0 3px rgba(26, 95, 168, 0.12);
+}
+

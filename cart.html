@@ -1,0 +1,329 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Review your cart and proceed to secure checkout. Azzurra Pharmaconutrition — clinically formulated nutrition." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/cart.css" />
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+
+  <!-- Scroll progress bar -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ========================================================
+       NAVBAR — same as all pages, no active link on cart
+       ======================================================== -->
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart active" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       CART HERO — thin strip with breadcrumb
+       ======================================================== -->
+  <header class="cart-hero">
+    <div class="cart-hero__inner">
+      <nav class="cart-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="sep" aria-hidden="true">›</span>
+        <a href="productss.html">Shop</a>
+        <span class="sep" aria-hidden="true">›</span>
+        <span aria-current="page">Cart</span>
+      </nav>
+      <h1 class="cart-hero__heading">Your Cart</h1>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       CART MAIN — two-column layout
+       ======================================================== -->
+  <main class="cart-main" role="main">
+    <div class="cart-layout">
+
+      <!-- ── LEFT: Cart Items (65%) ─────────────────────────── -->
+      <section class="cart-items-col" aria-label="Cart items">
+        <div class="cart-items-header">
+          <h2 class="cart-items-title">Items</h2>
+          <span class="cart-count-label" id="cart-item-count-label">0 items</span>
+        </div>
+
+        <!-- Items rendered by JS here -->
+        <div id="cart-items-list">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── RIGHT: Order Summary (35%) ─────────────────────── -->
+      <aside class="cart-summary-col" aria-label="Order summary">
+        <div class="cart-summary-card">
+          <div class="cart-summary__header">
+            <h2 class="cart-summary__title">Order Summary</h2>
+          </div>
+
+          <div class="cart-summary__body">
+            <div class="summary-line">
+              <span>Subtotal</span>
+              <span class="summary-line__value" id="summary-subtotal">₹0</span>
+            </div>
+            <div class="summary-line">
+              <span>Shipping</span>
+              <span class="summary-line__value summary-line__note">Calculated at checkout</span>
+            </div>
+            <div class="summary-line">
+              <span>GST (18%)</span>
+              <span class="summary-line__value" id="summary-gst">₹0</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total-line">
+              <span class="summary-total-label">Total</span>
+              <span class="summary-total-value" id="summary-total">₹0</span>
+            </div>
+
+            <!-- Checkout button -->
+            <a href="checkout.html" class="cart-checkout-btn" id="cart-checkout-btn">
+              Proceed to Checkout →
+            </a>
+            <a href="productss.html" class="cart-continue-link">← Continue Shopping</a>
+          </div>
+
+          <!-- Trust badges -->
+          <div class="cart-trust-badges">
+            <span class="cart-trust-badge">🔒 Secure Checkout</span>
+            <span class="cart-trust-badge">✓ Genuine Products</span>
+            <span class="cart-trust-badge">📦 Pan-India Delivery</span>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" role="contentinfo" style="margin-top: 0;">
+    <div class="footer__bottom" style="max-width:1200px;margin:0 auto;padding:24px 40px;">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button id="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+  /* ============================================================
+     CART PAGE — Read/update localStorage cart
+     ============================================================ */
+  (function initCartPage() {
+
+    var STORAGE_KEY = 'azzurra_cart';
+    var GST_RATE    = 0.18;
+
+    /* ---- Load cart from localStorage ---- */
+    function loadCart() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    /* ---- Save cart to localStorage ---- */
+    function saveCart(cart) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+        if (typeof window.updateCartBadge === 'function') window.updateCartBadge();
+      } catch (e) { /* localStorage unavailable */ }
+    }
+
+    /* ---- Format currency ---- */
+    function fmt(amount) {
+      return '₹' + Math.round(amount).toLocaleString('en-IN');
+    }
+
+    /* ---- Update order summary totals ---- */
+    function updateSummary(cart) {
+      var subtotal = cart.reduce(function(sum, item) {
+        return sum + (item.price * (item.quantity || 1));
+      }, 0);
+      var gst   = subtotal * GST_RATE;
+      var total = subtotal + gst;
+
+      var subtotalEl = document.getElementById('summary-subtotal');
+      var gstEl      = document.getElementById('summary-gst');
+      var totalEl    = document.getElementById('summary-total');
+      var countLabel = document.getElementById('cart-item-count-label');
+      var checkoutBtn = document.getElementById('cart-checkout-btn');
+
+      if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+      if (gstEl)      gstEl.textContent      = fmt(gst);
+      if (totalEl)    totalEl.textContent     = fmt(total);
+
+      var totalItems = cart.reduce(function(n, item) { return n + (item.quantity || 1); }, 0);
+      if (countLabel) countLabel.textContent = totalItems + (totalItems === 1 ? ' item' : ' items');
+
+      /* Disable checkout button when cart is empty */
+      if (checkoutBtn) {
+        if (cart.length === 0) {
+          checkoutBtn.style.opacity = '0.5';
+          checkoutBtn.style.pointerEvents = 'none';
+        } else {
+          checkoutBtn.style.opacity = '';
+          checkoutBtn.style.pointerEvents = '';
+        }
+      }
+    }
+
+    /* ---- Render a single cart item row ---- */
+    function createItemEl(item, index) {
+      var el = document.createElement('div');
+      el.className = 'cart-item';
+      el.setAttribute('data-index', index);
+
+      var subtotal = item.price * (item.quantity || 1);
+
+      el.innerHTML =
+        '<div class="cart-item__img">' +
+          '<img src="' + (item.image || '') + '" alt="' + item.name + '" />' +
+        '</div>' +
+        '<div class="cart-item__info">' +
+          '<p class="cart-item__series">' + (item.series || 'Essential Series') + '</p>' +
+          '<h3 class="cart-item__name">' + item.name + '</h3>' +
+          '<p class="cart-item__unit-price">₹' + item.price.toLocaleString('en-IN') + ' per unit</p>' +
+        '</div>' +
+        '<div class="cart-item__controls">' +
+          '<div class="qty-control" role="group" aria-label="Quantity for ' + item.name + '">' +
+            '<button class="qty-control__btn qty-dec" aria-label="Decrease quantity">−</button>' +
+            '<span class="qty-control__num">' + (item.quantity || 1) + '</span>' +
+            '<button class="qty-control__btn qty-inc" aria-label="Increase quantity">+</button>' +
+          '</div>' +
+          '<span class="cart-item__subtotal" id="item-subtotal-' + index + '">' + fmt(subtotal) + '</span>' +
+          '<button class="cart-item__remove" aria-label="Remove ' + item.name + ' from cart">× Remove</button>' +
+        '</div>';
+
+      /* Quantity decrease */
+      el.querySelector('.qty-dec').addEventListener('click', function() {
+        var cart = loadCart();
+        if (cart[index] && cart[index].quantity > 1) {
+          cart[index].quantity -= 1;
+        } else {
+          removeItem(el, index);
+          return;
+        }
+        saveCart(cart);
+        renderCart();
+      });
+
+      /* Quantity increase */
+      el.querySelector('.qty-inc').addEventListener('click', function() {
+        var cart = loadCart();
+        if (cart[index]) cart[index].quantity = (cart[index].quantity || 1) + 1;
+        saveCart(cart);
+        renderCart();
+      });
+
+      /* Remove item */
+      el.querySelector('.cart-item__remove').addEventListener('click', function() {
+        removeItem(el, index);
+      });
+
+      return el;
+    }
+
+    /* ---- Animate removal, then update state ---- */
+    function removeItem(el, index) {
+      el.classList.add('removing');
+      setTimeout(function() {
+        var cart = loadCart();
+        cart.splice(index, 1);
+        saveCart(cart);
+        renderCart();
+      }, 370); /* match CSS transition */
+    }
+
+    /* ---- Render full cart ---- */
+    function renderCart() {
+      var cart     = loadCart();
+      var listEl   = document.getElementById('cart-items-list');
+      if (!listEl) return;
+
+      listEl.innerHTML = '';
+
+      if (cart.length === 0) {
+        /* Empty state */
+        listEl.innerHTML =
+          '<div class="cart-empty">' +
+            '<div class="cart-empty__icon">🛒</div>' +
+            '<p class="cart-empty__msg">Your cart is empty.</p>' +
+            '<a href="productss.html" class="btn btn--primary" style="margin-top:8px;">Browse Products</a>' +
+          '</div>';
+      } else {
+        cart.forEach(function(item, i) {
+          listEl.appendChild(createItemEl(item, i));
+        });
+      }
+
+      updateSummary(cart);
+    }
+
+    /* ---- Boot ---- */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', renderCart);
+    } else {
+      renderCart();
+    }
+
+  }());
+  </script>
+
+</body>
+</html>

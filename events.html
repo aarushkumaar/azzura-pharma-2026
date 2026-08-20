@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Events &amp; Conferences — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Stay updated with Azzurra's clinical outreach, product launches, and healthcare events across India. Upcoming and past medical events and conferences." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+
+  <!-- ========================================================
+       NAVBAR
+       ======================================================== -->
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events" class="active">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html" class="active">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- ========================================================
+       PAGE HERO
+       ======================================================== -->
+  <header class="events-page-hero">
+    <div class="container">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>Events</span>
+      </nav>
+      <div class="page-hero__rule" aria-hidden="true"></div>
+      <h1 class="page-hero__heading" style="font-family:var(--font-heading);">Medical Events &amp; Conferences</h1>
+      <p style="font-size:17px;color:var(--color-grey);margin-top:16px;max-width:640px;margin-left:auto;margin-right:auto;">
+        Stay updated with Azzurra's clinical outreach, product launches,
+        and healthcare events across India.
+      </p>
+      <div class="events-hero-rule"></div>
+    </div>
+  </header>
+
+
+  <!-- ========================================================
+       UPCOMING EVENTS SECTION
+       ======================================================== -->
+  <div class="events-section">
+    <h2 class="heading-xl" style="margin-bottom:32px;">Upcoming Events</h2>
+    <div id="upcoming-events-container">
+      <!-- Populated by JS -->
+      <div style="text-align:center;padding:40px;"><span style="font-size:24px;">⏳</span><p style="color:var(--color-grey);margin-top:12px;">Loading events…</p></div>
+    </div>
+
+    <!-- ── PAST EVENTS ── -->
+    <h2 class="heading-xl" style="margin-top:64px;margin-bottom:32px;">Past Events</h2>
+    <div id="past-events-container" class="past-events-grid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
+        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="about.html"     class="footer__link">About</a></li>
+          <li><a href="science.html"   class="footer__link">Science</a></li>
+          <li><a href="events.html"    class="footer__link">Events</a></li>
+          <li><a href="productss.html" class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Product Series</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="productss.html" class="footer__link">Essential Series</a></li>
+          <li><a href="productss.html" class="footer__link">Vital Series</a></li>
+          <li><a href="productss.html" class="footer__link">Max Series</a></li>
+          <li><a href="productss.html" class="footer__link">Provit Series</a></li>
+          <li><a href="productss.html" class="footer__link">Lifeline Series</a></li>
+          <li><a href="productss.html" class="footer__link">Oral Series</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Contact</h3>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📍</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF, Faridabad (NCR-Delhi) — 121006, India</p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <p class="footer__contact-text"><a href="tel:+919871648649">+91 98 71 648 649</a></p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">✉️</span>
+          <p class="footer__contact-text"><a href="mailto:info@azzurrapharmaconutrition.com">info@azzurrapharmaconutrition.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <script src="assets/js/main.js"></script>
+
+  <script>
+  /* ============================================================
+     EVENTS PAGE — fetch & render events from Supabase
+  ============================================================ */
+  (async function initEventsPage() {
+    var SUPA_URL = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
+    var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
+
+    var today = new Date().toISOString().split('T')[0];
+
+    function formatDate(d) {
+      if (!d) return '';
+      var dt = new Date(d + 'T00:00:00');
+      return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function formatShortDate(d) {
+      if (!d) return '';
+      var dt = new Date(d + 'T00:00:00');
+      return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    /* ── Countdown timer for events within 30 days ── */
+    function getCountdown(dateStr) {
+      if (!dateStr) return null;
+      var target = new Date(dateStr + 'T00:00:00');
+      var now = new Date();
+      var diff = target - now;
+      if (diff <= 0 || diff > 30 * 24 * 60 * 60 * 1000) return null;
+      return diff;
+    }
+
+    function formatCountdown(ms) {
+      var days = Math.floor(ms / (1000 * 60 * 60 * 24));
+      var hrs  = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var mins = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+      var secs = Math.floor((ms % (1000 * 60)) / 1000);
+      return days + 'd ' + hrs + 'h ' + mins + 'm ' + secs + 's';
+    }
+
+    /* ── Fetch events ── */
+    async function fetchEvents(filter) {
+      try {
+        var url = SUPA_URL + '/rest/v1/events?' + filter + '&is_active=eq.true&order=date.' + (filter.includes('gte') ? 'asc' : 'desc');
+        var res = await fetch(url, {
+          headers: {
+            'apikey':        SUPA_KEY,
+            'Authorization': 'Bearer ' + SUPA_KEY,
+            'Accept':        'application/json'
+          }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return await res.json();
+      } catch(e) {
+        console.warn('[Azzurra Events] fetch error:', e);
+        return [];
+      }
+    }
+
+    /* ── Render upcoming event card ── */
+    function renderUpcomingCard(ev) {
+      var imgHtml = ev.banner_image_url
+        ? '<img src="' + ev.banner_image_url + '" alt="' + ev.title + '" class="event-banner-image" loading="lazy" />'
+        : '<div class="event-banner-placeholder">' + (ev.title || 'Event') + '</div>';
+
+      var regBtn = ev.registration_url
+        ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="event-register-btn">Register / Learn More →</a>'
+        : '<span class="event-register-btn disabled">Coming Soon</span>';
+
+      var countdownMs = getCountdown(ev.date);
+      var countdownHtml = countdownMs !== null
+        ? '<div class="event-countdown" data-target="' + new Date(ev.date + 'T00:00:00').getTime() + '">Starts in: ' + formatCountdown(countdownMs) + '</div>'
+        : '';
+
+      return '<article class="event-banner-card fade-up">' +
+        '<div>' +
+          '<span class="event-date-badge">' + formatShortDate(ev.date) + '</span>' +
+          '<span class="event-type-tag">' + (ev.event_type || 'Event') + '</span>' +
+          '<h3 class="event-title">' + (ev.title || '') + '</h3>' +
+          '<p class="event-desc">' + (ev.short_description || '') + '</p>' +
+          (ev.location ? '<p class="event-meta">📍 ' + ev.location + (ev.city ? ', ' + ev.city : '') + '</p>' : '') +
+          (ev.time ? '<p class="event-meta">🕐 ' + ev.time + '</p>' : '') +
+          countdownHtml +
+          regBtn +
+        '</div>' +
+        '<div>' + imgHtml + '</div>' +
+      '</article>';
+    }
+
+    /* ── Render past event card ── */
+    function renderPastCard(ev) {
+      var imgHtml = ev.banner_image_url
+        ? '<img src="' + ev.banner_image_url + '" alt="' + ev.title + '" class="past-event-img" loading="lazy" />'
+        : '<div class="past-event-img-placeholder">No Image</div>';
+
+      return '<div class="past-event-card">' +
+        imgHtml +
+        '<div class="past-event-body">' +
+          '<span class="past-event-concluded">Event Concluded</span>' +
+          '<div class="past-event-title">' + (ev.title || '') + '</div>' +
+          '<div class="past-event-meta">' +
+            (ev.date ? '📅 ' + formatDate(ev.date) : '') +
+            (ev.city ? ' · 📍 ' + ev.city : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    /* ── Load and render ── */
+    var upcomingEl = document.getElementById('upcoming-events-container');
+    var pastEl     = document.getElementById('past-events-container');
+
+    var upcoming = await fetchEvents('date=gte.' + today);
+    var past     = await fetchEvents('date=lt.' + today);
+
+    // Upcoming
+    if (upcomingEl) {
+      if (!upcoming || upcoming.length === 0) {
+        upcomingEl.innerHTML = '<div class="no-events-card">📅 No upcoming events scheduled. Check back soon.</div>';
+      } else {
+        upcomingEl.innerHTML = upcoming.map(renderUpcomingCard).join('');
+
+        // Start countdown timers
+        var countdowns = upcomingEl.querySelectorAll('.event-countdown[data-target]');
+        countdowns.forEach(function(el) {
+          var target = parseInt(el.dataset.target, 10);
+          setInterval(function() {
+            var remaining = target - Date.now();
+            if (remaining <= 0) {
+              el.textContent = 'Event started!';
+            } else {
+              el.textContent = 'Starts in: ' + formatCountdown(remaining);
+            }
+          }, 1000);
+        });
+
+        // Re-trigger fade-up observer for dynamically inserted cards
+        if (window.initFadeUp) window.initFadeUp();
+      }
+    }
+
+    // Past
+    if (pastEl) {
+      if (!past || past.length === 0) {
+        pastEl.innerHTML = '<p style="color:var(--color-grey);font-size:15px;">No past events to display.</p>';
+      } else {
+        pastEl.innerHTML = past.map(renderPastCard).join('');
+      }
+    }
+  }());
+  </script>
+
+</body>
+</html>

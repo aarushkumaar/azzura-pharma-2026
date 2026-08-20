@@ -1,0 +1,53 @@
+# ============================================================
+# AZZURRA — SUPABASE PROJECT CONFIG
+# Used by the Supabase CLI when deploying Edge Functions.
+# Install CLI: https://supabase.com/docs/guides/cli
+# ============================================================
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+site_url = "https://nazzura.com"
+additional_redirect_urls = [
+  "https://nazzura.com/admin.html"
+]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+# ---- Edge Functions ----
+[functions.createOrder]
+verify_jwt = false   # We manually check the anon key header
+
+[functions.verifyPayment]
+verify_jwt = false   # Payment callback comes from Razorpay, not a logged-in user
+
+[functions.initiateRefund]
+verify_jwt = false   # Admin check is done inside the function

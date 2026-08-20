@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In / Create Account — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Sign in or create your Azzurra account to track orders, manage your wishlist and save your cart." />
+  <meta name="robots" content="noindex" />
+  <!-- config.js MUST be first — defines SUPABASE_URL, SUPABASE_ANON_KEY, RAZORPAY_KEY_ID -->
+  <script src="config.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <style>
+    .auth-page { min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 60px 20px; }
+    .auth-card { background: #fff; border-radius: 20px; padding: 40px 36px; max-width: 440px; width: 100%; box-shadow: 0 4px 32px rgba(26,95,168,0.10); border: 1.5px solid #D1E3F8; }
+    .auth-logo { text-align: center; margin-bottom: 28px; }
+    .auth-logo-name { font-size: 22px; font-weight: 800; color: var(--color-primary); letter-spacing: 0.10em; display: block; }
+    .auth-logo-tag  { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #C9A84C; font-weight: 600; display: block; margin-top: 2px; }
+    .auth-tabs { display: flex; border-bottom: 2px solid #D1E3F8; margin-bottom: 28px; }
+    .auth-tab { flex: 1; padding: 10px 0; text-align: center; border: none; background: none; font-size: 14px; font-weight: 600; color: #6B7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; }
+    .auth-tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+    .auth-title { font-size: 20px; font-weight: 700; color: #1A1A2E; margin-bottom: 6px; }
+    .auth-sub   { font-size: 13px; color: #6B7280; margin-bottom: 24px; }
+    .auth-form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+    .auth-label { font-size: 13px; font-weight: 600; color: #1A1A2E; }
+    .auth-input { border: 1.5px solid #D1E3F8; border-radius: 8px; padding: 11px 14px; font-size: 14px; width: 100%; box-sizing: border-box; transition: border-color 0.2s; outline: none; font-family: inherit; }
+    .auth-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(26,95,168,0.10); }
+    .auth-btn { width: 100%; background: var(--color-primary); color: #fff; border: none; border-radius: 100px; padding: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.2s; margin-top: 4px; font-family: inherit; }
+    .auth-btn:hover { background: #134a87; transform: scale(1.02); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .auth-error   { background: #FFF5F5; border: 1.5px solid #FC8181; color: #C62828; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .auth-success { background: #F0FFF4; border: 1.5px solid #48BB78; color: #2E7D32; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .auth-error.show, .auth-success.show { display: block; }
+    .auth-switch { text-align: center; font-size: 13px; color: #6B7280; margin-top: 20px; }
+    .auth-switch a { color: var(--color-primary); text-decoration: none; font-weight: 600; cursor: pointer; }
+
+    /* Divider between primary button and Google button */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 4px;
+      color: #9CA3AF;
+      font-size: 13px;
+    }
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #E5E7EB;
+    }
+
+    /* Google sign-in button */
+    .google-signin-btn {
+      width: 100%;
+      padding: 11px 16px;
+      border: 1.5px solid #D1D5DB;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #374151;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      margin-top: 12px;
+    }
+    .google-signin-btn:hover {
+      background: #F9FAFB;
+      border-color: #9CA3AF;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    /* Forgot password inline section */
+    .forgot-link-wrap {
+      text-align: right;
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+    .forgot-link-wrap a {
+      font-size: 12px;
+      color: #6B7280;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+      display: none; /* hidden until first failed sign-in */
+    }
+    .forgot-link-wrap a.visible { display: inline; }
+    .forgot-link-wrap a:hover { color: var(--color-primary); }
+
+    /* Inline forgot password panel */
+    #inline-forgot-panel {
+      display: none;
+      background: #f8fbff;
+      border: 1.5px solid #D1E3F8;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    #inline-forgot-panel.show { display: block; }
+    #inline-forgot-panel p {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1A1A2E;
+      margin: 0 0 10px;
+    }
+    #inline-forgot-panel .cancel-forgot {
+      font-size: 12px;
+      color: #6B7280;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 8px;
+      display: inline-block;
+    }
+    #inline-forgot-panel .cancel-forgot:hover { color: #1A1A2E; }
+    #forgot-inline-error   { display: none; background: #FFF5F5; border: 1.5px solid #FC8181; color: #C62828; border-radius: 6px; padding: 8px 12px; font-size: 12px; margin-bottom: 8px; }
+    #forgot-inline-success { display: none; background: #F0FFF4; border: 1.5px solid #48BB78; color: #2E7D32; border-radius: 6px; padding: 8px 12px; font-size: 12px; margin-bottom: 8px; }
+    #forgot-inline-error.show, #forgot-inline-success.show { display: block; }
+  </style>
+</head>
+<body class="has-main-nav">
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; margin:0 auto; display:block;">
+      </div>
+
+      <!-- Tab navigation — only 2 tabs -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="tab-login"  role="tab" aria-selected="true"  aria-controls="panel-login">Sign In</button>
+        <button class="auth-tab"        id="tab-signup" role="tab" aria-selected="false" aria-controls="panel-signup">Create Account</button>
+      </div>
+
+      <!-- ══════════════════════════════════════════════ -->
+      <!-- LOGIN PANEL                                   -->
+      <!-- ══════════════════════════════════════════════ -->
+      <div class="auth-panel active" id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+        <p class="auth-title">Welcome back</p>
+        <p class="auth-sub">Sign in to access your orders and account.</p>
+        <div class="auth-error"   id="login-error"></div>
+        <div class="auth-success" id="login-success"></div>
+        <form id="login-form" novalidate>
+          <div class="auth-form-group">
+            <label class="auth-label" for="login-email">Email Address</label>
+            <input class="auth-input" type="email" id="login-email" name="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label" for="login-password">Password</label>
+            <input class="auth-input" type="password" id="login-password" name="password" placeholder="Your password" autocomplete="current-password" required />
+          </div>
+
+          <!-- "Forgot password?" link — hidden until first failed sign-in -->
+          <div class="forgot-link-wrap">
+            <a id="show-forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="auth-btn" id="login-btn">Sign In</button>
+        </form>
+
+        <!-- Inline forgot-password section (revealed on click) -->
+        <div id="inline-forgot-panel">
+          <p>Reset your password</p>
+          <div id="forgot-inline-error"></div>
+          <div id="forgot-inline-success"></div>
+          <div class="auth-form-group">
+            <label class="auth-label" for="forgot-inline-email">Email Address</label>
+            <input class="auth-input" type="email" id="forgot-inline-email" placeholder="you@example.com" autocomplete="email" />
+          </div>
+          <button type="button" class="auth-btn" id="forgot-inline-btn" style="margin-top:0;">Send Reset Link</button>
+          <br/>
+          <a class="cancel-forgot" id="cancel-forgot-link">Never mind, go back</a>
+        </div>
+
+        <!-- Divider + Google button -->
+        <div class="auth-divider">or</div>
+        <button id="googleSignInBtn" class="google-signin-btn" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-switch">
+          <span>Don't have an account? </span><a id="switch-to-signup">Create one</a>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════ -->
+      <!-- SIGNUP PANEL                                  -->
+      <!-- ══════════════════════════════════════════════ -->
+      <div class="auth-panel" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup">
+        <p class="auth-title">Create your account</p>
+        <p class="auth-sub">Join Azzurra to save your cart, track orders, and more.</p>
+        <div class="auth-error"   id="signup-error"></div>
+        <div class="auth-success" id="signup-success"></div>
+        <form id="signup-form" novalidate>
+          <div class="auth-form-group">
+            <label class="auth-label" for="signup-name">Full Name</label>
+            <input class="auth-input" type="text" id="signup-name" name="name" placeholder="Dr. Priya Sharma" autocomplete="name" required />
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label" for="signup-email">Email Address</label>
+            <input class="auth-input" type="email" id="signup-email" name="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="auth-form-group">
+            <label class="auth-label" for="signup-password">Password <span style="font-weight:400;color:#6B7280;">(min. 6 characters)</span></label>
+            <input class="auth-input" type="password" id="signup-password" name="password" placeholder="Create a password" autocomplete="new-password" required minlength="6" />
+          </div>
+          <button type="submit" class="auth-btn" id="signup-btn">Create Account</button>
+        </form>
+
+        <!-- Divider + Google button for signup -->
+        <div class="auth-divider" style="margin-top:16px;">or</div>
+        <p style="text-align:center;font-size:12px;color:#6B7280;margin:8px 0 0;">Or sign up with Google for instant access</p>
+        <button id="googleSignUpBtn" class="google-signin-btn" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-switch">Already have an account? <a id="switch-to-login">Sign in</a></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+  (function () {
+    /* ── Tab switching (2 tabs only) ── */
+    function showPanel(name) {
+      ['login','signup'].forEach(function(n) {
+        var tab   = document.getElementById('tab-' + n);
+        var panel = document.getElementById('panel-' + n);
+        if (!tab || !panel) return;
+        var active = n === name;
+        tab.classList.toggle('active', active);
+        tab.setAttribute('aria-selected', String(active));
+        panel.classList.toggle('active', active);
+      });
+    }
+    document.getElementById('tab-login') .addEventListener('click', function(){ showPanel('login'); });
+    document.getElementById('tab-signup').addEventListener('click', function(){ showPanel('signup'); });
+    document.getElementById('switch-to-signup').addEventListener('click', function(){ showPanel('signup'); });
+    document.getElementById('switch-to-login') .addEventListener('click', function(){ showPanel('login'); });
+
+    /* ── Redirect if already logged in ── */
+    var urlParams = new URLSearchParams(window.location.search);
+    window.getCustomerSession && window.getCustomerSession().then(function(session) {
+      if (session) {
+        var returnTo = urlParams.get('returnTo') || 'customer-dashboard.html';
+        window.location.replace(returnTo);
+      }
+    });
+
+    /* ── Helpers ── */
+    function showMsg(elId, msg, isError) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      el.textContent = (typeof msg === 'string') ? msg : (msg && msg.message ? msg.message : String(msg));
+      el.className = 'auth-' + (isError ? 'error' : 'success') + ' show';
+    }
+    function clearMsgs(prefix) {
+      var e = document.getElementById(prefix + '-error');
+      var s = document.getElementById(prefix + '-success');
+      if (e) { e.textContent = ''; e.className = 'auth-error'; }
+      if (s) { s.textContent = ''; s.className = 'auth-success'; }
+    }
+    function setLoading(btnId, loading, defaultText) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.textContent = loading ? 'Please wait\u2026' : defaultText;
+    }
+
+    /* ── Inline Forgot Password ── */
+    var showForgotLink  = document.getElementById('show-forgot-link');
+    var inlineForgot    = document.getElementById('inline-forgot-panel');
+    var cancelForgot    = document.getElementById('cancel-forgot-link');
+    var forgotEmailIn   = document.getElementById('forgot-inline-email');
+    var forgotBtn       = document.getElementById('forgot-inline-btn');
+
+    function showForgotLinkVisible() {
+      if (showForgotLink) showForgotLink.classList.add('visible');
+    }
+
+    if (showForgotLink) {
+      showForgotLink.addEventListener('click', function() {
+        /* Pre-fill email from sign-in field */
+        var loginEmail = document.getElementById('login-email');
+        if (loginEmail && loginEmail.value && forgotEmailIn) {
+          forgotEmailIn.value = loginEmail.value;
+        }
+        if (inlineForgot) inlineForgot.classList.add('show');
+        showForgotLink.classList.remove('visible');
+      });
+    }
+
+    if (cancelForgot) {
+      cancelForgot.addEventListener('click', function() {
+        if (inlineForgot) inlineForgot.classList.remove('show');
+        showForgotLinkVisible();
+        /* clear messages */
+        var fe = document.getElementById('forgot-inline-error');
+        var fs = document.getElementById('forgot-inline-success');
+        if (fe) { fe.textContent = ''; fe.className = ''; }
+        if (fs) { fs.textContent = ''; fs.className = ''; }
+      });
+    }
+
+    if (forgotBtn) {
+      forgotBtn.addEventListener('click', async function() {
+        var fe = document.getElementById('forgot-inline-error');
+        var fs = document.getElementById('forgot-inline-success');
+        if (fe) { fe.textContent = ''; fe.className = ''; }
+        if (fs) { fs.textContent = ''; fs.className = ''; }
+        var email = forgotEmailIn ? forgotEmailIn.value.trim() : '';
+        if (!email) {
+          if (fe) { fe.textContent = 'Please enter your email address.'; fe.className = 'show'; }
+          return;
+        }
+        forgotBtn.disabled = true;
+        forgotBtn.textContent = 'Sending\u2026';
+        try {
+          await window.customerForgotPassword(email);
+          if (fs) { fs.textContent = '\u2713 Check your inbox for a reset link.'; fs.className = 'show'; }
+          if (fe) { fe.textContent = ''; fe.className = ''; }
+        } catch(err) {
+          var msg = (err && err.message) ? err.message : 'Failed to send reset email.';
+          if (fe) { fe.textContent = msg; fe.className = 'show'; }
+        }
+        forgotBtn.disabled = false;
+        forgotBtn.textContent = 'Send Reset Link';
+      });
+    }
+
+    /* ── LOGIN ── */
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearMsgs('login');
+      var email    = document.getElementById('login-email').value.trim();
+      var password = document.getElementById('login-password').value;
+      if (!email || !password) { showMsg('login-error', 'Please fill in all fields.', true); return; }
+      setLoading('login-btn', true, 'Sign In');
+      try {
+        await window.customerSignIn(email, password);
+        /* Save session for navbar profile icon */
+        try { localStorage.setItem('azzurra_customer_session', JSON.stringify({ email: email, signedIn: true })); } catch(ex) {}
+        showMsg('login-success', '\u2713 Signed in! Redirecting\u2026', false);
+        var returnTo = new URLSearchParams(window.location.search).get('returnTo') || 'customer-dashboard.html';
+        setTimeout(function(){ window.location.href = returnTo; }, 800);
+      } catch(err) {
+        var errMsg = (err && err.message) ? err.message : 'Sign in failed. Please try again.';
+        showMsg('login-error', errMsg, true);
+        setLoading('login-btn', false, 'Sign In');
+        /* Reveal "Forgot password?" link after any sign-in failure */
+        showForgotLinkVisible();
+      }
+    });
+
+    /* ── SIGN UP ── */
+    document.getElementById('signup-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      clearMsgs('signup');
+      var name     = document.getElementById('signup-name').value.trim();
+      var email    = document.getElementById('signup-email').value.trim();
+      var password = document.getElementById('signup-password').value;
+      if (!name || !email || !password) { showMsg('signup-error', 'Please fill in all fields.', true); return; }
+      if (password.length < 6) { showMsg('signup-error', 'Password must be at least 6 characters.', true); return; }
+      setLoading('signup-btn', true, 'Create Account');
+      try {
+        var res = await window.customerSignUp(email, password, name);
+        /* Save session for navbar profile icon */
+        try { localStorage.setItem('azzurra_customer_session', JSON.stringify({ email: email, signedIn: true })); } catch(ex) {}
+        showMsg('signup-success', '\u2713 Account created! Redirecting\u2026', false);
+        var returnTo = new URLSearchParams(window.location.search).get('returnTo') || 'customer-dashboard.html';
+        setTimeout(function(){ window.location.href = returnTo; }, 800);
+      } catch(err) {
+        var errMsg = (err && err.message) ? err.message : 'Sign up failed.';
+        /* Handle Supabase 500 / SMTP not configured */
+        if (errMsg.indexOf('500') !== -1 || errMsg.toLowerCase().indexOf('internal') !== -1 ||
+            errMsg.toLowerCase().indexOf('sending confirmation') !== -1 ||
+            errMsg.toLowerCase().indexOf('smtp') !== -1) {
+          showMsg('signup-error',
+            'Account creation is temporarily unavailable. Please try signing in with Google instead, or contact support.',
+            true);
+        } else {
+          showMsg('signup-error', errMsg, true);
+        }
+        setLoading('signup-btn', false, 'Create Account');
+      }
+    });
+
+    /* ── GOOGLE SIGN IN / SIGN UP ── */
+    async function handleGoogleSignIn() {
+      try {
+        var sb = window.getCustomerSupabase ? window.getCustomerSupabase() : null;
+        if (!sb) { showMsg('login-error', 'Auth not available. Please refresh the page.', true); return; }
+        var result = await sb.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin + (window.location.pathname.replace(/[^/]*$/, '')) + 'customer-auth.html'
+          }
+        });
+        if (result.error) {
+          showMsg('login-error',
+            result.error.message.indexOf('provider') !== -1
+              ? 'Google sign-in is not yet enabled. Please enable the Google provider in Supabase Dashboard \u2192 Authentication \u2192 Providers.'
+              : result.error.message,
+            true);
+        }
+      } catch(e) {
+        showMsg('login-error', 'Google sign-in failed. Please try email sign-in instead.', true);
+      }
+    }
+
+    var gSignIn = document.getElementById('googleSignInBtn');
+    if (gSignIn) gSignIn.addEventListener('click', handleGoogleSignIn);
+
+    var gSignUp = document.getElementById('googleSignUpBtn');
+    if (gSignUp) gSignUp.addEventListener('click', handleGoogleSignIn);
+
+  })();
+  </script>
+</body>
+</html>

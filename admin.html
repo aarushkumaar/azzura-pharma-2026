@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin — Azzurra Pharmaconutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- ── Supabase UMD — MUST come before any script using window.supabase ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- ── AUTH GUARD ────────────────────────────────────────────────────────
+       Runs synchronously as soon as Supabase is available.
+       Body stays opacity:0 until we confirm a valid session.
+       No redirect loops: if no session we go to admin-login.html and return.
+  ─────────────────────────────────────────────────────────────────────── -->
+  <script>
+    (async function authGuard() {
+      var SUPABASE_URL      = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
+      var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
+
+      // Create client and expose it globally so the main script can reuse it
+      var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window.adminSupabase = client;
+
+      try {
+        var res     = await client.auth.getSession();
+        var session = res.data && res.data.session;
+
+        if (!session) {
+          // Not logged in — go to login page, stop execution
+          window.location.replace('./admin-login.html');
+          return;
+        }
+
+        // Logged in — expose session & populate email in sidebar
+        window.adminSession = session;
+
+        // DOM might not be ready yet; wait for it before touching elements
+        if (document.readyState === 'loading') {
+          await new Promise(function(r) { document.addEventListener('DOMContentLoaded', r, { once: true }); });
+        }
+
+        var emailEl = document.getElementById('sidebar-user-email');
+        if (emailEl) emailEl.textContent = session.user.email || '';
+
+        // Reveal the page
+        if (document.body) document.body.style.opacity = '1';
+
+      } catch (err) {
+        console.error('[authGuard] error:', err);
+        // On any unexpected error, stay safe and redirect to login
+        window.location.replace('./admin-login.html');
+      }
+    })();
+  </script>
+
+  <style>
+    /* ================================================================
+       CSS CUSTOM PROPERTIES
+       ================================================================ */
+    :root {
+      --color-primary:       #1A5FA8;
+      --color-primary-dark:  #134a87;
+      --color-primary-light: #E8F1FB;
+      --color-dark:          #1A1A2E;
+      --color-grey:          #6B7280;
+      --color-gold:          #C9A84C;
+      --color-border:        #D1E3F8;
+      --color-green:         #48BB78;
+      --color-purple:        #9F7AEA;
+      --color-red:           #FC8181;
+      --color-orange:        #F6AD55;
+      --font-body:           'Inter', sans-serif;
+      --font-heading:        'DM Serif Display', serif;
+    }
+
+    /* RESET */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: #f5f7fa;
+      color: var(--color-dark);
+      height: 100vh;
+      overflow: hidden;
+      opacity: 0;                  /* Hidden until auth guard confirms session */
+      transition: opacity 0.3s ease;
+    }
+
+    /* SHELL */
+    .admin-shell { display: flex; height: 100vh; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px; min-width: 240px;
+      height: 100vh; background: #fff;
+      border-left: 4px solid var(--color-primary);
+      box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+      display: flex; flex-direction: column;
+      position: relative; z-index: 100; flex-shrink: 0;
+    }
+    .sidebar-brand { padding: 28px 20px 20px; border-bottom: 1px solid var(--color-border); }
+    .sidebar-brand-name { font-size: 18px; font-weight: 700; color: var(--color-primary); letter-spacing: 0.08em; display: block; }
+    .sidebar-brand-tag  { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-gold); font-weight: 600; display: block; margin-top: 2px; }
+    .sidebar-user-email { font-size: 12px; color: var(--color-grey); margin-top: 8px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: 500;
+      color: var(--color-dark); cursor: pointer; border: none; background: transparent;
+      text-align: left; width: 100%; transition: background 0.2s ease, color 0.2s ease;
+    }
+    .sidebar-link:hover { background: #f0f6ff; }
+    .sidebar-link.active { background: var(--color-primary-light); color: var(--color-primary); font-weight: 600; }
+    .sidebar-link .nav-icon { font-size: 16px; flex-shrink: 0; }
+    .sidebar-bottom { padding: 16px 12px; border-top: 1px solid var(--color-border); }
+    .btn-signout {
+      display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: none;
+      background: transparent; color: var(--color-red); font-family: var(--font-body);
+      font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 8px; width: 100%;
+      transition: background 0.2s ease;
+    }
+    .btn-signout:hover { background: #fff5f5; }
+
+    /* MAIN */
+    .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; min-width: 0; }
+    .topbar {
+      position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--color-border);
+      padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; z-index: 50; flex-shrink: 0;
+    }
+    .topbar-title { font-size: 20px; font-weight: 700; color: var(--color-dark); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-clock { font-size: 13px; color: var(--color-grey); font-weight: 500; }
+    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--color-dark); border-radius: 2px; }
+    .content-area { flex: 1; overflow-y: auto; padding: 32px; }
+
+    /* SECTIONS */
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+
+    /* STAT CARDS */
+    .stats-grid { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }
+    .stat-card {
+      background: #fff; border-radius: 12px; padding: 24px;
+      border-left: 4px solid var(--color-primary);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06); flex: 1; min-width: 180px;
+    }
+    .stat-card.green  { border-left-color: var(--color-green); }
+    .stat-card.purple { border-left-color: var(--color-purple); }
+    .stat-card.red    { border-left-color: var(--color-red); }
+    .stat-number { font-size: 28px; font-weight: 700; color: var(--color-primary); line-height: 1; display: block; margin-bottom: 6px; }
+    .stat-card.green  .stat-number { color: var(--color-green); }
+    .stat-card.purple .stat-number { color: var(--color-purple); }
+    .stat-card.red    .stat-number { color: var(--color-red); }
+    .stat-label { font-size: 13px; color: var(--color-grey); font-weight: 500; }
+
+    /* DASHBOARD PANELS */
+    .dashboard-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .panel-card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .panel-title { font-size: 15px; font-weight: 700; color: var(--color-dark); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--color-border); }
+
+    /* TABLES */
+    .table-wrapper { overflow-x: auto; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--color-primary); }
+    thead th { color: #fff; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 16px; text-align: left; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--color-primary-light); transition: background 0.2s ease; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f8fbff; }
+    tbody td { padding: 12px 16px; font-size: 14px; color: var(--color-dark); vertical-align: middle; }
+    tbody tr.fade-out { opacity: 0; transition: opacity 0.4s ease; }
+    .prod-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--color-border); background: #f5f7fa; }
+    .prod-thumb-placeholder { width: 48px; height: 48px; border-radius: 8px; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+    /* BADGES */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: capitalize; letter-spacing: 0.03em; }
+    .badge-pending   { background: #FFF3E0; color: #E65100; }
+    .badge-confirmed { background: var(--color-primary-light); color: var(--color-primary); }
+    .badge-shipped   { background: #F3E5F5; color: #7B1FA2; }
+    .badge-delivered { background: #E8F5E9; color: #2E7D32; }
+    .badge-cancelled { background: #FFEBEE; color: #C62828; }
+    .badge-instock    { background: #E8F5E9; color: #2E7D32; }
+    .badge-outofstock { background: #FFEBEE; color: #C62828; }
+
+    /* TOGGLE SWITCH */
+    label.toggle-switch { display: inline-flex; align-items: center; cursor: pointer; gap: 8px; }
+    label.toggle-switch input[type="checkbox"] { display: none; }
+    label.toggle-switch .toggle-slider {
+      position: relative; display: inline-block; width: 44px; height: 24px;
+      background: #CBD5E0; border-radius: 12px; transition: background 0.2s ease; flex-shrink: 0;
+    }
+    label.toggle-switch .toggle-slider::after {
+      content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    label.toggle-switch input[type="checkbox"]:checked + .toggle-slider { background: var(--color-primary); }
+    label.toggle-switch input[type="checkbox"]:checked + .toggle-slider::after { transform: translateX(20px); }
+
+    /* FORM */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--color-dark); }
+    .form-label .req { color: var(--color-red); }
+    input[type="text"], input[type="number"], input[type="email"], input[type="tel"], select, textarea {
+      border: 1.5px solid var(--color-border); border-radius: 8px; padding: 10px 14px;
+      font-family: var(--font-body); font-size: 14px; width: 100%; box-sizing: border-box;
+      color: var(--color-dark); background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease; resize: vertical;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, input[type="email"]:focus,
+    input[type="tel"]:focus, select:focus, textarea:focus {
+      border-color: var(--color-primary); outline: none; box-shadow: 0 0 0 3px rgba(26,95,168,0.1);
+    }
+    .btn-primary {
+      background: var(--color-primary); color: #fff; border: none; border-radius: 100px;
+      padding: 10px 22px; font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; white-space: nowrap;
+    }
+    .btn-primary:hover { background: var(--color-primary-dark); transform: scale(1.02); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-primary.full-width { border-radius: 8px; width: 100%; padding: 12px; font-size: 15px; }
+    .btn-secondary {
+      background: transparent; color: var(--color-grey); border: 1.5px solid #CBD5E0; border-radius: 100px;
+      padding: 10px 22px; font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; white-space: nowrap;
+    }
+    .btn-secondary:hover { background: #f5f7fa; border-color: #a0aec0; }
+    .btn-secondary.full-width { border-radius: 8px; width: 100%; padding: 12px; font-size: 15px; margin-top: 8px; }
+    .btn-danger {
+      background: transparent; color: var(--color-red); border: 1.5px solid var(--color-red); border-radius: 100px;
+      padding: 10px 22px; font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s ease; white-space: nowrap;
+    }
+    .btn-danger:hover { background: #fff5f5; }
+    .btn-icon {
+      background: none; border: none; cursor: pointer; padding: 6px 8px; border-radius: 6px;
+      font-size: 15px; transition: background 0.2s ease; display: inline-flex; align-items: center;
+    }
+    .btn-icon:hover { background: #f0f6ff; }
+    .btn-icon.danger:hover { background: #fff5f5; }
+
+    /* TOOLBAR */
+    .section-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .section-toolbar h2 { font-size: 18px; font-weight: 700; color: var(--color-dark); }
+    .toolbar-search { flex: 1; min-width: 180px; max-width: 280px; border: 1.5px solid var(--color-border); border-radius: 8px; padding: 9px 14px; font-family: var(--font-body); font-size: 14px; }
+    .toolbar-select { border: 1.5px solid var(--color-border); border-radius: 8px; padding: 9px 14px; font-family: var(--font-body); font-size: 14px; background: #fff; cursor: pointer; }
+
+    /* PAGINATION */
+    .pagination { display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+    .pagination button {
+      background: #fff; border: 1.5px solid var(--color-border); border-radius: 8px;
+      padding: 6px 14px; font-family: var(--font-body); font-size: 13px; cursor: pointer; transition: background 0.2s ease;
+    }
+    .pagination button:hover:not(:disabled) { background: var(--color-primary-light); }
+    .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pagination span { font-size: 13px; color: var(--color-grey); }
+
+    /* SLIDE PANEL */
+    .panel-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .panel-overlay.open { opacity: 1; pointer-events: all; }
+    .slide-panel {
+      position: fixed; right: 0; top: 0; width: 560px; height: 100vh; background: #fff;
+      z-index: 1000; padding: 0; overflow: hidden; display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.3s ease; box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    }
+    .slide-panel.open { transform: translateX(0); }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px 16px; border-bottom: 1px solid var(--color-border); flex-shrink: 0;
+    }
+    .panel-header h3 { font-family: var(--font-heading); font-size: 20px; color: var(--color-dark); }
+
+    /* Panel tabs */
+    .panel-tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--color-border); flex-shrink: 0; background: #fff; }
+    .panel-tab {
+      padding: 12px 20px; border: none; background: none;
+      font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      color: var(--color-grey); cursor: pointer;
+      border-bottom: 3px solid transparent; margin-bottom: -1.5px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .panel-tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .panel-tab:hover { color: var(--color-primary); }
+    .panel-body { flex: 1; overflow-y: auto; padding: 24px; }
+    .panel-tab-content { display: none; }
+    .panel-tab-content.active { display: block; }
+
+    /* Image editor */
+    .img-editor-layout { display: flex; gap: 16px; }
+    .img-editor-current { flex: 7; min-width: 0; }
+    .img-editor-upload  { flex: 3; min-width: 120px; }
+    .img-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(120px,1fr)); gap: 10px; margin-bottom: 16px; }
+    .img-card {
+      position: relative; border-radius: 10px; overflow: hidden;
+      border: 1.5px solid var(--color-border);
+      aspect-ratio: 1/1; background: #f8fbff;
+    }
+    .img-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-card-actions {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 2px;
+      padding: 4px; background: rgba(0,0,0,0.55);
+    }
+    .img-action-btn {
+      width: 26px; height: 26px; border: none; border-radius: 4px;
+      background: rgba(255,255,255,0.2); color: #fff;
+      font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease;
+    }
+    .img-action-btn:hover { background: rgba(255,255,255,0.45); }
+    .img-action-btn.cover-active { background: #C9A84C; }
+    .img-action-btn.danger { color: #FC8181; }
+    .img-cover-badge {
+      position: absolute; top: 4px; left: 4px;
+      background: #C9A84C; color: #fff; font-size: 10px; font-weight: 700;
+      padding: 2px 6px; border-radius: 4px;
+    }
+    .img-confirm-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.7);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      border-radius: 8px;
+    }
+    .img-confirm-overlay p { color: #fff; font-size: 11px; text-align: center; padding: 0 8px; }
+    .img-confirm-btn { padding: 4px 10px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .img-confirm-btn.yes { background: var(--color-red); color: #fff; }
+    .img-confirm-btn.no  { background: rgba(255,255,255,0.2); color: #fff; }
+
+    /* Upload area */
+    .upload-area {
+      border: 2px dashed var(--color-border); border-radius: 10px;
+      padding: 20px 12px; text-align: center; cursor: pointer;
+      font-size: 12px; color: var(--color-grey);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: var(--color-primary); background: var(--color-primary-light);
+    }
+    .upload-previews { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .upload-preview {
+      width: 52px; height: 52px; object-fit: cover;
+      border-radius: 6px; border: 1.5px solid var(--color-border);
+    }
+    .save-images-btn { width: 100%; margin-top: 16px; }
+    .save-images-btn.has-changes { border: 2px solid var(--color-primary); animation: pulseBlue 1.5s ease infinite; }
+    @keyframes pulseBlue { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 0 3px rgba(26,95,168,0.25)} }
+    .btn-close-panel { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--color-grey); line-height: 1; padding: 4px; border-radius: 6px; transition: background 0.2s ease; }
+    .btn-close-panel:hover { background: #f5f7fa; color: var(--color-dark); }
+
+    /* TOAST */
+    #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast {
+      background: #fff; border-radius: 10px; padding: 14px 18px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12); border-left: 4px solid var(--color-primary);
+      display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500;
+      color: var(--color-dark); min-width: 260px; max-width: 380px; pointer-events: all;
+      animation: toastIn 0.3s ease forwards; cursor: pointer;
+    }
+    .toast.success { border-left-color: var(--color-green); }
+    .toast.error   { border-left-color: var(--color-red); }
+    .toast.info    { border-left-color: var(--color-primary); }
+    .toast.warning { border-left-color: var(--color-orange); }
+    .toast-icon { font-size: 16px; flex-shrink: 0; }
+    .toast.exiting { animation: toastOut 0.3s ease forwards; }
+    @keyframes toastIn  { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(60px); } }
+
+    /* MODAL */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .modal-box { background: #fff; border-radius: 16px; padding: 32px; width: 100%; max-width: 640px; max-height: 80vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.2); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border); }
+    .modal-header h3 { font-family: var(--font-heading); font-size: 20px; color: var(--color-dark); }
+
+    /* FILTER TABS */
+    .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-tab {
+      padding: 7px 16px; border-radius: 100px; border: 1.5px solid var(--color-border); background: #fff;
+      font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer;
+      transition: all 0.2s ease; color: var(--color-grey);
+    }
+    .filter-tab:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .filter-tab.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; font-weight: 600; }
+
+    /* ORDER DETAIL */
+    .order-detail-row td { background: var(--color-primary-light); padding: 20px 16px; }
+    .order-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .order-detail-group h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-grey); margin-bottom: 4px; }
+    .order-detail-group p { font-size: 14px; color: var(--color-dark); }
+    .order-items-list { background: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; }
+    .order-item-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid var(--color-border); }
+    .order-item-row:last-child { border-bottom: none; }
+    .status-select { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--color-border); font-family: var(--font-body); font-size: 13px; background: #fff; cursor: pointer; }
+
+    /* CUSTOMER DETAIL */
+    .customer-detail-row td { background: var(--color-primary-light); padding: 16px; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--color-grey); }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 15px; }
+
+    /* SETTINGS */
+    .settings-card { background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); max-width: 560px; }
+    .settings-card h3 { font-family: var(--font-heading); font-size: 20px; margin-bottom: 24px; color: var(--color-dark); }
+    .settings-divider { height: 1px; background: var(--color-border); margin: 28px 0; }
+
+    /* LOW STOCK */
+    .low-stock-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 14px; }
+    .low-stock-item:last-child { border-bottom: none; }
+
+    /* SPINNER */
+    .spinner { display: inline-block; width: 20px; height: 20px; border: 2.5px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-row td { text-align: center; padding: 40px; }
+
+    /* IMPORT ITEMS */
+    .import-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid var(--color-border); margin-bottom: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; }
+    .import-item:hover { background: var(--color-primary-light); border-color: var(--color-primary); }
+    .import-item input[type="checkbox"] { cursor: pointer; accent-color: var(--color-primary); width: 16px; height: 16px; flex-shrink: 0; }
+    .import-item-name { font-weight: 600; color: var(--color-dark); }
+    .import-item-sub { color: var(--color-grey); margin-top: 2px; }
+    .select-all-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; color: var(--color-grey); cursor: pointer; }
+
+    /* MOBILE */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 90; }
+    .sidebar-overlay.open { display: block; }
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .sidebar { position: fixed; left: -244px; top: 0; z-index: 200; transition: left 0.3s ease; }
+      .sidebar.mobile-open { left: 0; }
+      .dashboard-panels { grid-template-columns: 1fr; }
+      .stats-grid { gap: 12px; }
+      .stat-card { min-width: 140px; padding: 16px; }
+      .content-area { padding: 16px; }
+      .topbar { padding: 12px 16px; }
+      .slide-panel { width: 100%; }
+      .order-detail-grid { grid-template-columns: 1fr; }
+      .img-editor-layout { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block; margin-bottom:8px;">
+        <span class="sidebar-brand-tag">Admin Portal</span>
+      <span class="sidebar-user-email" id="sidebar-user-email">Loading&hellip;</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-link active" data-section="dashboard"><span class="nav-icon">&#128202;</span> Dashboard</button>
+      <button class="sidebar-link" data-section="products"><span class="nav-icon">&#129516;</span> Products</button>
+      <button class="sidebar-link" data-section="events"><span class="nav-icon">🗓️</span> Events</button>
+      <button class="sidebar-link" data-section="orders"><span class="nav-icon">&#128230;</span> Orders</button>
+      <button class="sidebar-link" data-section="customers"><span class="nav-icon">&#128101;</span> Customers</button>
+      <button class="sidebar-link" data-section="coupons"><span class="nav-icon">🎟️</span> Coupons</button>
+      <button class="sidebar-link" data-section="notify_me"><span class="nav-icon">🔔</span> Notify Me</button>
+      <button class="sidebar-link" data-section="enquiries"><span class="nav-icon">✉️</span> Enquiries</button>
+      <button class="sidebar-link" data-section="banners"><span class="nav-icon">🖼️</span> Banners</button>
+      <button class="sidebar-link" data-section="settings"><span class="nav-icon">&#9881;&#65039;</span> Settings</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn-signout" id="btn-signout"><span>&#128682;</span> Sign Out</button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+        <h1 class="topbar-title" id="topbar-title">Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-clock" id="topbar-clock"></span>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- SECTION: DASHBOARD -->
+      <section class="admin-section active" id="section-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-number" id="stat-products">&mdash;</span>
+            <span class="stat-label">Total Products</span>
+          </div>
+          <div class="stat-card green">
+            <span class="stat-number" id="stat-orders">&mdash;</span>
+            <span class="stat-label">Total Orders</span>
+          </div>
+          <div class="stat-card purple">
+            <span class="stat-number" id="stat-customers">&mdash;</span>
+            <span class="stat-label">Customers</span>
+          </div>
+          <div class="stat-card red">
+            <span class="stat-number" id="stat-outofstock">&mdash;</span>
+            <span class="stat-label">Out of Stock</span>
+          </div>
+        </div>
+        <div class="dashboard-panels">
+          <div class="panel-card">
+            <div class="panel-title">Recent Orders</div>
+            <div id="recent-orders-container"><div style="text-align:center;padding:24px;"><div class="spinner"></div></div></div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-title">Out of Stock Products</div>
+            <div id="low-stock-container"><div style="text-align:center;padding:24px;"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: PRODUCTS -->
+      <section class="admin-section" id="section-products">
+        <div class="section-toolbar">
+          <h2>Products <span id="products-count" style="font-size:14px;font-weight:400;color:var(--color-grey);"></span></h2>
+          <input type="text" class="toolbar-search" id="products-search" placeholder="Search products&hellip;" />
+          <select class="toolbar-select" id="products-series-filter">
+            <option value="">All Series</option>
+            <option value="Essential">Essential</option>
+            <option value="Vital">Vital</option>
+            <option value="Max">Max</option>
+            <option value="Provit">Provit</option>
+            <option value="Lifeline">Lifeline</option>
+            <option value="Oral">Oral</option>
+          </select>
+          <button class="btn-secondary" id="btn-import-cloudinary">&#9729; Import from Cloudinary</button>
+          <button class="btn-primary" id="btn-add-product">+ Add New Product</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Image</th><th>Name</th><th>Series</th>
+                <th>Price (&#8377;)</th><th>In Stock</th><th>Featured</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody">
+              <tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="products-pagination"></div>
+      </section>
+
+      <!-- SECTION: EVENTS -->
+      <section class="admin-section" id="section-events">
+        <div class="section-toolbar">
+          <h2>Events <span id="events-count" style="font-size:14px;font-weight:400;color:var(--color-grey);"></span></h2>
+          <button class="btn-primary" id="btn-add-event">+ Add New Event</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Banner</th><th>Title</th><th>Type</th>
+                <th>Date</th><th>Location</th><th>Active</th><th>Featured</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="events-tbody">
+              <tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: ORDERS -->
+      <section class="admin-section" id="section-orders">
+        <div class="section-toolbar"><h2>Orders</h2></div>
+        <div class="filter-tabs" id="orders-filter-tabs">
+          <button class="filter-tab active" data-status="all">All</button>
+          <button class="filter-tab" data-status="pending">Pending</button>
+          <button class="filter-tab" data-status="confirmed">Confirmed</button>
+          <button class="filter-tab" data-status="shipped">Shipped</button>
+          <button class="filter-tab" data-status="delivered">Delivered</button>
+          <button class="filter-tab" data-status="cancelled">Cancelled</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th><th>Customer</th><th>Items</th>
+                <th>Total (&#8377;)</th><th>Status</th><th>Payment</th><th>Date</th><th>View</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody">
+              <tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: CUSTOMERS -->
+      <section class="admin-section" id="section-customers">
+        <div class="section-toolbar"><h2>Customers</h2></div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Phone</th><th>Total Orders</th><th>Last Activity</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody">
+              <tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: SETTINGS -->
+      <section class="admin-section" id="section-settings">
+        <div class="settings-card">
+          <h3>Site Settings</h3>
+          <div class="form-group">
+            <label class="form-label">Site Name</label>
+            <input type="text" id="setting-site-name" placeholder="Azzurra" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Phone</label>
+            <input type="text" id="setting-phone" placeholder="+91 98 71 648 649" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input type="email" id="setting-email" placeholder="info@azzurrapharmaconutrition.com" />
+          </div>
+          <button class="btn-primary" id="btn-save-settings" style="margin-top:8px;">Save Settings</button>
+          <div class="settings-divider"></div>
+          <h3 style="font-size:17px;margin-bottom:16px;">Danger Zone</h3>
+          <p style="font-size:14px;color:var(--color-grey);margin-bottom:16px;">Sign out all admin sessions globally.</p>
+          <button class="btn-danger" id="btn-clear-sessions">&#128274; Clear All Sessions</button>
+        </div>
+      </section>
+
+      <!-- SECTION: COUPONS -->
+      <section class="admin-section" id="section-coupons">
+        <div class="section-toolbar">
+          <h2>Coupons</h2>
+          <button class="btn-primary" id="btn-add-coupon">+ Add Coupon</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th><th>Type</th><th>Value</th><th>Min Order (₹)</th><th>Limit</th><th>Used</th><th>Expiry</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-tbody">
+              <tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: NOTIFY ME -->
+      <section class="admin-section" id="section-notify_me">
+        <div class="section-toolbar">
+          <h2>Notify Me Requests</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Name</th><th>Customer Email</th><th>Requested At</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="notify-me-tbody">
+              <tr class="loading-row"><td colspan="4"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: ENQUIRIES -->
+      <section class="admin-section" id="section-enquiries">
+        <div class="section-toolbar">
+          <h2>Customer Enquiries</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Status</th><th>Submitted At</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="enquiries-tbody">
+              <tr class="loading-row"><td colspan="7"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION: BANNERS -->
+      <section class="admin-section" id="section-banners">
+        <div class="section-toolbar">
+          <h2>Homepage Banners</h2>
+          <button class="btn-primary" id="btn-add-banner">+ Add Banner</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Display Order</th><th>Image Preview</th><th>Title</th><th>Link URL</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="banners-tbody">
+              <tr class="loading-row"><td colspan="6"><div class="spinner"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE-IN PANEL -->
+<div class="panel-overlay" id="panel-overlay"></div>
+<div class="slide-panel" id="product-panel">
+  <!-- Panel Header -->
+  <div class="panel-header">
+    <h3 id="panel-title">Add Product</h3>
+    <button class="btn-close-panel" id="btn-close-panel">&times;</button>
+  </div>
+  <!-- Tab Nav -->
+  <div class="panel-tabs" id="panel-tabs">
+    <button class="panel-tab active" data-ptab="details" id="ptab-details">&#128221; Details</button>
+    <button class="panel-tab" data-ptab="images" id="ptab-images">&#128247; Images</button>
+  </div>
+  <!-- Panel Body -->
+  <div class="panel-body">
+
+    <!-- DETAILS TAB -->
+    <div class="panel-tab-content active" id="ptab-content-details">
+      <form id="product-form" novalidate>
+        <input type="hidden" id="form-product-id" />
+        <div class="form-group">
+          <label class="form-label">Product Name <span class="req">*</span></label>
+          <input type="text" id="form-name" required placeholder="e.g. Essential Chocolate 350g" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Series <small style="font-weight:400;color:var(--color-grey);">(internal classification)</small></label>
+          <!-- Free-text with auto-suggestions from existing products.
+               Datalist is populated dynamically after products load.
+               Type a new name to create a new classification. -->
+          <input type="text" id="form-series" list="series-datalist" placeholder="e.g. Essential Series, EG Series" autocomplete="off" />
+          <datalist id="series-datalist">
+            <!-- Populated by JS after products load -->
+          </datalist>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Flavour</label>
+          <input type="text" id="form-flavour" placeholder="e.g. Chocolate, Vanilla" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price in &#8377;</label>
+          <input type="number" id="form-price" min="0" placeholder="0 = Contact for price" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Short Description</label>
+          <textarea id="form-short-desc" rows="2" placeholder="Brief product description"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags <small style="font-weight:400;color:var(--color-grey);">(comma-separated)</small></label>
+          <input type="text" id="form-tags" placeholder="protein, clinical, renal" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Key Benefits <small style="font-weight:400;color:var(--color-grey);">(one per line)</small></label>
+          <textarea id="form-benefits" rows="4" placeholder="Supports muscle recovery&#10;Boosts immunity"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ingredients</label>
+          <textarea id="form-ingredients" rows="3" placeholder="Whey protein, maltodextrin, vitamins&hellip;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">How to Use</label>
+          <textarea id="form-how-to-use" rows="3" placeholder="Mix 2 scoops with 200ml water&hellip;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nutrition Facts</label>
+          <textarea id="form-nutrition" rows="4" placeholder="Per 100g: Protein 70g, Carbs 8g&hellip;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Warnings</label>
+          <textarea id="form-warnings" rows="2" placeholder="Keep out of reach of children&hellip;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image Folder</label>
+          <input type="text" id="form-image-folder" placeholder="ESSENTIAL_VANILLA_BLUE" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:12px;">
+            <span>In Stock</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="form-in-stock" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="display:flex;align-items:center;gap:12px;">
+            <span>Is Featured</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="form-featured" />
+              <span class="toggle-slider"></span>
+            </label>
+          </label>
+        </div>
+        <button type="submit" class="btn-primary full-width" id="btn-save-product">Save Product</button>
+        <button type="button" class="btn-secondary full-width" id="btn-cancel-panel">Cancel</button>
+      </form>
+    </div>
+
+    <!-- IMAGES TAB -->
+    <div class="panel-tab-content" id="ptab-content-images">
+      <p style="font-size:12px;color:var(--color-grey);margin-bottom:16px;">Manage product images. Drag to reorder, set the cover (⭐), or delete. Click &ldquo;Save Image Changes&rdquo; to persist.</p>
+      <div class="img-editor-layout">
+        <!-- Current images -->
+        <div class="img-editor-current">
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Current Images</div>
+          <div class="img-grid" id="img-editor-grid">
+            <p style="font-size:13px;color:var(--color-grey);">No images yet.</p>
+          </div>
+          <button class="btn-primary save-images-btn" id="btn-save-images" type="button">&#128190; Save Image Changes</button>
+        </div>
+        <!-- Upload new images -->
+        <div class="img-editor-upload">
+          <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Add Images</div>
+          <div class="upload-area" id="upload-area">
+            &#128247; Click or drag images here
+            <input type="file" id="upload-file-input" accept="image/jpeg,image/png,image/jpg" multiple style="display:none;" />
+          </div>
+          <div class="upload-previews" id="upload-previews"></div>
+          <div id="upload-progress" style="font-size:12px;color:var(--color-grey);margin-top:8px;"></div>
+          <button class="btn-primary full-width" id="btn-do-upload" type="button" style="margin-top:10px;display:none;">&#8593; Upload Images</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SLIDE-IN PANEL: COUPON -->
+<div class="slide-panel" id="coupon-panel">
+  <div class="panel-header">
+    <h3 id="coupon-panel-title">Add Coupon</h3>
+    <button class="btn-close-panel" id="btn-close-coupon-panel">&times;</button>
+  </div>
+  <div class="panel-body">
+    <form id="coupon-form" novalidate>
+      <input type="hidden" id="form-coupon-id" />
+      <div class="form-group">
+        <label class="form-label">Coupon Code <span class="req">*</span></label>
+        <input type="text" id="form-coupon-code" required placeholder="e.g. WELCOME10" style="text-transform:uppercase;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Discount Type</label>
+        <select id="form-coupon-type">
+          <option value="percentage">Percentage (%)</option>
+          <option value="flat">Flat Amount (₹)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Discount Value <span class="req">*</span></label>
+        <input type="number" id="form-coupon-value" required placeholder="e.g. 10" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Min. Order Value (₹)</label>
+        <input type="number" id="form-coupon-min" placeholder="0 = No minimum" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Usage Limit (Total)</label>
+        <input type="number" id="form-coupon-limit" placeholder="Leave blank for unlimited" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Expiry Date</label>
+        <input type="date" id="form-coupon-expiry" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:12px;">
+          <span>One-time per customer</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="form-coupon-per-customer" />
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:12px;">
+          <span>Is Active</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="form-coupon-active" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+      <button type="submit" class="btn-primary full-width" id="btn-save-coupon">Save Coupon</button>
+      <button type="button" class="btn-secondary full-width" id="btn-cancel-coupon-panel">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- SLIDE-IN PANEL: BANNER -->
+<div class="slide-panel" id="banner-panel">
+  <div class="panel-header">
+    <h3 id="banner-panel-title">Add Banner</h3>
+    <button class="btn-close-panel" id="btn-close-banner-panel">&times;</button>
+  </div>
+  <div class="panel-body">
+    <form id="banner-form" novalidate>
+      <input type="hidden" id="form-banner-id" />
+      <div class="form-group">
+        <label class="form-label">Title / Heading</label>
+        <input type="text" id="form-banner-title" placeholder="e.g. Clinical Nutrition Offer" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Image URL <span class="req">*</span></label>
+        <input type="text" id="form-banner-image" required placeholder="Paste Cloudinary URL" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link URL</label>
+        <input type="text" id="form-banner-link" placeholder="e.g. productss.html?series=Essential" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Display Order</label>
+        <input type="number" id="form-banner-order" value="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:12px;">
+          <span>Is Enabled</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="form-banner-enabled" checked />
+            <span class="toggle-slider"></span>
+          </label>
+        </label>
+      </div>
+      <button type="submit" class="btn-primary full-width" id="btn-save-banner">Save Banner</button>
+      <button type="button" class="btn-secondary full-width" id="btn-cancel-banner-panel">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+<!-- IMPORT MODAL CONTAINER -->
+<div id="import-modal-container"></div>
+
+<!-- MAIN APP SCRIPT -->
+<script>
+// Wait for the auth guard to attach window.adminSupabase
+// The guard runs synchronously right after Supabase UMD loads, so by the time
+// DOMContentLoaded fires the session is either confirmed or the page has redirected.
+document.addEventListener('DOMContentLoaded', function() {
+  var sb = window.adminSupabase;
+  if (!sb) {
+    // Should not happen — guard redirects away if no session.
+    console.error('[admin] adminSupabase not found after DOMContentLoaded');
+    return;
+  }
+  initAdmin(sb);
+});
+
+function initAdmin(sb) {
+
+/* ── CLOCK ── */
+var clockEl = document.getElementById('topbar-clock');
+function updateClock() {
+  if (clockEl) clockEl.textContent = new Date().toLocaleString('en-IN', {
+    weekday:'short', day:'2-digit', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true
+  });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+/* ── TOAST ── */
+window.showToast = function(message, type, autoDismiss) {
+  if (type === undefined) type = 'info';
+  if (autoDismiss === undefined) autoDismiss = true;
+  var icons = { success: '&#10003;', error: '&#10007;', info: '&#9432;', warning: '&#9888;' };
+  var container = document.getElementById('toast-container');
+  if (!container) return;
+  var toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = '<span class="toast-icon">' + (icons[type] || icons.info) + '</span><span>' + message + '</span>';
+  container.appendChild(toast);
+  var dismiss = function() {
+    toast.classList.add('exiting');
+    toast.addEventListener('animationend', function() { if (toast.parentNode) toast.remove(); }, { once: true });
+  };
+  toast.addEventListener('click', dismiss);
+  if (autoDismiss && type !== 'error') setTimeout(dismiss, 3000);
+};
+
+/* ── NAVIGATION ── */
+var sectionLoaded = {};
+var sectionTitles = { dashboard:'Dashboard', products:'Products', orders:'Orders', customers:'Customers', settings:'Settings', coupons:'Coupons', notify_me:'Notify Me Requests', enquiries:'Customer Enquiries', banners:'Homepage Banners' };
+
+window.showSection = function(name) {
+  document.querySelectorAll('.admin-section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.sidebar-link').forEach(function(l) { l.classList.remove('active'); });
+  var sec  = document.getElementById('section-' + name);
+  var link = document.querySelector('.sidebar-link[data-section="' + name + '"]');
+  if (sec)  sec.classList.add('active');
+  if (link) link.classList.add('active');
+  var titleEl = document.getElementById('topbar-title');
+  if (titleEl) titleEl.textContent = sectionTitles[name] || name;
+  if (!sectionLoaded[name]) {
+    sectionLoaded[name] = true;
+    if (name === 'dashboard') loadDashboard();
+    if (name === 'products')  loadProducts();
+    if (name === 'orders')    loadOrders();
+    if (name === 'customers') loadCustomers();
+    if (name === 'settings')  loadSettings();
+  }
+  closeMobileSidebar();
+};
+
+document.querySelectorAll('.sidebar-link').forEach(function(link) {
+  link.addEventListener('click', function() { showSection(link.dataset.section); });
+});
+
+/* ── MOBILE ── */
+var hamburger      = document.getElementById('hamburger');
+var sidebarEl      = document.getElementById('sidebar');
+var sidebarOverlay = document.getElementById('sidebar-overlay');
+if (hamburger) hamburger.addEventListener('click', function() {
+  if (sidebarEl) sidebarEl.classList.toggle('mobile-open');
+  if (sidebarOverlay) sidebarOverlay.classList.toggle('open');
+});
+if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMobileSidebar);
+function closeMobileSidebar() {
+  if (sidebarEl) sidebarEl.classList.remove('mobile-open');
+  if (sidebarOverlay) sidebarOverlay.classList.remove('open');
+}
+
+/* ── SIGN OUT ── */
+var signoutBtn = document.getElementById('btn-signout');
+if (signoutBtn) signoutBtn.addEventListener('click', async function() {
+  try { await sb.auth.signOut(); } catch(_) {}
+  window.location.replace('./admin-login.html');
+});
+
+/* ── HELPERS ── */
+function esc(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function fmtDate(ts) {
+  if (!ts) return '&mdash;';
+  return new Date(ts).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+function statusBadge(status) {
+  var s = (status || 'pending').toLowerCase();
+  var cls = { pending:'badge-pending', confirmed:'badge-confirmed', shipped:'badge-shipped', delivered:'badge-delivered', cancelled:'badge-cancelled', payment_failed:'badge-cancelled' }[s] || 'badge-pending';
+  return '<span class="badge ' + cls + '">' + esc(s.replace(/_/g,' ')) + '</span>';
+}
+function paymentBadge(payStatus, payMethod) {
+  var ps = (payStatus || 'pending').toLowerCase();
+  var pm = (payMethod  || 'razorpay').toLowerCase();
+  if (ps === 'paid') {
+    return '<span class="badge badge-instock" style="background:#22C55E;color:#fff;">✓ Paid</span>';
+  }
+  if (ps === 'cod_pending' || pm === 'cod') {
+    return '<span class="badge" style="background:#F59E0B;color:#fff;">COD</span>';
+  }
+  if (ps === 'failed') {
+    return '<span class="badge badge-outofstock">Failed</span>';
+  }
+  return '<span class="badge" style="background:#E5E7EB;color:#6B7280;">Pending</span>';
+}
+function getFirstImage(imagesField) {
+  if (!imagesField) return null;
+  try {
+    var parsed = typeof imagesField === 'string' ? JSON.parse(imagesField) : imagesField;
+    if (Array.isArray(parsed) && parsed.length) return parsed[0];
+  } catch(_) {}
+  if (typeof imagesField === 'string' && imagesField.startsWith('http')) return imagesField;
+  return null;
+}
+function countItems(items) {
+  try { var a = typeof items === 'string' ? JSON.parse(items) : (items || []); return Array.isArray(a) ? a.length : 0; }
+  catch(_) { return 0; }
+}
+function toTitleCase(str) {
+  return str.replace(/_/g,' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+}
+
+/* ── DASHBOARD ── */
+async function loadDashboard() {
+  // Stats — each wrapped individually so one failure doesn't crash all
+  try {
+    var pr = await sb.from('products').select('*',{count:'exact',head:true});
+    var pEl = document.getElementById('stat-products');
+    if (pEl) pEl.textContent = pr.count != null ? pr.count : '—';
+  } catch(_) { var pEl2 = document.getElementById('stat-products'); if (pEl2) pEl2.textContent = '—'; }
+
+  try {
+    var or = await sb.from('orders').select('*',{count:'exact',head:true});
+    var oEl = document.getElementById('stat-orders');
+    if (oEl) oEl.textContent = or.count != null ? or.count : '—';
+  } catch(_) { var oEl2 = document.getElementById('stat-orders'); if (oEl2) oEl2.textContent = '—'; }
+
+  try {
+    var cr = await sb.from('customers').select('*',{count:'exact',head:true});
+    var cEl = document.getElementById('stat-customers');
+    if (cEl) cEl.textContent = cr.count != null ? cr.count : '—';
+  } catch(_) { var cEl2 = document.getElementById('stat-customers'); if (cEl2) cEl2.textContent = '—'; }
+
+  try {
+    var oor = await sb.from('products').select('*',{count:'exact',head:true}).eq('in_stock',false);
+    var ooEl = document.getElementById('stat-outofstock');
+    if (ooEl) ooEl.textContent = oor.count != null ? oor.count : '—';
+  } catch(_) { var ooEl2 = document.getElementById('stat-outofstock'); if (ooEl2) ooEl2.textContent = '—'; }
+
+  // Recent orders
+  try {
+    var roc = document.getElementById('recent-orders-container');
+    var ror = await sb.from('orders')
+      .select('id,customer_name,total_amount,created_at,status')
+      .order('created_at',{ascending:false}).limit(5);
+    if (ror.error) throw ror.error;
+    renderRecentOrders(ror.data || []);
+  } catch(err) {
+    var roc2 = document.getElementById('recent-orders-container');
+    if (roc2) roc2.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128230;</div><p>No orders yet</p></div>';
+  }
+
+  // Out of stock products
+  try {
+    var lsr = await sb.from('products').select('id,name,series').eq('in_stock',false).limit(15);
+    if (lsr.error) throw lsr.error;
+    renderLowStock(lsr.data || []);
+  } catch(err) {
+    var lsc = document.getElementById('low-stock-container');
+    if (lsc) lsc.innerHTML = '<div class="empty-state"><div class="empty-icon">&#10003;</div><p>All products in stock</p></div>';
+  }
+}
+
+function renderRecentOrders(orders) {
+  var c = document.getElementById('recent-orders-container');
+  if (!c) return;
+  if (!orders.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128230;</div><p>No orders yet</p></div>'; return; }
+  c.innerHTML = '<table><thead><tr><th>ID</th><th>Customer</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody>'
+    + orders.map(function(o) {
+        return '<tr><td style="font-size:12px;color:var(--color-grey);">#' + String(o.id).slice(-6) + '</td><td>' + esc(o.customer_name||'&mdash;') + '</td><td>&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</td><td style="font-size:12px;">' + fmtDate(o.created_at) + '</td><td>' + statusBadge(o.status) + '</td></tr>';
+      }).join('')
+    + '</tbody></table>';
+}
+
+function renderLowStock(products) {
+  var c = document.getElementById('low-stock-container');
+  if (!c) return;
+  if (!products.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#10003;</div><p>All products in stock</p></div>'; return; }
+  c.innerHTML = products.map(function(p) {
+    return '<div class="low-stock-item"><span class="badge badge-outofstock">Out of Stock</span><span>' + esc(p.name||'&mdash;') + '</span>'
+      + (p.series ? '<span style="font-size:12px;color:var(--color-grey);margin-left:auto;">' + esc(p.series) + '</span>' : '') + '</div>';
+  }).join('');
+}
+
+/* ── PRODUCTS ── */
+var allProducts      = [];
+var filteredProducts = [];
+var productPage      = 1;
+var PER_PAGE         = 20;
+var searchTimer      = null;
+
+async function loadProducts() {
+  var tbody = document.getElementById('products-tbody');
+  if (tbody) tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>';
+  try {
+    var r = await sb.from('products').select('*').order('created_at',{ascending:false});
+    if (r.error) throw r.error;
+    allProducts = r.data || [];
+    populateSeriesDatalist(allProducts);  // keep datalist fresh after every load
+    applyFilters();
+  } catch(err) { showToast('Products load error: ' + err.message, 'error'); }
+}
+
+/* Rebuild the series datalist from the actual series values in Supabase.
+   This means any new series created in admin is immediately available as
+   a suggestion next time without touching code. */
+function populateSeriesDatalist(products) {
+  var dl = document.getElementById('series-datalist');
+  if (!dl) return;
+  var seen = {};
+  (products || []).forEach(function(p) {
+    if (p.series && p.series.trim() && !seen[p.series]) {
+      seen[p.series] = true;
+    }
+  });
+  // Always include known baseline options
+  var baseSeries = [
+    'Essential Series','ABC Series','EG Series','Enpedia Series',
+    'Glutamax Series','Neu Series','Micro Series','Fibero Series',
+    'Azo Series','Others'
+  ];
+  baseSeries.forEach(function(s) { seen[s] = true; });
+  dl.innerHTML = Object.keys(seen).sort().map(function(s) {
+    return '<option value="' + s.replace(/"/g,'&quot;') + '">';
+  }).join('');
+}
+
+function applyFilters() {
+  var qEl = document.getElementById('products-search');
+  var sEl = document.getElementById('products-series-filter');
+  var q = qEl ? qEl.value.trim().toLowerCase() : '';
+  var s = sEl ? sEl.value : '';
+  filteredProducts = allProducts.filter(function(p) {
+    return (!q || (p.name||'').toLowerCase().includes(q)) && (!s || (p.series||'') === s);
+  });
+  productPage = 1;
+  renderProducts();
+}
+
+function renderProducts() {
+  var tbody      = document.getElementById('products-tbody');
+  if (!tbody) return;
+  var totalPages = Math.max(1, Math.ceil(filteredProducts.length / PER_PAGE));
+  var start      = (productPage - 1) * PER_PAGE;
+  var slice      = filteredProducts.slice(start, start + PER_PAGE);
+  var countEl    = document.getElementById('products-count');
+  if (countEl) countEl.textContent = '(' + filteredProducts.length + ')';
+
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#129516;</div><p>No products found</p></div></td></tr>';
+    var pg0 = document.getElementById('products-pagination');
+    if (pg0) pg0.innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = slice.map(function(p, i) {
+    var imgSrc = getFirstImage(p.images);
+    // Add f_auto,q_auto,w_120 for admin thumbnails
+    if (imgSrc && imgSrc.indexOf('res.cloudinary.com') !== -1) {
+      imgSrc = imgSrc.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_120/');
+    }
+    var thumb  = imgSrc
+      ? '<img src="' + esc(imgSrc) + '" class="prod-thumb" loading="lazy" alt="' + esc(p.name||'') + '" />'
+      : '<div class="prod-thumb-placeholder">&#129516;</div>';
+    var priceDisplay = p.price_inr ? '&#8377;' + Number(p.price_inr).toLocaleString('en-IN') : '&mdash;';
+    var detailLink = 'product-detail.html?id=' + p.id;
+    return '<tr id="prod-row-' + p.id + '">'
+      + '<td style="color:var(--color-grey);font-size:12px;">' + (start+i+1) + '</td>'
+      + '<td>' + thumb + '</td>'
+      + '<td style="font-weight:600;max-width:200px;word-break:break-word;"><a href="' + detailLink + '" target="_blank" style="color:var(--color-dark);text-decoration:none;" onmouseover="this.style.color=\'var(--color-primary)\'" onmouseout="this.style.color=\'var(--color-dark)\'">' + esc(p.name||'&mdash;') + ' &#8599;</a></td>'
+      + '<td>' + (p.series ? '<span style="font-size:12px;background:var(--color-primary-light);color:var(--color-primary);padding:3px 8px;border-radius:20px;">' + esc(p.series) + '</span>' : '&mdash;') + '</td>'
+      + '<td>' + priceDisplay + '</td>'
+      + '<td><label class="toggle-switch"><input type="checkbox" ' + (p.in_stock?'checked':'') + ' onchange="toggleField(' + p.id + ',\'in_stock\',this.checked)" /><span class="toggle-slider"></span></label></td>'
+      + '<td><label class="toggle-switch"><input type="checkbox" ' + (p.is_featured?'checked':'') + ' onchange="toggleField(' + p.id + ',\'is_featured\',this.checked)" /><span class="toggle-slider"></span></label></td>'
+      + '<td style="white-space:nowrap;"><button class="btn-icon" onclick="openEditPanel(' + p.id + ')" title="Edit">&#9999;&#65039;</button><button class="btn-icon danger" onclick="deleteProduct(' + p.id + ')" title="Delete">&#128465;&#65039;</button></td>'
+      + '</tr>';
+  }).join('');
+
+  var pg = document.getElementById('products-pagination');
+  if (!pg) return;
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+  pg.innerHTML = '<button onclick="changePage(' + (productPage-1) + ')" ' + (productPage===1?'disabled':'') + '>&larr; Prev</button>'
+    + '<span>Page ' + productPage + ' of ' + totalPages + '</span>'
+    + '<button onclick="changePage(' + (productPage+1) + ')" ' + (productPage===totalPages?'disabled':'') + '>Next &rarr;</button>';
+}
+
+window.changePage = function(p) {
+  var total = Math.max(1, Math.ceil(filteredProducts.length / PER_PAGE));
+  if (p < 1 || p > total) return;
+  productPage = p; renderProducts();
+};
+
+window.toggleField = async function(id, field, value) {
+  try {
+    var r = await sb.from('products').update({ [field]: value }).eq('id', id);
+    if (r.error) throw r.error;
+    var idx = allProducts.findIndex(function(p) { return p.id === id; });
+    if (idx !== -1) allProducts[idx][field] = value;
+    if (field === 'in_stock') {
+      var ooEl = document.getElementById('stat-outofstock');
+      if (ooEl) ooEl.textContent = allProducts.filter(function(p) { return !p.in_stock; }).length;
+    }
+    showToast('Product updated', 'success');
+  } catch(err) { showToast('Update failed: ' + err.message, 'error'); }
+};
+
+window.deleteProduct = async function(id) {
+  if (!window.confirm('Delete this product? This cannot be undone.')) return;
+  var row = document.getElementById('prod-row-' + id);
+  if (row) row.classList.add('fade-out');
+  try {
+    var r = await sb.from('products').delete().eq('id', id);
+    if (r.error) throw r.error;
+    allProducts = allProducts.filter(function(p) { return p.id !== id; });
+    applyFilters();
+    showToast('Product deleted', 'success');
+  } catch(err) {
+    if (row) row.classList.remove('fade-out');
+    showToast('Delete failed: ' + err.message, 'error');
+  }
+};
+
+var psEl = document.getElementById('products-search');
+if (psEl) psEl.addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(applyFilters, 250);
+});
+var psf = document.getElementById('products-series-filter');
+if (psf) psf.addEventListener('change', applyFilters);
+
+/* ── SLIDE-IN PANEL ── */
+var panelOverlay   = document.getElementById('panel-overlay');
+var productPanel   = document.getElementById('product-panel');
+var productForm    = document.getElementById('product-form');
+var currentEditId  = null;          // product ID being edited
+var currentImgs    = [];            // image URLs for the editor
+var pendingUploads = [];            // files queued for upload
+
+/* Switch tabs inside panel */
+document.querySelectorAll('.panel-tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.panel-tab').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.panel-tab-content').forEach(function(c) { c.classList.remove('active'); });
+    btn.classList.add('active');
+    var content = document.getElementById('ptab-content-' + btn.dataset.ptab);
+    if (content) content.classList.add('active');
+  });
+});
+
+function switchPanelTab(tabName) {
+  document.querySelectorAll('.panel-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.panel-tab-content').forEach(function(c) { c.classList.remove('active'); });
+  var btn = document.querySelector('.panel-tab[data-ptab="' + tabName + '"]');
+  var content = document.getElementById('ptab-content-' + tabName);
+  if (btn) btn.classList.add('active');
+  if (content) content.classList.add('active');
+}
+
+function openPanel()  {
+  if (panelOverlay) panelOverlay.classList.add('open');
+  if (productPanel) productPanel.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  switchPanelTab('details');
+}
+function closePanel() {
+  if (panelOverlay) panelOverlay.classList.remove('open');
+  if (productPanel) productPanel.classList.remove('open');
+  document.body.style.overflow = '';
+  if (productForm) productForm.reset();
+  var pidEl = document.getElementById('form-product-id');
+  if (pidEl) pidEl.value = '';
+  var ptEl = document.getElementById('panel-title');
+  if (ptEl) ptEl.textContent = 'Add Product';
+  currentEditId  = null;
+  currentImgs    = [];
+  pendingUploads = [];
+  renderImgEditor();
+}
+
+if (panelOverlay) panelOverlay.addEventListener('click', closePanel);
+var closePanelBtn = document.getElementById('btn-close-panel');
+if (closePanelBtn) closePanelBtn.addEventListener('click', closePanel);
+var cancelPanelBtn = document.getElementById('btn-cancel-panel');
+if (cancelPanelBtn) cancelPanelBtn.addEventListener('click', closePanel);
+var addProductBtn = document.getElementById('btn-add-product');
+if (addProductBtn) addProductBtn.addEventListener('click', function() {
+  var inStockEl = document.getElementById('form-in-stock');
+  var featEl    = document.getElementById('form-featured');
+  if (inStockEl) inStockEl.checked = true;
+  if (featEl)    featEl.checked = false;
+  currentEditId = null;
+  currentImgs   = [];
+  pendingUploads = [];
+  renderImgEditor();
+  openPanel();
+});
+
+/* ── IMAGE EDITOR ── */
+function parseImgsAdmin(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { var a = JSON.parse(raw); return Array.isArray(a) ? a : []; }
+  catch(_) { return typeof raw === 'string' && raw.startsWith('http') ? [raw] : []; }
+}
+
+function renderImgEditor() {
+  var grid = document.getElementById('img-editor-grid');
+  if (!grid) return;
+  if (!currentImgs.length) {
+    grid.innerHTML = '<p style="font-size:13px;color:var(--color-grey);">No images yet. Upload some from the right panel.</p>';
+    return;
+  }
+  grid.innerHTML = currentImgs.map(function(url, idx) {
+    var isCover = idx === 0;
+    return '<div class="img-card" id="imgcard-' + idx + '" data-idx="' + idx + '">'
+      + '<img src="' + esc(url.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_200/')) + '" alt="Image ' + (idx+1) + '" loading="lazy" />'
+      + (isCover ? '<div class="img-cover-badge">&#11088; Cover</div>' : '')
+      + '<div class="img-card-actions">'
+        + '<button class="img-action-btn' + (isCover?' cover-active':'') + '" title="Set as cover" onclick="imgSetCover(' + idx + ')" type="button">&#11088;</button>'
+        + '<button class="img-action-btn" title="Rotate left" onclick="imgRotate(' + idx + ',-90)" type="button">&#8634;</button>'
+        + '<button class="img-action-btn" title="Rotate right" onclick="imgRotate(' + idx + ',90)" type="button">&#8635;</button>'
+        + '<button class="img-action-btn danger" title="Delete" onclick="imgConfirmDelete(' + idx + ')" type="button">&#10005;</button>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+window.imgSetCover = function(idx) {
+  if (idx === 0) return;
+  var url = currentImgs.splice(idx, 1)[0];
+  currentImgs.unshift(url);
+  renderImgEditor();
+  var saveBtn = document.getElementById('btn-save-images');
+  if (saveBtn) saveBtn.classList.add('has-changes');
+};
+
+var imgRotations = {};
+window.imgRotate = function(idx, deg) {
+  var card = document.getElementById('imgcard-' + idx);
+  if (!card) return;
+  var img = card.querySelector('img');
+  if (!img) return;
+  imgRotations[idx] = ((imgRotations[idx] || 0) + deg + 360) % 360;
+  img.style.transform = 'rotate(' + imgRotations[idx] + 'deg)';
+};
+
+window.imgConfirmDelete = function(idx) {
+  var card = document.getElementById('imgcard-' + idx);
+  if (!card) return;
+  // Build inline confirm overlay
+  var overlay = document.createElement('div');
+  overlay.className = 'img-confirm-overlay';
+  overlay.innerHTML = '<p>Remove this image?</p>'
+    + '<div style="display:flex;gap:6px;">'
+      + '<button class="img-confirm-btn yes" type="button" onclick="imgDoDelete(' + idx + ')">Yes</button>'
+      + '<button class="img-confirm-btn no" type="button" onclick="this.closest(\'.img-confirm-overlay\').remove()">No</button>'
+    + '</div>';
+  card.appendChild(overlay);
+};
+
+window.imgDoDelete = function(idx) {
+  currentImgs.splice(idx, 1);
+  renderImgEditor();
+  var saveBtn = document.getElementById('btn-save-images');
+  if (saveBtn) saveBtn.classList.add('has-changes');
+};
+
+/* Save image order/changes to Supabase */
+var saveImagesBtn = document.getElementById('btn-save-images');
+if (saveImagesBtn) saveImagesBtn.addEventListener('click', async function() {
+  if (!currentEditId) { showToast('Open an existing product to save images', 'warning'); return; }
+  this.disabled = true; this.textContent = 'Saving\u2026';
+  try {
+    var r = await sb.from('products').update({ images: JSON.stringify(currentImgs) }).eq('id', currentEditId);
+    if (r.error) throw r.error;
+    // Update in-memory
+    var p = allProducts.find(function(x) { return x.id === currentEditId; });
+    if (p) p.images = JSON.stringify(currentImgs);
+    this.classList.remove('has-changes');
+    // Refresh thumbnail in table
+    var img = document.querySelector('#prod-row-' + currentEditId + ' .prod-thumb');
+    if (img && currentImgs[0]) img.src = currentImgs[0].replace('/image/upload/', '/image/upload/f_auto,q_auto,w_120/');
+    showToast('\u2713 Images saved', 'success');
+  } catch(err) { showToast('Save failed: ' + err.message, 'error'); }
+  finally { this.disabled = false; this.textContent = '\u{1F4BE} Save Image Changes'; }
+});
+
+/* Upload area */
+var uploadArea  = document.getElementById('upload-area');
+var uploadInput = document.getElementById('upload-file-input');
+var doUploadBtn = document.getElementById('btn-do-upload');
+if (uploadArea) {
+  uploadArea.addEventListener('click', function() { if (uploadInput) uploadInput.click(); });
+  uploadArea.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+  uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault(); this.classList.remove('drag-over');
+    handleFileSelect(e.dataTransfer.files);
+  });
+}
+if (uploadInput) uploadInput.addEventListener('change', function() { handleFileSelect(this.files); });
+
+function handleFileSelect(files) {
+  pendingUploads = Array.from(files).filter(function(f) { return f.type.startsWith('image/'); });
+  var previews = document.getElementById('upload-previews');
+  if (previews) {
+    previews.innerHTML = pendingUploads.map(function(f) {
+      var url = URL.createObjectURL(f);
+      return '<img class="upload-preview" src="' + url + '" alt="Preview" />';
+    }).join('');
+  }
+  if (doUploadBtn) doUploadBtn.style.display = pendingUploads.length ? '' : 'none';
+  if (doUploadBtn) doUploadBtn.textContent = '\u2191 Upload ' + pendingUploads.length + ' Image' + (pendingUploads.length !== 1 ? 's' : '');
+}
+
+/* Browser image processing before upload.
+   Uses createImageBitmap() which respects EXIF orientation in modern browsers
+   (Chrome, Firefox, Safari 15+). Falls back to canvas draw if unavailable.
+   Also composites to white background for transparent PNGs. */
+function toWebP(file) {
+  return new Promise(function(resolve) {
+    var url = URL.createObjectURL(file);
+
+    /* createImageBitmap respects EXIF orientation natively */
+    if (window.createImageBitmap) {
+      createImageBitmap(file).then(function(bmp) {
+        URL.revokeObjectURL(url);
+        var canvas = document.createElement('canvas');
+        canvas.width  = bmp.width;
+        canvas.height = bmp.height;
+        var ctx = canvas.getContext('2d');
+        /* White background — covers transparent PNGs */
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(bmp, 0, 0);
+        bmp.close();
+        canvas.toBlob(function(blob) {
+          resolve(blob || file);
+        }, 'image/webp', 0.88);
+      }).catch(function() {
+        /* Fallback if createImageBitmap fails */
+        resolve(file);
+      });
+    } else {
+      /* Legacy fallback: plain canvas draw (no EXIF correction) */
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width  = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(function(blob) {
+          resolve(blob || file);
+        }, 'image/webp', 0.88);
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    }
+  });
+}
+
+/* Upload to Cloudinary using unsigned preset */
+async function uploadToCloudinary(blob, folder, baseName) {
+  var CLOUD_NAME = 'dfiskvjbl';
+  var PRESET     = 'azzura';
+  var fd = new FormData();
+  fd.append('file',         blob);
+  fd.append('upload_preset', PRESET);
+  fd.append('folder',       'azzura_products/' + (folder || 'uncategorized'));
+  fd.append('public_id',    (folder || 'uncategorized') + '/' + baseName);
+  fd.append('format',       'webp');
+  var res  = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', { method: 'POST', body: fd });
+  var data = await res.json();
+  if (!res.ok || data.error) throw new Error(data.error ? data.error.message : 'Upload failed');
+  return 'https://res.cloudinary.com/' + CLOUD_NAME + '/image/upload/f_auto,q_auto/' + data.public_id;
+}
+
+if (doUploadBtn) doUploadBtn.addEventListener('click', async function() {
+  if (!pendingUploads.length) return;
+  var progressEl = document.getElementById('upload-progress');
+  this.disabled  = true;
+  var folder = (function() {
+    if (currentEditId) {
+      var p = allProducts.find(function(x) { return x.id === currentEditId; });
+      return p ? (p.image_folder || '') : '';
+    }
+    var el = document.getElementById('form-image-folder');
+    return el ? el.value.trim() : '';
+  }());
+
+  var succeeded = 0;
+  for (var i = 0; i < pendingUploads.length; i++) {
+    var file = pendingUploads[i];
+    if (progressEl) progressEl.textContent = 'Uploading ' + (i+1) + '/' + pendingUploads.length + '\u2026';
+    try {
+      var blob = await toWebP(file);
+      var baseName = file.name.replace(/\.[^.]+$/, '') + '_' + Date.now();
+      var url  = await uploadToCloudinary(blob, folder, baseName);
+      currentImgs.push(url);
+      succeeded++;
+    } catch(err) {
+      showToast('Upload failed: ' + err.message, 'error');
+    }
+  }
+  pendingUploads = [];
+  if (uploadInput) uploadInput.value = '';
+  var previews = document.getElementById('upload-previews');
+  if (previews) previews.innerHTML = '';
+  if (progressEl) progressEl.textContent = '\u2713 ' + succeeded + ' image' + (succeeded !== 1 ? 's' : '') + ' uploaded';
+  this.style.display = 'none';
+  this.disabled = false;
+  renderImgEditor();
+  var saveBtn = document.getElementById('btn-save-images');
+  if (saveBtn) saveBtn.classList.add('has-changes');
+});
+
+window.openEditPanel = function(id) {
+  var p = allProducts.find(function(x) { return x.id === id; });
+  if (!p) { showToast('Product not found', 'error'); return; }
+
+  function setVal(elId, val) {
+    var el = document.getElementById(elId);
+    if (el) el.value = val || '';
+  }
+  function setChk(elId, val) {
+    var el = document.getElementById(elId);
+    if (el) el.checked = !!val;
+  }
+
+  currentEditId  = p.id;
+  currentImgs    = parseImgsAdmin(p.images);
+  pendingUploads = [];
+  imgRotations   = {};
+
+  setVal('form-product-id',  p.id);
+  setVal('form-name',        p.name);
+  setVal('form-series',      p.series);
+  setVal('form-flavour',     p.flavour);
+  setVal('form-price',       p.price_inr);
+  setVal('form-short-desc',  p.short_description);
+  setVal('form-tags',        p.tags);
+  setVal('form-benefits',    p.benefits);
+  setVal('form-ingredients', p.ingredients);
+  setVal('form-how-to-use',  p.how_to_use);
+  setVal('form-nutrition',   p.nutrition_facts);
+  setVal('form-warnings',    p.warnings);
+  setVal('form-image-folder',p.image_folder);
+  setChk('form-in-stock',    p.in_stock);
+  setChk('form-featured',    p.is_featured);
+  var ptEl = document.getElementById('panel-title');
+  if (ptEl) ptEl.textContent = 'Edit: ' + (p.name || 'Product');
+  renderImgEditor();
+  openPanel();
+};
+
+if (productForm) productForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
+  var nameEl  = document.getElementById('form-name');
+  var priceEl = document.getElementById('form-price');
+  var name    = nameEl  ? nameEl.value.trim()  : '';
+  var price   = priceEl ? priceEl.value.trim() : '';
+  if (!name)  { showToast('Product name is required', 'error'); return; }
+  if (!price) { showToast('Price is required', 'error'); return; }
+  var btn = document.getElementById('btn-save-product');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving\u2026'; }
+
+  function getV(elId) { var el = document.getElementById(elId); return el ? el.value.trim() || null : null; }
+  function getC(elId) { var el = document.getElementById(elId); return el ? el.checked : false; }
+
+  // Column names aligned with schema (price_inr, benefits, short_description)
+  // Images are managed separately in the Images tab using currentImgs
+  var payload = {
+    name:              name,
+    price_inr:         parseFloat(price) || 0,
+    series:            getV('form-series'),
+    flavour:           getV('form-flavour'),
+    short_description: getV('form-short-desc'),
+    tags:              getV('form-tags'),
+    benefits:          getV('form-benefits'),
+    ingredients:       getV('form-ingredients'),
+    how_to_use:        getV('form-how-to-use'),
+    nutrition_facts:   getV('form-nutrition'),
+    warnings:          getV('form-warnings'),
+    image_folder:      getV('form-image-folder'),
+    in_stock:          getC('form-in-stock'),
+    is_featured:       getC('form-featured'),
+  };
+  // Include current images from editor if available (new product or after upload)
+  if (currentImgs.length > 0) payload.images = JSON.stringify(currentImgs);
+  try {
+    var idEl = document.getElementById('form-product-id');
+    var id   = idEl ? idEl.value : '';
+    var r;
+    if (id) { r = await sb.from('products').update(payload).eq('id', id); }
+    else    { r = await sb.from('products').insert(payload); }
+    if (r.error) throw r.error;
+    closePanel();
+    sectionLoaded['products'] = false;
+    await loadProducts();
+    showToast(id ? '\u2713 Product updated' : '\u2713 Product added', 'success');
+  } catch(err) { showToast('Save failed: ' + err.message, 'error'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Product'; } }
+});
+
+/* ── CLOUDINARY IMPORT ── */
+var importBtn = document.getElementById('btn-import-cloudinary');
+if (importBtn) importBtn.addEventListener('click', async function() {
+  importBtn.disabled = true; importBtn.textContent = 'Loading\u2026';
+  try {
+    var res = await fetch('./cloudinary-products-map.json');
+    if (!res.ok) throw new Error('Could not load cloudinary-products-map.json — run npm run upload-images first');
+    var mapData = await res.json();
+    var existR  = await sb.from('products').select('image_folder');
+    var existingFolders = new Set((existR.data || []).map(function(p) { return p.image_folder; }).filter(Boolean));
+    var newItems = [];
+
+    // Handle BOTH flat map { productFolder: [urls] } and old nested { series: { product: [urls] } }
+    var firstVal = mapData[Object.keys(mapData)[0]];
+    var isFlat   = Array.isArray(firstVal);
+
+    if (isFlat) {
+      // New flat structure from upload-to-cloudinary.js
+      for (var folder in mapData) {
+        var urls = mapData[folder];
+        if (!existingFolders.has(folder)) newItems.push({ seriesKey: 'Unknown', productKey: folder, folder: folder, urls: urls });
+      }
+    } else {
+      // Legacy nested structure
+      for (var seriesKey in mapData) {
+        var seriesProducts = mapData[seriesKey];
+        for (var productKey in seriesProducts) {
+          var urls2  = seriesProducts[productKey];
+          var folder2 = seriesKey + '/' + productKey;
+          if (!existingFolders.has(folder2)) newItems.push({ seriesKey: seriesKey, productKey: productKey, folder: folder2, urls: urls2 });
+        }
+      }
+    }
+    showImportModal(newItems);
+  } catch(err) { showToast('Import error: ' + err.message, 'error'); }
+  finally { importBtn.disabled = false; importBtn.textContent = '\u2601\uFE0F Import from Cloudinary'; }
+});
+
+function showImportModal(items) {
+  var c = document.getElementById('import-modal-container');
+  if (!c) return;
+  if (!items.length) { showToast('All Cloudinary products already imported!', 'info'); return; }
+  var itemsHtml = items.map(function(item, i) {
+    return '<label class="import-item" for="imp-' + i + '">'
+      + '<input type="checkbox" id="imp-' + i + '" data-idx="' + i + '" checked />'
+      + '<div class="import-item-info"><div class="import-item-name">' + esc(toTitleCase(item.productKey)) + '</div>'
+      + '<div class="import-item-sub">' + esc(item.seriesKey) + ' &middot; ' + item.urls.length + ' image' + (item.urls.length!==1?'s':'') + '</div></div></label>';
+  }).join('');
+  c.innerHTML = '<div class="modal-backdrop" id="import-modal">'
+    + '<div class="modal-box">'
+    + '<div class="modal-header"><h3>&#9729;&#65039; Import from Cloudinary (' + items.length + ' new)</h3>'
+    + '<button class="btn-close-panel" onclick="document.getElementById(\'import-modal\').remove()">&times;</button></div>'
+    + '<label class="select-all-row"><input type="checkbox" id="imp-sel-all" checked onchange="selAll(this.checked)" /> Select / deselect all</label>'
+    + '<div style="max-height:40vh;overflow-y:auto;margin-bottom:20px;">' + itemsHtml + '</div>'
+    + '<button class="btn-primary full-width" onclick="doImport()">Import Selected</button>'
+    + '<button class="btn-secondary full-width" onclick="document.getElementById(\'import-modal\').remove()">Cancel</button>'
+    + '</div></div>';
+  window.__importItems = items;
+}
+
+window.selAll = function(checked) {
+  document.querySelectorAll('#import-modal input[data-idx]').forEach(function(cb) { cb.checked = checked; });
+};
+
+window.doImport = async function() {
+  var items    = window.__importItems || [];
+  var selected = [];
+  document.querySelectorAll('#import-modal input[data-idx]').forEach(function(cb) {
+    if (cb.checked) selected.push(items[parseInt(cb.dataset.idx)]);
+  });
+  if (!selected.length) { showToast('No products selected', 'warning'); return; }
+  var btn = document.querySelector('#import-modal .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Importing\u2026'; }
+
+  var seriesMap = {
+    'ESENTIAL_SERIES':'Essential','VITAL_SERIES':'Vital','MAX_SERIES':'Max',
+    'PROVIT_SERIES':'Provit','LIFELINE_SERIES':'Lifeline','ORAL_SERIES':'Oral',
+    'OTHERS':'Other','default':'Other'
+  };
+
+  try {
+    var inserts = selected.map(function(item) {
+      return {
+        name:              toTitleCase(item.productKey),
+        series:            seriesMap[item.seriesKey] || item.seriesKey,
+        image_folder:      item.folder,
+        images:            JSON.stringify(item.urls),
+        in_stock:          true,
+        is_featured:       false,
+        price_inr:         0,
+        flavour:           '',
+        short_description: '',
+        tags:              '',
+        benefits:          '',
+        ingredients:       '',
+        how_to_use:        '',
+        nutrition_facts:   '',
+        warnings:          '',
+      };
+    });
+    var total = inserts.length;
+    var batchSize = 20;
+    var imported  = 0;
+    for (var i = 0; i < inserts.length; i += batchSize) {
+      var batch = inserts.slice(i, i + batchSize);
+      var r = await sb.from('products').insert(batch);
+      if (r.error) throw r.error;
+      imported += batch.length;
+      if (btn) btn.textContent = 'Importing\u2026 (' + imported + '/' + total + ')';
+    }
+    var modal = document.getElementById('import-modal');
+    if (modal) modal.remove();
+    sectionLoaded['products'] = false;
+    await loadProducts();
+    showToast('\u2713 ' + selected.length + ' product' + (selected.length!==1?'s':'') + ' imported successfully', 'success');
+  } catch(err) {
+    showToast('Import failed: ' + err.message, 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Import Selected'; }
+  }
+};
+
+/* ── ORDERS ── */
+var allOrders    = [];
+var ordersFilter = 'all';
+
+async function loadOrders() {
+  var tbody = document.getElementById('orders-tbody');
+  if (tbody) tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>';
+  try {
+    var r = await sb.from('orders').select('*').order('created_at',{ascending:false});
+    if (r.error) throw r.error;
+    allOrders = r.data || [];
+    renderOrders();
+  } catch(err) {
+    var t2 = document.getElementById('orders-tbody');
+    if (t2) t2.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128230;</div><p>No orders yet</p></div></td></tr>';
+    showToast('Orders load error: ' + err.message, 'error');
+  }
+}
+
+function renderOrders() {
+  var tbody    = document.getElementById('orders-tbody');
+  if (!tbody) return;
+  var filtered = ordersFilter === 'all' ? allOrders : allOrders.filter(function(o) { return (o.status||'').toLowerCase() === ordersFilter; });
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128230;</div><p>No ' + (ordersFilter!=='all'?ordersFilter+' ':'') + 'orders found</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map(function(o) {
+    var itemCount = countItems(o.items);
+    return '<tr id="order-row-' + o.id + '" class="order-main-row" style="cursor:pointer;" onclick="toggleOrderDetail(' + o.id + ')">' 
+      + '<td style="font-size:12px;color:var(--color-grey);font-family:monospace;">#' + String(o.id).slice(-8) + '</td>'
+      + '<td style="font-weight:600;">' + esc(o.customer_name||'&mdash;') + '</td>'
+      + '<td>' + itemCount + ' item' + (itemCount!==1?'s':'') + '</td>'
+      + '<td>&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</td>'
+      + '<td>' + statusBadge(o.status) + '</td>'
+      + '<td>' + paymentBadge(o.payment_status, o.payment_method) + '</td>'
+      + '<td style="font-size:13px;color:var(--color-grey);">' + fmtDate(o.created_at) + '</td>'
+      + '<td><button class="btn-icon" onclick="event.stopPropagation();toggleOrderDetail(' + o.id + ')" title="View">&#128065;</button></td>'
+      + '</tr>'
+      + '<tr id="order-detail-' + o.id + '" class="order-detail-row" style="display:none;"><td colspan="8">' + buildOrderDetail(o) + '</td></tr>';
+  }).join('');
+}
+
+function buildOrderDetail(o) {
+  var itemsHtml = '';
+  try {
+    var items = typeof o.items === 'string' ? JSON.parse(o.items) : (o.items || []);
+    if (Array.isArray(items) && items.length) {
+      itemsHtml = '<div class="order-items-list">'
+        + items.map(function(it) {
+            return '<div class="order-item-row"><span>' + esc(it.name||it.product_name||'Item') + '</span><span>Qty: ' + (it.quantity||it.qty||1) + ' &nbsp;&middot;&nbsp; &#8377;' + Number(it.price||it.unit_price||0).toLocaleString('en-IN') + '</span></div>';
+          }).join('')
+        + '</div>';
+    }
+  } catch(_) { itemsHtml = '<p style="font-size:13px;color:var(--color-grey);">Unable to parse items.</p>'; }
+
+  /* ── Payment info block ── */
+  var payMethod  = o.payment_method  || 'razorpay';
+  var payStatus  = o.payment_status  || 'pending';
+  var payId      = o.razorpay_payment_id || '';
+  var coupon     = o.coupon_code     || '';
+  var discount   = Number(o.discount_amount || 0);
+
+  var payIdHtml = payId
+    ? '<a href="https://dashboard.razorpay.com/app/payments/' + payId + '" target="_blank" rel="noopener" style="color:#1A5FA8;font-size:12px;font-family:monospace;text-decoration:underline;">' + payId + ' ↗</a>'
+    : '<span style="color:var(--color-grey);font-size:12px;">—</span>';
+
+  var couponHtml = coupon
+    ? '<p style="font-size:13px;">Coupon: <strong>' + esc(coupon) + '</strong> &nbsp; Discount: <strong>&#8377;' + discount.toLocaleString('en-IN') + '</strong></p>'
+    : '';
+
+  var paymentBlock = '<div class="order-detail-group">'
+    + '<h4>Payment</h4>'
+    + '<p style="font-size:13px;">Method: <strong>' + esc(payMethod.toUpperCase()) + '</strong></p>'
+    + '<p style="font-size:13px;">Status: ' + paymentBadge(payStatus, payMethod) + '</p>'
+    + '<p style="font-size:13px;">Razorpay ID: ' + payIdHtml + '</p>'
+    + couponHtml
+    + '</div>';
+
+  return '<div class="order-detail-grid">'
+    + '<div class="order-detail-group"><h4>Customer</h4><p>' + esc(o.customer_name||'&mdash;') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_email||'&mdash;') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_phone||'&mdash;') + '</p></div>'
+    + '<div class="order-detail-group"><h4>Delivery Address</h4><p style="font-size:13px;">' + esc(o.address||'&mdash;') + '</p></div>'
+    + paymentBlock
+    + '</div>' + itemsHtml
+    + '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;"><span style="font-size:13px;font-weight:600;">Update Status:</span>'
+    + '<select class="status-select" onchange="updateOrderStatus(' + o.id + ',this.value)">'
+    + ['pending','confirmed','shipped','delivered','cancelled'].map(function(s) {
+        return '<option value="' + s + '" ' + ((o.status||'').toLowerCase()===s?'selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
+      }).join('')
+    + '</select></div>';
+}
+
+window.toggleOrderDetail = function(id) {
+  var det = document.getElementById('order-detail-' + id);
+  if (!det) return;
+  var wasOpen = det.style.display !== 'none';
+  document.querySelectorAll('.order-detail-row').forEach(function(r) { r.style.display = 'none'; });
+  document.querySelectorAll('.order-main-row').forEach(function(r) { r.style.background = ''; });
+  if (!wasOpen) {
+    det.style.display = 'table-row';
+    var mainRow = document.getElementById('order-row-' + id);
+    if (mainRow) mainRow.style.background = '#E8F1FB';
+  }
+};
+
+window.updateOrderStatus = async function(id, status) {
+  try {
+    var r = await sb.from('orders').update({ status }).eq('id', id);
+    if (r.error) throw r.error;
+    var idx = allOrders.findIndex(function(o) { return o.id === id; });
+    if (idx !== -1) allOrders[idx].status = status;
+    var mainRow = document.getElementById('order-row-' + id);
+    if (mainRow) {
+      var cell = mainRow.querySelector('td:nth-child(5)');
+      if (cell) cell.innerHTML = statusBadge(status);
+    }
+    showToast('Order status updated to ' + status, 'success');
+  } catch(err) { showToast('Status update failed: ' + err.message, 'error'); }
+};
+
+var ordersFilterTabs = document.getElementById('orders-filter-tabs');
+if (ordersFilterTabs) ordersFilterTabs.addEventListener('click', function(e) {
+  var tab = e.target.closest('.filter-tab');
+  if (!tab) return;
+  document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  tab.classList.add('active');
+  ordersFilter = tab.dataset.status;
+  renderOrders();
+});
+
+/* ── CUSTOMERS ── */
+async function loadCustomers() {
+  var tbody = document.getElementById('customers-tbody');
+  if (tbody) tbody.innerHTML = '<tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr>';
+  try {
+    var r = await sb.from('customers').select('*').order('first_seen',{ascending:false});
+    if (r.error) throw r.error;
+    var r2 = await sb.from('orders').select('id,customer_email,created_at');
+    var ordersByEmail = {};
+    (r2.data||[]).forEach(function(o) {
+      var em = (o.customer_email||'').toLowerCase();
+      if (!ordersByEmail[em]) ordersByEmail[em] = [];
+      ordersByEmail[em].push(o);
+    });
+    renderCustomers(r.data||[], ordersByEmail);
+  } catch(err) {
+    var t2 = document.getElementById('customers-tbody');
+    if (t2) t2.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128101;</div><p>No customers yet</p></div></td></tr>';
+    showToast('Customers load error: ' + err.message, 'error');
+  }
+}
+
+function renderCustomers(customers, ordersByEmail) {
+  var tbody = document.getElementById('customers-tbody');
+  if (!tbody) return;
+  if (!customers.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128101;</div><p>No customers yet</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = customers.map(function(c) {
+    var email  = (c.email||'').toLowerCase();
+    var orders = ordersByEmail[email] || [];
+    var lastTs = orders.length ? orders.reduce(function(a,b) { return a.created_at > b.created_at ? a : b; }).created_at : null;
+    return '<tr id="cust-row-' + c.id + '" style="cursor:pointer;" onclick="toggleCustDetail(' + c.id + ')">'
+      + '<td style="font-weight:600;">' + esc(c.name||'&mdash;') + '</td>'
+      + '<td style="font-size:13px;">' + esc(c.email||'&mdash;') + '</td>'
+      + '<td style="font-size:13px;">' + esc(c.phone||'&mdash;') + '</td>'
+      + '<td>' + orders.length + '</td>'
+      + '<td style="font-size:13px;color:var(--color-grey);">' + fmtDate(lastTs) + '</td>'
+      + '</tr>'
+      + '<tr id="cust-detail-' + c.id + '" class="customer-detail-row" style="display:none;"><td colspan="5">' + buildCustDetail(c, orders) + '</td></tr>';
+  }).join('');
+}
+
+function buildCustDetail(c, orders) {
+  if (!orders.length) return '<div style="padding:12px;font-size:14px;color:var(--color-grey);">No orders for this customer.</div>';
+  return '<div style="padding:8px 0;">'
+    + '<div style="font-size:13px;font-weight:600;margin-bottom:8px;">Order History (' + orders.length + ')</div>'
+    + '<div class="order-items-list">'
+    + orders.map(function(o) {
+        return '<div class="order-item-row"><span style="font-size:12px;color:var(--color-grey);font-family:monospace;">#' + String(o.id).slice(-8) + '</span><span style="font-size:13px;">' + fmtDate(o.created_at) + '</span></div>';
+      }).join('')
+    + '</div></div>';
+}
+
+window.toggleCustDetail = function(id) {
+  var det = document.getElementById('cust-detail-' + id);
+  if (!det) return;
+  var wasOpen = det.style.display !== 'none';
+  document.querySelectorAll('.customer-detail-row').forEach(function(r) { r.style.display = 'none'; });
+  document.querySelectorAll('#customers-tbody tr[id^="cust-row"]').forEach(function(r) { r.style.background = ''; });
+  if (!wasOpen) {
+    det.style.display = 'table-row';
+    var mr = document.getElementById('cust-row-' + id);
+    if (mr) mr.style.background = '#E8F1FB';
+  }
+};
+
+/* ── SETTINGS ── */
+async function loadSettings() {
+  try {
+    // New schema: key/value table — fetch all three rows
+    var r = await sb.from('settings').select('*');
+    if (r.error && r.error.code !== 'PGRST116') throw r.error;
+    var map = {};
+    (r.data || []).forEach(function(row) { map[row.key] = row.value; });
+    var snEl = document.getElementById('setting-site-name');
+    var spEl = document.getElementById('setting-phone');
+    var seEl = document.getElementById('setting-email');
+    if (snEl) snEl.value = map['site_name']     || 'Azzurra';
+    if (spEl) spEl.value = map['contact_phone'] || '+91 98 71 648 649';
+    if (seEl) seEl.value = map['contact_email'] || 'info@azzurrapharmaconutrition.com';
+  } catch(_) {
+    var snEl2 = document.getElementById('setting-site-name');
+    var spEl2 = document.getElementById('setting-phone');
+    var seEl2 = document.getElementById('setting-email');
+    if (snEl2) snEl2.value = 'Azzurra';
+    if (spEl2) spEl2.value = '+91 98 71 648 649';
+    if (seEl2) seEl2.value = 'info@azzurrapharmaconutrition.com';
+  }
+}
+
+var saveSettingsBtn = document.getElementById('btn-save-settings');
+if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', async function() {
+  var btn = document.getElementById('btn-save-settings');
+  if (!btn) return;
+  btn.disabled = true; btn.textContent = 'Saving\u2026';
+  try {
+    var snEl = document.getElementById('setting-site-name');
+    var spEl = document.getElementById('setting-phone');
+    var seEl = document.getElementById('setting-email');
+    // Upsert using key/value schema
+    var rows = [
+      { key: 'site_name',     value: snEl ? snEl.value.trim() : '' },
+      { key: 'contact_phone', value: spEl ? spEl.value.trim() : '' },
+      { key: 'contact_email', value: seEl ? seEl.value.trim() : '' },
+    ];
+    var r = await sb.from('settings').upsert(rows, { onConflict: 'key' });
+    if (r.error) throw r.error;
+    showToast('\u2713 Settings saved', 'success');
+  } catch(err) { showToast('Save failed: ' + err.message, 'error'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Save Settings'; } }
+});
+
+var clearSessionsBtn = document.getElementById('btn-clear-sessions');
+if (clearSessionsBtn) clearSessionsBtn.addEventListener('click', async function() {
+  if (!window.confirm('Sign out all admin sessions globally? You will be redirected to login.')) return;
+  try {
+    await sb.auth.signOut({ scope: 'global' });
+    window.location.replace('./admin-login.html');
+  } catch(err) { showToast('Failed: ' + err.message, 'error'); }
+});
+
+/* ── INITIAL LOAD ── */
+showSection('dashboard');
+
+} // end initAdmin
+</script>
+
+<!-- ========================================================
+     EVENTS ADMIN PANEL (HTML + Script)
+     ======================================================== -->
+
+<!-- Events slide panel -->
+<div class="slide-panel" id="event-panel" style="width:520px;">
+  <div class="panel-header">
+    <h3 id="event-panel-title">Add Event</h3>
+    <button class="btn-close-panel" id="btn-close-event-panel">&times;</button>
+  </div>
+  <div class="panel-body">
+    <form id="event-form" novalidate>
+      <input type="hidden" id="ev-id" />
+      <div class="form-group">
+        <label class="form-label">Event Title <span class="req">*</span></label>
+        <input type="text" id="ev-title" placeholder="e.g. Critical Care Nutrition Conference 2025" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Event Type</label>
+        <select id="ev-type">
+          <option value="Conference">Conference</option>
+          <option value="CME">CME</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Symposium">Symposium</option>
+          <option value="Product Launch">Product Launch</option>
+          <option value="Exhibition">Exhibition</option>
+          <option value="Webinar">Webinar</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Short Description</label>
+        <textarea id="ev-short-description" rows="2" placeholder="Brief description shown in cards…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Description</label>
+        <textarea id="ev-description" rows="4" placeholder="Full event details…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Event Date <span class="req">*</span></label>
+        <input type="date" id="ev-date" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time (optional)</label>
+        <input type="text" id="ev-time" placeholder="e.g. 9:00 AM – 5:00 PM" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location / Venue</label>
+        <input type="text" id="ev-location" placeholder="e.g. Hotel Taj, Hall A" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <input type="text" id="ev-city" placeholder="e.g. New Delhi" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Registration / Info URL</label>
+        <input type="url" id="ev-registration-url" placeholder="https://…" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Banner Image URL</label>
+        <input type="url" id="ev-banner-image-url" placeholder="https://res.cloudinary.com/…" />
+      </div>
+      <div style="display:flex;gap:24px;margin-bottom:16px;">
+        <label class="toggle-switch">
+          <input type="checkbox" id="ev-is-active" checked />
+          <span class="toggle-slider"></span>
+          Active (visible on site)
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="ev-is-featured" />
+          <span class="toggle-slider"></span>
+          Featured on Homepage
+        </label>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="submit" class="btn-primary" id="ev-save-btn">Save Event</button>
+        <button type="button" class="btn-secondary" id="ev-delete-btn" style="display:none;color:#FC8181;border-color:#FC8181;">Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EVENTS ADMIN — CRUD
+   Uses the shared adminSupabase client set up by authGuard.
+============================================================ */
+(function initEventsAdmin() {
+  var sb = window.adminSupabase;
+  if (!sb) { console.warn('[Admin] No adminSupabase client'); return; }
+
+  /* ── Helpers ── */
+  function showToastEv(msg, type) {
+    if (window.showToast) window.showToast(msg, type || 'info');
+    else console.log('[Events Admin]', msg);
+  }
+
+  function openEventPanel(title) {
+    var overlay = document.getElementById('panel-overlay');
+    var panel   = document.getElementById('event-panel');
+    if (overlay) overlay.classList.add('open');
+    if (panel)   panel.classList.add('open');
+    document.getElementById('event-panel-title').textContent = title;
+  }
+
+  function closeEventPanel() {
+    var overlay = document.getElementById('panel-overlay');
+    var panel   = document.getElementById('event-panel');
+    if (overlay) overlay.classList.remove('open');
+    if (panel)   panel.classList.remove('open');
+  }
+
+  function clearEventForm() {
+    document.getElementById('ev-id').value = '';
+    document.getElementById('ev-title').value = '';
+    document.getElementById('ev-type').value = 'Conference';
+    document.getElementById('ev-short-description').value = '';
+    document.getElementById('ev-description').value = '';
+    document.getElementById('ev-date').value = '';
+    document.getElementById('ev-time').value = '';
+    document.getElementById('ev-location').value = '';
+    document.getElementById('ev-city').value = '';
+    document.getElementById('ev-registration-url').value = '';
+    document.getElementById('ev-banner-image-url').value = '';
+    document.getElementById('ev-is-active').checked = true;
+    document.getElementById('ev-is-featured').checked = false;
+    document.getElementById('ev-delete-btn').style.display = 'none';
+    document.getElementById('ev-save-btn').textContent = 'Save Event';
+  }
+
+  function fillEventForm(ev) {
+    document.getElementById('ev-id').value = ev.id || '';
+    document.getElementById('ev-title').value = ev.title || '';
+    document.getElementById('ev-type').value = ev.event_type || 'Conference';
+    document.getElementById('ev-short-description').value = ev.short_description || '';
+    document.getElementById('ev-description').value = ev.description || '';
+    document.getElementById('ev-date').value = ev.date || '';
+    document.getElementById('ev-time').value = ev.time || '';
+    document.getElementById('ev-location').value = ev.location || '';
+    document.getElementById('ev-city').value = ev.city || '';
+    document.getElementById('ev-registration-url').value = ev.registration_url || '';
+    document.getElementById('ev-banner-image-url').value = ev.banner_image_url || '';
+    document.getElementById('ev-is-active').checked = ev.is_active !== false;
+    document.getElementById('ev-is-featured').checked = !!ev.is_featured;
+    document.getElementById('ev-delete-btn').style.display = '';
+  }
+
+  function formatShortDate(d) {
+    if (!d) return '—';
+    var dt = new Date(d + 'T00:00:00');
+    return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  /* ── Load events table ── */
+  async function loadEventsTable() {
+    var tbody = document.getElementById('events-tbody');
+    var countEl = document.getElementById('events-count');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><div class="spinner"></div></td></tr>';
+
+    try {
+      var { data, error } = await sb.from('events').select('*').order('date', { ascending: false });
+      if (error) throw error;
+      if (countEl) countEl.textContent = '(' + (data ? data.length : 0) + ')';
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🗓️</div><p>No events yet. Click "Add New Event" to create one.</p></div></td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(function(ev, i) {
+        var img = ev.banner_image_url
+          ? '<img src="' + ev.banner_image_url + '" class="prod-thumb" alt="" />'
+          : '<div class="prod-thumb-placeholder">🗓️</div>';
+        var activeBadge  = ev.is_active   ? '<span class="badge badge-instock">Active</span>'   : '<span class="badge badge-outofstock">Inactive</span>';
+        var featuredBadge = ev.is_featured ? '<span class="badge badge-confirmed">Yes</span>'   : '<span style="color:var(--color-grey);font-size:12px;">—</span>';
+        return '<tr>' +
+          '<td style="font-size:13px;color:var(--color-grey);">' + (i + 1) + '</td>' +
+          '<td>' + img + '</td>' +
+          '<td style="font-weight:600;max-width:200px;">' + (ev.title || '') + '</td>' +
+          '<td><span class="badge" style="background:#f0f4ff;color:#4A6FA5;">' + (ev.event_type || '—') + '</span></td>' +
+          '<td>' + formatShortDate(ev.date) + '</td>' +
+          '<td style="font-size:13px;">' + (ev.city || ev.location || '—') + '</td>' +
+          '<td>' + activeBadge + '</td>' +
+          '<td>' + featuredBadge + '</td>' +
+          '<td><button class="btn-icon ev-edit-btn" data-id="' + ev.id + '" title="Edit">✏️</button></td>' +
+        '</tr>';
+      }).join('');
+
+      tbody.querySelectorAll('.ev-edit-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.dataset.id;
+          var ev = data.find(function(e) { return String(e.id) === String(id); });
+          if (!ev) return;
+          clearEventForm();
+          fillEventForm(ev);
+          openEventPanel('Edit Event');
+        });
+      });
+
+    } catch(err) {
+      tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;color:var(--color-red);text-align:center;">Failed to load: ' + err.message + '</td></tr>';
+    }
+  }
+
+  /* ── Add button ── */
+  var addBtn = document.getElementById('btn-add-event');
+  if (addBtn) {
+    addBtn.addEventListener('click', function() {
+      clearEventForm();
+      openEventPanel('Add New Event');
+    });
+  }
+
+  /* ── Close button ── */
+  var closeBtn = document.getElementById('btn-close-event-panel');
+  if (closeBtn) closeBtn.addEventListener('click', closeEventPanel);
+
+  /* ── Save form ── */
+  var form = document.getElementById('event-form');
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var saveBtn = document.getElementById('ev-save-btn');
+      if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+
+      try {
+        var id = document.getElementById('ev-id').value;
+        var payload = {
+          title:             document.getElementById('ev-title').value.trim(),
+          event_type:        document.getElementById('ev-type').value,
+          short_description: document.getElementById('ev-short-description').value.trim(),
+          description:       document.getElementById('ev-description').value.trim(),
+          date:              document.getElementById('ev-date').value || null,
+          time:              document.getElementById('ev-time').value.trim() || null,
+          location:          document.getElementById('ev-location').value.trim() || null,
+          city:              document.getElementById('ev-city').value.trim() || null,
+          registration_url:  document.getElementById('ev-registration-url').value.trim() || null,
+          banner_image_url:  document.getElementById('ev-banner-image-url').value.trim() || null,
+          is_active:         document.getElementById('ev-is-active').checked,
+          is_featured:       document.getElementById('ev-is-featured').checked
+        };
+
+        var r;
+        if (id) {
+          r = await sb.from('events').update(payload).eq('id', id);
+        } else {
+          r = await sb.from('events').insert(payload);
+        }
+        if (r.error) throw r.error;
+
+        showToastEv('✓ Event saved', 'success');
+        closeEventPanel();
+        loadEventsTable();
+      } catch(err) {
+        showToastEv('Failed: ' + err.message, 'error');
+      } finally {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Event'; }
+      }
+    });
+  }
+
+  /* ── Delete ── */
+  var deleteBtn = document.getElementById('ev-delete-btn');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', async function() {
+      var id = document.getElementById('ev-id').value;
+      if (!id) return;
+      if (!window.confirm('Delete this event? This cannot be undone.')) return;
+
+      try {
+        var { error } = await sb.from('events').delete().eq('id', id);
+        if (error) throw error;
+        showToastEv('✓ Event deleted', 'success');
+        closeEventPanel();
+        loadEventsTable();
+      } catch(err) {
+        showToastEv('Delete failed: ' + err.message, 'error');
+      }
+    });
+  }
+
+  /* ── Expose load function for sidebar navigation ── */
+  window._loadEventsTable = loadEventsTable;
+
+  /* ── Hook into sidebar nav so table loads when tab is clicked ── */
+  document.querySelectorAll('.sidebar-link[data-section="events"]').forEach(function(link) {
+    link.addEventListener('click', function() {
+      setTimeout(loadEventsTable, 50); // slight delay so section is visible
+    });
+  });
+
+}());
+</script>
+
+<script src="assets/js/admin-addons.js"></script>
+</body>
+</html>

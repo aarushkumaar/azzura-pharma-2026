@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Clinically formulated pharmaconutrition products by Azzurra." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/cart.css" />
+  <style>
+    /* ── Product Detail Page Styles ───────────────────────────── */
+    :root {
+      --pd-gold:   #C9A84C;
+      --pd-green:  #48BB78;
+      --pd-red:    #FC8181;
+      --pd-border: #D1E3F8;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: 18px 0 0;
+      font-size: 13px;
+      color: var(--color-grey);
+    }
+    .breadcrumb a { color: var(--color-primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb span { margin: 0 6px; }
+
+    /* Page layout */
+    .pd-page { max-width: 1200px; margin: 0 auto; padding: 0 32px 80px; }
+    .pd-columns {
+      display: grid;
+      grid-template-columns: 45% 55%;
+      gap: 48px;
+      align-items: start;
+      padding-top: 24px;
+    }
+
+    /* ── GALLERY ── */
+    .pd-gallery {}
+    .pd-main-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f8fbff;
+      border: 1.5px solid var(--pd-border);
+      cursor: zoom-in;
+    }
+    .pd-main-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.3s ease;
+    }
+    .pd-main-img.fade { opacity: 0; }
+    .pd-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.9);
+      border: 1.5px solid var(--pd-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 2;
+    }
+    .pd-main-img-wrap:hover .pd-arrow { opacity: 1; }
+    .pd-arrow-left  { left: 10px; }
+    .pd-arrow-right { right: 10px; }
+    .pd-arrow:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .pd-img-counter {
+      text-align: center;
+      font-size: 12px;
+      color: var(--color-grey);
+      margin-top: 8px;
+    }
+    .pd-thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .pd-thumbs::-webkit-scrollbar { height: 4px; }
+    .pd-thumbs::-webkit-scrollbar-track { background: #f0f4fa; border-radius: 2px; }
+    .pd-thumbs::-webkit-scrollbar-thumb { background: var(--color-primary); border-radius: 2px; }
+    .pd-thumb {
+      flex-shrink: 0;
+      width: 70px; height: 70px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      background: #f8fbff;
+    }
+    .pd-thumb.active { border-color: var(--color-primary); }
+    .pd-thumb:hover { border-color: #a0c4f0; }
+
+    /* ── INFO ── */
+    .pd-info { padding-top: 4px; }
+    .pd-series-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--color-primary-light);
+      color: var(--color-primary);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+    .pd-name {
+      font-family: var(--font-heading);
+      font-size: 28px;
+      line-height: 1.25;
+      color: var(--color-dark);
+      margin-bottom: 6px;
+    }
+    .pd-flavour {
+      font-style: italic;
+      color: var(--color-grey);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    /* Rating */
+    .pd-rating-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .pd-stars { color: #f6b73c; font-size: 18px; letter-spacing: 2px; }
+    .pd-rating-num { font-size: 14px; font-weight: 600; }
+    .pd-review-link { font-size: 13px; color: var(--color-primary); cursor: pointer; text-decoration: underline; }
+
+    /* Price */
+    .pd-price-block { margin-bottom: 24px; }
+    .pd-price {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .pd-price-contact {
+      font-size: 15px;
+      color: var(--color-grey);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .pd-price-contact a {
+      color: #25D366;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .pd-price-contact a:hover { text-decoration: underline; }
+
+    /* Qty */
+    .pd-qty-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .pd-qty-label { font-size: 14px; font-weight: 600; }
+    .pd-qty-ctrl {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--pd-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .pd-qty-btn {
+      width: 36px; height: 36px;
+      background: #f8fbff;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pd-qty-btn:hover { background: var(--color-primary-light); }
+    .pd-qty-input {
+      width: 44px; height: 36px;
+      border: none;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    /* Buttons */
+    .pd-btn-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .pd-btn-cart {
+      width: 100%;
+      padding: 14px;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .pd-btn-cart:hover { background: var(--color-primary-dark); transform: translateY(-1px); }
+    .pd-btn-cart.added { background: var(--pd-green); }
+    .pd-btn-now {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .pd-btn-now:hover { background: var(--color-primary-light); }
+
+    /* Short desc */
+    .pd-short-desc {
+      font-size: 14px;
+      color: var(--color-grey);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    /* Trust badges */
+    .pd-trust {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .pd-trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-dark);
+    }
+    .pd-trust-badge span { color: var(--pd-green); font-size: 14px; }
+
+    /* Tags */
+    .pd-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .pd-tag {
+      padding: 4px 12px;
+      background: #f0f4fa;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--color-grey);
+    }
+
+    /* ── TABS ── */
+    .pd-tabs-section {
+      margin-top: 48px;
+      border-top: 1.5px solid var(--pd-border);
+    }
+    .pd-tab-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1.5px solid var(--pd-border);
+      overflow-x: auto;
+    }
+    .pd-tab-btn {
+      padding: 14px 20px;
+      border: none;
+      background: none;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-grey);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -1.5px;
+      white-space: nowrap;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .pd-tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+    .pd-tab-btn:hover { color: var(--color-primary); }
+    .pd-tab-panel { display: none; padding: 32px 0; }
+    .pd-tab-panel.active { display: block; }
+
+    /* Benefits list */
+    .pd-benefits-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .pd-benefits-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .pd-benefits-list li::before {
+      content: '✓';
+      color: var(--color-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Nutrition table */
+    .pd-nutrition-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .pd-nutrition-table th {
+      background: var(--color-primary);
+      color: #fff;
+      padding: 10px 16px;
+      text-align: left;
+    }
+    .pd-nutrition-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--pd-border);
+    }
+    .pd-nutrition-table tr:hover td { background: #f8fbff; }
+
+    /* Reviews */
+    .pd-reviews-grid { display: flex; flex-direction: column; gap: 16px; }
+    .pd-review-card {
+      background: #f8fbff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--pd-border);
+    }
+    .pd-review-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .pd-reviewer-name { font-weight: 700; font-size: 14px; }
+    .pd-review-date { font-size: 12px; color: var(--color-grey); }
+    .pd-review-stars { color: #f6b73c; font-size: 14px; margin-bottom: 6px; }
+    .pd-review-text { font-size: 14px; color: var(--color-grey); line-height: 1.6; }
+    .pd-write-review-btn {
+      margin-top: 20px;
+      padding: 10px 24px;
+      background: transparent;
+      border: 1.5px solid var(--color-primary);
+      border-radius: 8px;
+      color: var(--color-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Related products */
+    .pd-related { margin-top: 64px; }
+    .pd-related-title {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+    .pd-related-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .pd-rel-card {
+      border-radius: 12px;
+      border: 1px solid var(--pd-border);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: #fff;
+    }
+    .pd-rel-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
+    .pd-rel-card img {
+      width: 100%; height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+    .pd-rel-card-body { padding: 12px; }
+    .pd-rel-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .pd-rel-series { font-size: 11px; color: var(--color-grey); }
+
+    /* Lightbox */
+    .pd-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .pd-lightbox.open { display: flex; }
+    .pd-lb-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .pd-lb-close {
+      position: absolute;
+      top: 20px; right: 24px;
+      background: none; border: none;
+      color: #fff; font-size: 32px;
+      cursor: pointer; line-height: 1;
+    }
+    .pd-lb-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pd-lb-arrow:hover { background: rgba(255,255,255,0.3); }
+    .pd-lb-arrow-left  { left: 20px; }
+    .pd-lb-arrow-right { right: 20px; }
+
+    /* Toast */
+    #pd-toast {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: #fff;
+      border-left: 4px solid var(--pd-green);
+      border-radius: 10px;
+      padding: 14px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.14);
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+      z-index: 9000;
+      min-width: 220px;
+    }
+    #pd-toast.show { display: block; animation: toastIn 0.3s ease; }
+    @keyframes toastIn { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+
+    /* Loading state */
+    .pd-loading { text-align: center; padding: 80px 20px; color: var(--color-grey); }
+    .pd-spinner {
+      display: inline-block;
+      width: 40px; height: 40px;
+      border: 3px solid var(--pd-border);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pd-error { text-align: center; padding: 80px 20px; }
+
+    /* Skeleton */
+    .pd-skel {
+      background: linear-gradient(90deg, #f0f4fa 25%, #e8f0fb 50%, #f0f4fa 75%);
+      background-size: 400% 100%;
+      animation: skel 1.2s ease infinite;
+      border-radius: 8px;
+    }
+    @keyframes skel { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .pd-columns { grid-template-columns: 1fr; gap: 24px; }
+      .pd-related-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .pd-page { padding: 0 16px 60px; }
+      .pd-name { font-size: 22px; }
+      .pd-related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .pd-tab-btn { padding: 12px 14px; font-size: 13px; }
+    }
+    
+    /* Notify Me styles */
+    .pd-btn-notify {
+      width: 100%;
+      padding: 14px;
+      background: #4A5568;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+      margin-bottom: 12px;
+    }
+    .pd-btn-notify:hover { background: #2D3748; transform: translateY(-1px); }
+    .pd-notify-form-wrap {
+      padding: 18px;
+      background: #f8fbff;
+      border: 1.5px solid var(--pd-border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .pd-notify-input {
+      width: 100%;
+      padding: 12px;
+      border: 1.5px solid var(--pd-border);
+      border-radius: 8px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+    }
+    .pd-notify-input:focus { border-color: var(--color-primary); }
+    .pd-notify-submit {
+      width: 100%;
+      padding: 12px;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .pd-notify-submit:hover { background: var(--color-primary-dark); }
+    .pd-notify-msg {
+      font-size: 13px;
+      margin-top: 8px;
+      min-height: 18px;
+      font-weight: 600;
+    }
+  </style>
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn active">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html" class="active">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── MAIN ── -->
+  <main id="pd-main" style="padding-top:80px;">
+    <div class="pd-page">
+      <div id="pd-content">
+        <div class="pd-loading">
+          <div class="pd-spinner"></div>
+          <p>Loading product…</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── LIGHTBOX ── -->
+  <div class="pd-lightbox" id="pd-lightbox" role="dialog" aria-modal="true" aria-label="Image lightbox">
+    <button class="pd-lb-close" id="lb-close" aria-label="Close lightbox">&times;</button>
+    <button class="pd-lb-arrow pd-lb-arrow-left" id="lb-prev" aria-label="Previous image">&#8592;</button>
+    <img class="pd-lb-img" id="lb-img" src="" alt="Product image" />
+    <button class="pd-lb-arrow pd-lb-arrow-right" id="lb-next" aria-label="Next image">&#8594;</button>
+  </div>
+
+  <!-- ── TOAST ── -->
+  <div id="pd-toast"></div>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
+        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="about.html"     class="footer__link">About</a></li>
+          <li><a href="science.html"   class="footer__link">Science</a></li>
+          <li><a href="productss.html" class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Contact</h3>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📍</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF,<br />Faridabad (NCR-Delhi) — 121006, India</p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <p class="footer__contact-text"><a href="tel:+919871648649">+91 98 71 648 649</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <!-- ── SCRIPTS ── -->
+  <script src="assets/js/cart-utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-products.js"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    /* ─── Config ─────────────────────────────────────────── */
+    var SUPABASE_URL      = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
+    var CLOUD   = 'dfiskvjbl';
+    var WA_NUM  = '919871648649';
+
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    /* ─── State ──────────────────────────────────────────── */
+    var product      = null;
+    var images       = [];
+    var currentIdx   = 0;
+    var lbCurrentIdx = 0;
+
+    /* ─── Helpers ────────────────────────────────────────── */
+    function esc(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+    function parseImages(raw) {
+      if (!raw) return [];
+      if (Array.isArray(raw)) return raw;
+      try { var a = JSON.parse(raw); return Array.isArray(a) ? a : []; }
+      catch(_) { return typeof raw === 'string' && raw.startsWith('http') ? [raw] : []; }
+    }
+    function parseTags(raw) {
+      if (!raw) return [];
+      return String(raw).split(',').map(function(t) { return t.trim(); }).filter(Boolean);
+    }
+    function cldUrl(url, w) {
+      if (!url || url.indexOf('res.cloudinary.com') === -1) return url;
+      return url.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_' + w + '/');
+    }
+    function showToast(msg) {
+      var t = document.getElementById('pd-toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 3000);
+    }
+
+    /* ─── Parse URL ──────────────────────────────────────── */
+    function getProductId() {
+      var params = new URLSearchParams(window.location.search);
+      return params.get('id') || params.get('slug') || null;
+    }
+
+    /* ─── Fetch product ──────────────────────────────────── */
+    async function fetchProduct(idOrSlug) {
+      // Try numeric id first
+      if (/^\d+$/.test(String(idOrSlug))) {
+        var r = await sb.from('products').select('*').eq('id', idOrSlug).single();
+        if (!r.error && r.data) return r.data;
+      }
+      // Try slug (name search)
+      var r2 = await sb.from('products').select('*').ilike('name', idOrSlug.replace(/-/g, ' ')).limit(1);
+      if (!r2.error && r2.data && r2.data.length) return r2.data[0];
+      return null;
+    }
+
+    /* ─── Gallery ────────────────────────────────────────── */
+    function renderGallery() {
+      var mainImg    = document.getElementById('pd-main-img');
+      var counter    = document.getElementById('pd-img-counter');
+      var thumbsEl   = document.getElementById('pd-thumbs');
+      if (!mainImg) return;
+
+      function setImage(idx) {
+        currentIdx = idx;
+        var url = images[idx] || '';
+        mainImg.classList.add('fade');
+        setTimeout(function() {
+          mainImg.src = cldUrl(url, 800);
+          mainImg.classList.remove('fade');
+        }, 150);
+        if (counter) counter.textContent = (idx + 1) + ' / ' + images.length;
+        // Update thumbs
+        document.querySelectorAll('.pd-thumb').forEach(function(t, i) {
+          t.classList.toggle('active', i === idx);
+        });
+      }
+
+      // Build thumbnails
+      if (thumbsEl && images.length > 1) {
+        thumbsEl.innerHTML = images.map(function(url, i) {
+          return '<img class="pd-thumb' + (i === 0 ? ' active' : '') + '"' +
+            ' src="' + esc(cldUrl(url, 200)) + '"' +
+            ' alt="View ' + (i+1) + '"' +
+            ' loading="lazy"' +
+            ' data-idx="' + i + '" />';
+        }).join('');
+        thumbsEl.addEventListener('click', function(e) {
+          var t = e.target.closest('.pd-thumb');
+          if (t) setImage(parseInt(t.dataset.idx, 10));
+        });
+      }
+
+      // Arrow navigation
+      var btnLeft  = document.getElementById('pd-arrow-left');
+      var btnRight = document.getElementById('pd-arrow-right');
+      if (btnLeft)  btnLeft.addEventListener('click',  function() { setImage((currentIdx - 1 + images.length) % images.length); });
+      if (btnRight) btnRight.addEventListener('click', function() { setImage((currentIdx + 1) % images.length); });
+
+      // Click to open lightbox
+      var wrap = document.getElementById('pd-main-wrap');
+      if (wrap) wrap.addEventListener('click', function() { openLightbox(currentIdx); });
+
+      // Init
+      setImage(0);
+
+      // Expose for lightbox
+      window._pdSetImage = setImage;
+    }
+
+    /* ─── Lightbox ───────────────────────────────────────── */
+    function openLightbox(idx) {
+      lbCurrentIdx = idx;
+      var lb  = document.getElementById('pd-lightbox');
+      var img = document.getElementById('lb-img');
+      if (!lb || !img) return;
+      img.src = cldUrl(images[idx] || '', 1200);
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      var lb = document.getElementById('pd-lightbox');
+      if (lb) lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function lbNavigate(dir) {
+      lbCurrentIdx = (lbCurrentIdx + dir + images.length) % images.length;
+      var img = document.getElementById('lb-img');
+      if (img) img.src = cldUrl(images[lbCurrentIdx] || '', 1200);
+    }
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click',  function() { lbNavigate(-1); });
+    document.getElementById('lb-next').addEventListener('click',  function() { lbNavigate(1); });
+    document.getElementById('pd-lightbox').addEventListener('click', function(e) {
+      if (e.target === this) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e) {
+      var lb = document.getElementById('pd-lightbox');
+      if (!lb || !lb.classList.contains('open')) return;
+      if (e.key === 'Escape')      closeLightbox();
+      if (e.key === 'ArrowLeft')   lbNavigate(-1);
+      if (e.key === 'ArrowRight')  lbNavigate(1);
+    });
+    // Touch swipe for lightbox
+    var touchStartX = null;
+    document.getElementById('pd-lightbox').addEventListener('touchstart', function(e) { touchStartX = e.touches[0].clientX; });
+    document.getElementById('pd-lightbox').addEventListener('touchend', function(e) {
+      if (touchStartX === null) return;
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) lbNavigate(dx < 0 ? 1 : -1);
+      touchStartX = null;
+    });
+
+    /* ─── Cart ───────────────────────────────────────────── */
+    function addToCartAndToast(qty) {
+      if (!product) return;
+      var cartItem = {
+        id:       String(product.id),
+        name:     product.name,
+        price:    Number(product.price_inr) || 0,
+        image:    images[0] || '',
+        series:   product.series || '',
+        quantity: qty
+      };
+      if (typeof window.azzuraAddToCart === 'function') {
+        window.azzuraAddToCart(cartItem, qty);
+      } else {
+        try {
+          var cart = JSON.parse(localStorage.getItem('azzurra_cart') || '[]');
+          var ex = cart.find(function(i) { return i.id === cartItem.id; });
+          if (ex) { ex.quantity = (ex.quantity || 1) + qty; }
+          else cart.push(cartItem);
+          localStorage.setItem('azzurra_cart', JSON.stringify(cart));
+        } catch(_) {}
+      }
+      showToast('✓ ' + product.name + ' added to cart');
+      var btn = document.getElementById('pd-cart-btn');
+      if (btn) {
+        btn.textContent = '✓ Added!';
+        btn.classList.add('added');
+        setTimeout(function() {
+          btn.textContent = '🛒 Add to Cart';
+          btn.classList.remove('added');
+        }, 1500);
+      }
+    }
+
+    /* ─── Render product ─────────────────────────────────── */
+    function renderProduct(p) {
+      product = p;
+      images  = parseImages(p.images);
+      var tags = parseTags(p.tags);
+
+      /* Update page title */
+      document.title = esc(p.name) + ' — Azzurra Pharmaconutrition';
+
+      /* Price block */
+      var priceHtml;
+      if (p.price_inr && Number(p.price_inr) > 0) {
+        priceHtml = '<div class="pd-price">₹' + Number(p.price_inr).toLocaleString('en-IN') + '</div>';
+      } else {
+        priceHtml = '<div class="pd-price-contact">' +
+          'Contact for Price &nbsp;' +
+          '<a href="https://wa.me/' + WA_NUM + '?text=I\'m interested in ' + encodeURIComponent(p.name) + '" target="_blank" rel="noopener">' +
+          '💬 WhatsApp</a></div>';
+      }
+
+      /* Main image */
+      var mainImgHtml;
+      if (images.length > 0) {
+        mainImgHtml = '<img id="pd-main-img" class="pd-main-img" src="' + esc(cldUrl(images[0], 800)) + '" alt="' + esc(p.name) + '" loading="eager" />';
+      } else {
+        mainImgHtml = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;color:#1A5FA8;opacity:.3;">📦</div>';
+      }
+
+      /* Tags HTML */
+      var tagsHtml = tags.length
+        ? '<div class="pd-tags">' + tags.map(function(t) { return '<span class="pd-tag">' + esc(t) + '</span>'; }).join('') + '</div>'
+        : '';
+
+      /* Build full HTML */
+      var html = '' +
+        '<nav class="breadcrumb">' +
+          '<a href="index.html">Home</a><span>&rsaquo;</span>' +
+          '<a href="productss.html">Shop</a><span>&rsaquo;</span>' +
+          '<span>' + esc(p.name) + '</span>' +
+        '</nav>' +
+        '<div class="pd-columns">' +
+
+          /* LEFT — Gallery */
+          '<div class="pd-gallery">' +
+            '<div class="pd-main-img-wrap" id="pd-main-wrap">' +
+              mainImgHtml +
+              '<button class="pd-arrow pd-arrow-left"  id="pd-arrow-left"  aria-label="Previous image">&#8592;</button>' +
+              '<button class="pd-arrow pd-arrow-right" id="pd-arrow-right" aria-label="Next image">&#8594;</button>' +
+            '</div>' +
+            '<p class="pd-img-counter" id="pd-img-counter">1 / ' + Math.max(1, images.length) + '</p>' +
+            '<div class="pd-thumbs" id="pd-thumbs"></div>' +
+          '</div>' +
+
+          /* RIGHT — Info */
+          '<div class="pd-info">' +
+            '<h1 class="pd-name">' + esc(p.name) + '</h1>' +
+            (p.flavour ? '<p class="pd-flavour">' + esc(p.flavour) + ' Flavour</p>' : '') +
+            '<div class="pd-rating-row">' +
+              '<span class="pd-stars">★★★★☆</span>' +
+              '<span class="pd-rating-num">4.2</span>' +
+              '<a class="pd-review-link" onclick="document.getElementById(\'tab-reviews\').click();">(38 reviews)</a>' +
+            '</div>' +
+            '<div class="pd-price-block">' + priceHtml + '</div>' +
+            (p.in_stock === false
+              ? '<button class="pd-btn-notify" id="pd-notify-btn">Notify Me</button>' +
+                '<div class="pd-notify-form-wrap" id="pd-notify-form" style="display:none;">' +
+                  '<input class="pd-notify-input" id="pd-notify-email" type="email" placeholder="Enter your email" />' +
+                  '<button class="pd-notify-submit" id="pd-notify-submit">Submit</button>' +
+                  '<div class="pd-notify-msg" id="pd-notify-msg"></div>' +
+                '</div>'
+              : '<div class="pd-qty-row">' +
+                  '<span class="pd-qty-label">Quantity</span>' +
+                  '<div class="pd-qty-ctrl">' +
+                    '<button class="pd-qty-btn" id="pd-qty-minus" aria-label="Decrease quantity">−</button>' +
+                    '<input class="pd-qty-input" id="pd-qty" type="number" value="1" min="1" max="10" readonly />' +
+                    '<button class="pd-qty-btn" id="pd-qty-plus"  aria-label="Increase quantity">+</button>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="pd-btn-row">' +
+                  '<button class="pd-btn-cart" id="pd-cart-btn">🛒 Add to Cart</button>' +
+                  '<button class="pd-btn-now" id="pd-buynow-btn">Buy Now</button>' +
+                '</div>') +
+            (p.short_description ? '<p class="pd-short-desc">' + esc(p.short_description) + '</p>' : '') +
+            '<div class="pd-trust">' +
+              '<div class="pd-trust-badge"><span>✓</span> Clinically Tested</div>' +
+              '<div class="pd-trust-badge"><span>✓</span> Made in India</div>' +
+              '<div class="pd-trust-badge"><span>✓</span> USA Collaboration</div>' +
+            '</div>' +
+            tagsHtml +
+          '</div>' +
+
+        '</div>' + // pd-columns
+
+        /* TABS */
+        '<div class="pd-tabs-section">' +
+          '<div class="pd-tab-nav" id="pd-tab-nav">' +
+            '<button class="pd-tab-btn active" data-tab="overview" id="tab-overview">Overview</button>' +
+            '<button class="pd-tab-btn" data-tab="ingredients" id="tab-ingredients">Ingredients</button>' +
+            '<button class="pd-tab-btn" data-tab="how-to-use">How to Use</button>' +
+            '<button class="pd-tab-btn" data-tab="nutrition">Nutrition Facts</button>' +
+            '<button class="pd-tab-btn" data-tab="reviews" id="tab-reviews">Reviews</button>' +
+          '</div>' +
+          buildTabPanel('overview', buildBenefits(p.benefits)) +
+          buildTabPanel('ingredients', p.ingredients
+            ? '<p style="font-size:15px;line-height:1.8;color:var(--color-grey);">' + esc(p.ingredients).replace(/\n/g,'<br/>') + '</p>'
+            : '<p style="color:var(--color-grey);">Detailed ingredient list coming soon.</p>') +
+          buildTabPanel('how-to-use', p.how_to_use
+            ? '<p style="font-size:15px;line-height:1.8;">' + esc(p.how_to_use).replace(/\n/g,'<br/>') + '</p>'
+            : '<p style="color:var(--color-grey);">Usage instructions coming soon. Please consult your healthcare provider.</p>') +
+          buildTabPanel('nutrition', buildNutritionTable(p.nutrition_facts)) +
+          buildTabPanel('reviews', buildReviews()) +
+        '</div>' +
+
+        '<div class="pd-related" id="pd-related">' +
+          '<h2 class="pd-related-title">You Might Also Like</h2>' +
+          '<div class="pd-related-grid" id="pd-related-grid">' +
+            '<div style="color:var(--color-grey);font-size:14px;">Loading related products…</div>' +
+          '</div>' +
+        '</div>';
+
+      document.getElementById('pd-content').innerHTML = html;
+
+      /* Wire up interactions */
+      renderGallery();
+      wireQty();
+      wireButtons();
+      wireTabs();
+      loadRelated(p);
+    }
+
+    function buildTabPanel(id, contentHtml) {
+      return '<div class="pd-tab-panel' + (id === 'overview' ? ' active' : '') + '" data-tab="' + id + '">' +
+        contentHtml + '</div>';
+    }
+
+    function buildBenefits(raw) {
+      if (!raw || !raw.trim()) return '<p style="color:var(--color-grey);">Product benefits coming soon.</p>';
+      var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+      return '<ul class="pd-benefits-list">' +
+        lines.map(function(l) { return '<li>' + esc(l) + '</li>'; }).join('') +
+        '</ul>';
+    }
+
+    function buildNutritionTable(raw) {
+      if (!raw || !raw.trim()) return '<p style="color:var(--color-grey);">Nutrition facts coming soon.</p>';
+      // Simple format: each line "Nutrient: value"
+      var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+      return '<table class="pd-nutrition-table">' +
+        '<thead><tr><th>Nutrient</th><th>Per Serving</th></tr></thead>' +
+        '<tbody>' +
+        lines.map(function(l) {
+          var parts = l.split(':');
+          var nutrient = parts[0] ? parts[0].trim() : l;
+          var value    = parts[1] ? parts[1].trim() : '—';
+          return '<tr><td>' + esc(nutrient) + '</td><td>' + esc(value) + '</td></tr>';
+        }).join('') +
+        '</tbody></table>';
+    }
+
+    function buildReviews() {
+      var reviews = [
+        { name: 'Dr. S. Mehta', stars: 5, date: 'June 2025', text: 'Prescribed this for post-surgical patients, excellent tolerance and recovery outcomes. Highly recommend for clinical nutrition support.' },
+        { name: 'Dietitian R. Kapoor', stars: 5, date: 'May 2025', text: 'Outstanding product quality. The formulation is clinically sound and my patients have shown measurable improvement in nutritional markers.' },
+        { name: 'Ms. Priya V.', stars: 4, date: 'April 2025', text: 'Good product, mixes well and tastes pleasant. Noticed improvement in energy levels after two weeks of consistent use.' },
+        { name: 'Dr. A. Sharma', stars: 5, date: 'March 2025', text: 'Excellent pharmaconutrition formula. The clinical evidence supporting this product is solid. Recommended to multiple patients.' },
+      ];
+      return '<div class="pd-reviews-grid">' +
+        reviews.map(function(r) {
+          return '<div class="pd-review-card">' +
+            '<div class="pd-review-header">' +
+              '<span class="pd-reviewer-name">' + esc(r.name) + '</span>' +
+              '<span class="pd-review-date">' + r.date + '</span>' +
+            '</div>' +
+            '<div class="pd-review-stars">' + '★'.repeat(r.stars) + (r.stars < 5 ? '☆'.repeat(5-r.stars) : '') + '</div>' +
+            '<p class="pd-review-text">' + esc(r.text) + '</p>' +
+          '</div>';
+        }).join('') +
+        '</div>' +
+        '<button class="pd-write-review-btn" style="margin-top:20px;" onclick="alert(\'Review submission coming soon!\')">Write a Review</button>';
+    }
+
+    /* ─── Qty ────────────────────────────────────────────── */
+    function wireQty() {
+      var input = document.getElementById('pd-qty');
+      var minus = document.getElementById('pd-qty-minus');
+      var plus  = document.getElementById('pd-qty-plus');
+      if (!input) return;
+      if (minus) minus.addEventListener('click', function() {
+        var v = parseInt(input.value, 10) || 1;
+        if (v > 1) input.value = v - 1;
+      });
+      if (plus) plus.addEventListener('click', function() {
+        var v = parseInt(input.value, 10) || 1;
+        if (v < 10) input.value = v + 1;
+      });
+    }
+
+    /* ─── Buttons ────────────────────────────────────────── */
+    function wireButtons() {
+      var cartBtn  = document.getElementById('pd-cart-btn');
+      var buyBtn   = document.getElementById('pd-buynow-btn');
+      var qtyInput = document.getElementById('pd-qty');
+      if (cartBtn) cartBtn.addEventListener('click', function() {
+        addToCartAndToast(parseInt(qtyInput ? qtyInput.value : 1, 10) || 1);
+      });
+      if (buyBtn) buyBtn.addEventListener('click', function() {
+        addToCartAndToast(parseInt(qtyInput ? qtyInput.value : 1, 10) || 1);
+        setTimeout(function() { window.location.href = 'cart.html'; }, 300);
+      });
+
+      var notifyBtn = document.getElementById('pd-notify-btn');
+      var notifyForm = document.getElementById('pd-notify-form');
+      var notifySubmit = document.getElementById('pd-notify-submit');
+      var notifyEmail = document.getElementById('pd-notify-email');
+      var notifyMsg = document.getElementById('pd-notify-msg');
+
+      if (notifyBtn && notifyForm) {
+        notifyBtn.addEventListener('click', function() {
+          var isHidden = notifyForm.style.display === 'none';
+          notifyForm.style.display = isHidden ? 'block' : 'none';
+          if (isHidden && notifyEmail) notifyEmail.focus();
+        });
+      }
+      if (notifySubmit && notifyEmail && notifyMsg) {
+        notifySubmit.addEventListener('click', async function() {
+          var email = notifyEmail.value.trim();
+          if (!email || email.indexOf('@') === -1) {
+            notifyMsg.textContent = 'Please enter a valid email.';
+            notifyMsg.style.color = '#FC8181';
+            return;
+          }
+          notifySubmit.disabled = true;
+          notifySubmit.textContent = 'Sending...';
+          notifyMsg.textContent = '';
+          
+          var success = false;
+          if (window.submitNotifyMe) {
+            success = await window.submitNotifyMe(product.id, product.name, email);
+          } else {
+            try {
+              var res = await fetch(SUPABASE_URL + '/rest/v1/notify_me_requests', {
+                method: 'POST',
+                headers: {
+                  'apikey':        SUPABASE_ANON_KEY,
+                  'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                  'Content-Type':  'application/json',
+                  'Accept':        'application/json'
+                },
+                body: JSON.stringify({
+                  product_id:   product.id,
+                  product_name: product.name,
+                  email:        email
+                })
+              });
+              success = res.ok;
+            } catch(_) {}
+          }
+          
+          if (success) {
+            notifyMsg.textContent = '✓ Notification request saved!';
+            notifyMsg.style.color = '#48BB78';
+            notifyEmail.value = '';
+            setTimeout(function() {
+              notifyForm.style.display = 'none';
+              notifyBtn.textContent = '✓ Notified';
+              notifyBtn.disabled = true;
+            }, 1500);
+          } else {
+            notifyMsg.textContent = 'Failed to submit. Please try again.';
+            notifyMsg.style.color = '#FC8181';
+            notifySubmit.disabled = false;
+            notifySubmit.textContent = 'Submit';
+          }
+        });
+      }
+    }
+
+
+    /* ─── Tabs ───────────────────────────────────────────── */
+    function wireTabs() {
+      var nav = document.getElementById('pd-tab-nav');
+      if (!nav) return;
+      nav.addEventListener('click', function(e) {
+        var btn = e.target.closest('.pd-tab-btn');
+        if (!btn) return;
+        var tabId = btn.dataset.tab;
+        document.querySelectorAll('.pd-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.pd-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        var panel = document.querySelector('.pd-tab-panel[data-tab="' + tabId + '"]');
+        if (panel) panel.classList.add('active');
+      });
+    }
+
+    /* ─── Related products ───────────────────────────────── */
+    async function loadRelated(p) {
+      var grid = document.getElementById('pd-related-grid');
+      if (!grid) return;
+      try {
+        var r = await sb.from('products')
+          .select('id,name,series,images')
+          .eq('series', p.series || '')
+          .neq('id', p.id)
+          .limit(4);
+        if (r.error || !r.data || !r.data.length) {
+          // Fallback: get any 4 products
+          var r2 = await sb.from('products').select('id,name,series,images').neq('id', p.id).limit(4);
+          if (r2.error || !r2.data || !r2.data.length) {
+            grid.innerHTML = '<p style="color:var(--color-grey);font-size:14px;">No related products found.</p>';
+            return;
+          }
+          r = r2;
+        }
+        grid.innerHTML = r.data.map(function(rp) {
+          var rpImgs = parseImages(rp.images);
+          var rpImg  = rpImgs[0] ? cldUrl(rpImgs[0], 400) : '';
+          return '<div class="pd-rel-card" onclick="location.href=\'product-detail.html?id=' + rp.id + '\'">' +
+            (rpImg ? '<img src="' + esc(rpImg) + '" alt="' + esc(rp.name) + '" loading="lazy" />' : '<div style="height:160px;background:#f0f4fa;display:flex;align-items:center;justify-content:center;font-size:32px;">📦</div>') +
+            '<div class="pd-rel-card-body"><div class="pd-rel-name">' + esc(rp.name) + '</div><div class="pd-rel-series">' + esc(rp.series || '') + '</div></div>' +
+          '</div>';
+        }).join('');
+      } catch(_) {
+        grid.innerHTML = '<p style="color:var(--color-grey);">Could not load related products.</p>';
+      }
+    }
+
+    /* ─── Error state ────────────────────────────────────── */
+    function renderError(msg) {
+      document.getElementById('pd-content').innerHTML =
+        '<div class="pd-error">' +
+          '<div style="font-size:48px;margin-bottom:20px;">🔍</div>' +
+          '<h2 style="font-family:var(--font-heading);margin-bottom:12px;">Product Not Found</h2>' +
+          '<p style="color:var(--color-grey);margin-bottom:24px;">' + esc(msg || 'The product you\'re looking for could not be found.') + '</p>' +
+          '<a href="productss.html" style="padding:12px 28px;background:var(--color-primary);color:#fff;border-radius:100px;text-decoration:none;font-weight:700;">Browse All Products</a>' +
+        '</div>';
+    }
+
+    /* ─── Boot ───────────────────────────────────────────── */
+    async function boot() {
+      var id = getProductId();
+      if (!id) { renderError('No product ID specified in the URL.'); return; }
+
+      try {
+        var p = await fetchProduct(id);
+        if (!p) { renderError('Product #' + id + ' was not found.'); return; }
+        renderProduct(p);
+      } catch(err) {
+        renderError('Failed to load product: ' + err.message);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', boot);
+    } else {
+      boot();
+    }
+
+  }());
+  </script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

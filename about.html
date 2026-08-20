@@ -1,0 +1,421 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Azzurra Pharmaconutrition Pvt. Ltd.</title>
+  <meta name="description" content="Learn about Azzurra Pharmaconutrition — our story, vision, mission, and leadership team. Founded in 2014, in technical collaboration with Azzurra Pharmaconutrition, USA." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about" class="active">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+  <!-- ========================================================
+       PAGE HERO
+       ======================================================== -->
+  <header class="page-hero">
+    <div class="container">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>About</span>
+      </nav>
+      <div class="page-hero__rule" aria-hidden="true"></div>
+      <h1 class="page-hero__heading">About Azzurra</h1>
+    </div>
+  </header>
+
+
+  <!-- ========================================================
+       OUR STORY — text + CSS timeline
+       ======================================================== -->
+  <section class="story-section section" aria-labelledby="story-heading">
+
+    <!-- Floating Background Medical Shapes -->
+    <div class="floating-shapes-container" aria-hidden="true">
+      <!-- Hexagon -->
+      <svg class="floating-shape float-slow-up" style="top: 10%; left: 4%; width: 45px; height: 45px;" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="50,1 93,25 93,75 50,99 7,75 7,25"/>
+      </svg>
+      <!-- Medical Cross -->
+      <svg class="floating-shape floating-shape--cyan float-medium-down" style="top: 70%; left: 88%; width: 50px; height: 50px;" viewBox="0 0 100 100" fill="currentColor">
+        <path d="M35 15h30v20h20v30h-20v20h-30v-20h-20v-30h20z"/>
+      </svg>
+      <!-- Capsule/Pill -->
+      <svg class="floating-shape floating-shape--white float-fast-up" style="top: 20%; left: 82%; width: 55px; height: 55px;" viewBox="0 0 100 100" fill="currentColor">
+        <rect x="15" y="30" width="70" height="40" rx="20" ry="20" transform="rotate(-45 50 50)"/>
+      </svg>
+      <!-- Molecule -->
+      <svg class="floating-shape float-slow-diag" style="top: 80%; left: 12%; width: 60px; height: 60px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8">
+        <circle cx="25" cy="25" r="12" fill="currentColor"/>
+        <circle cx="75" cy="35" r="10" fill="currentColor"/>
+        <circle cx="50" cy="75" r="14" fill="currentColor"/>
+        <line x1="25" y1="25" x2="75" y2="35"/>
+        <line x1="75" y1="35" x2="50" y2="75"/>
+        <line x1="50" y1="75" x2="25" y2="25"/>
+      </svg>
+      <!-- DNA Inspired Element -->
+      <svg class="floating-shape floating-shape--cyan float-slow-up" style="top: 45%; left: 2%; width: 70px; height: 70px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6">
+        <path d="M10,30 Q25,70 50,30 T90,70" />
+        <path d="M10,70 Q25,30 50,70 T90,30" stroke-dasharray="4,4"/>
+        <line x1="20" y1="42" x2="20" y2="58" />
+        <line x1="35" y1="38" x2="35" y2="62" />
+        <line x1="50" y1="30" x2="50" y2="70" />
+        <line x1="65" y1="38" x2="65" y2="62" />
+        <line x1="80" y1="42" x2="80" y2="58" />
+      </svg>
+    </div>
+    <div class="story-section__grid">
+
+      <!-- Left: story text -->
+      <div class="fade-up">
+        <span style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-primary);font-weight:700;margin-bottom:20px;">Our Journey</span>
+        <h2 class="heading-xl" id="story-heading" style="margin-bottom:28px;">
+          Driven by Science.<br />Guided by Purpose.
+        </h2>
+        <p class="text-body" style="margin-bottom:20px;">
+          Azzurra Pharmaconutrition Pvt. Ltd. was founded in 2014 with a singular conviction:
+          that clinical nutrition, when formulated with true scientific rigour, can transform
+          the trajectory of human health. We are not a wellness brand — we are a pharmaconutrition
+          company, built by scientists for clinicians and their patients.
+        </p>
+        <p class="text-body" style="margin-bottom:20px;">
+          Our brand philosophy is rooted in the divine inspiration of Sky Blue — a colour that
+          represents protection, life, and the infinite possibilities of science. Nothing is more
+          precious than Human Lives. Every formulation we create carries this responsibility.
+        </p>
+        <p class="text-body">
+          Operating from Faridabad (NCR-Delhi), India, we work in technical collaboration with
+          Azzurra Pharmaconutrition, USA — bridging global research with the local clinical
+          needs of patients across India.
+        </p>
+      </div>
+
+      <!-- Right: CSS-drawn timeline -->
+      <div class="fade-up" aria-label="Company timeline">
+
+        <!-- Hospital / clinical environment image -->
+        <img
+          src="https://res.cloudinary.com/dfiskvjbl/image/upload/f_auto,q_auto,w_720/azzurra/site/hospital-corridor"
+          alt="State-of-the-art clinical healthcare facility representing Azzurra's commitment to patient care"
+          loading="lazy"
+          style="width:100%;max-width:360px;border-radius:16px;display:block;margin:0 auto 32px;"
+          onerror="this.style.display='none';"
+        />
+
+        <div class="timeline">
+
+          <div class="timeline__item">
+            <p class="timeline__year">2014</p>
+            <p class="timeline__text">
+              Azzurra Pharmaconutrition Pvt. Ltd. founded in Faridabad, India with
+              a vision to advance clinical nutrition through science.
+            </p>
+          </div>
+
+          <div class="timeline__item">
+            <p class="timeline__year">2016</p>
+            <p class="timeline__text">
+              Technical collaboration established with Azzurra Pharmaconutrition, USA —
+              importing global research expertise into Indian clinical practice.
+            </p>
+          </div>
+
+          <div class="timeline__item">
+            <p class="timeline__year">2018</p>
+            <p class="timeline__text">
+              Launch of the Essential and Vital Series — foundational product lines
+              addressing elemental nutritional needs in clinical settings.
+            </p>
+          </div>
+
+          <div class="timeline__item">
+            <p class="timeline__year">2020</p>
+            <p class="timeline__text">
+              Expansion into critical care nutrition with the Max Series, developed
+              in response to clinical demands during the global health challenge.
+            </p>
+          </div>
+
+          <div class="timeline__item">
+            <p class="timeline__year">2023</p>
+            <p class="timeline__text">
+              AAECEN association strengthened; team of 18 clinical nutrition
+              specialists driving ongoing R&amp;D and product innovation.
+            </p>
+          </div>
+
+          <div class="timeline__item">
+            <p class="timeline__year">2025</p>
+            <p class="timeline__text">
+              Six complete product series, 50+ clinical formulations, and a
+              growing commitment to reaching healthcare providers globally.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       VISION & MISSION
+       ======================================================== -->
+  <section class="section section--light" aria-labelledby="vm-heading">
+
+    <!-- Floating Background Medical Shapes -->
+    <div class="floating-shapes-container" aria-hidden="true">
+      <!-- Hexagon -->
+      <svg class="floating-shape float-slow-up" style="top: 10%; left: 4%; width: 45px; height: 45px;" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="50,1 93,25 93,75 50,99 7,75 7,25"/>
+      </svg>
+      <!-- Medical Cross -->
+      <svg class="floating-shape floating-shape--cyan float-medium-down" style="top: 70%; left: 88%; width: 50px; height: 50px;" viewBox="0 0 100 100" fill="currentColor">
+        <path d="M35 15h30v20h20v30h-20v20h-30v-20h-20v-30h20z"/>
+      </svg>
+      <!-- Capsule/Pill -->
+      <svg class="floating-shape floating-shape--white float-fast-up" style="top: 20%; left: 82%; width: 55px; height: 55px;" viewBox="0 0 100 100" fill="currentColor">
+        <rect x="15" y="30" width="70" height="40" rx="20" ry="20" transform="rotate(-45 50 50)"/>
+      </svg>
+      <!-- Molecule -->
+      <svg class="floating-shape float-slow-diag" style="top: 80%; left: 12%; width: 60px; height: 60px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8">
+        <circle cx="25" cy="25" r="12" fill="currentColor"/>
+        <circle cx="75" cy="35" r="10" fill="currentColor"/>
+        <circle cx="50" cy="75" r="14" fill="currentColor"/>
+        <line x1="25" y1="25" x2="75" y2="35"/>
+        <line x1="75" y1="35" x2="50" y2="75"/>
+        <line x1="50" y1="75" x2="25" y2="25"/>
+      </svg>
+      <!-- DNA Inspired Element -->
+      <svg class="floating-shape floating-shape--cyan float-slow-up" style="top: 45%; left: 2%; width: 70px; height: 70px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6">
+        <path d="M10,30 Q25,70 50,30 T90,70" />
+        <path d="M10,70 Q25,30 50,70 T90,30" stroke-dasharray="4,4"/>
+        <line x1="20" y1="42" x2="20" y2="58" />
+        <line x1="35" y1="38" x2="35" y2="62" />
+        <line x1="50" y1="30" x2="50" y2="70" />
+        <line x1="65" y1="38" x2="65" y2="62" />
+        <line x1="80" y1="42" x2="80" y2="58" />
+      </svg>
+    </div>
+    <div class="section-header container">
+      <span class="label" style="color:var(--color-primary);">Our Foundation</span>
+      <h2 class="heading-xl" id="vm-heading">Vision &amp; Mission</h2>
+    </div>
+
+    <div class="vm-grid">
+
+      <div class="vm-card vm-card--vision fade-up">
+        <span class="vm-card__label">Our Vision</span>
+        <h3 class="vm-card__heading">
+          To be the most trusted name in clinical nutrition globally.
+        </h3>
+        <p class="vm-card__text">
+          We envision a world where every patient — regardless of geography or clinical
+          complexity — has access to nutrition solutions that are scientifically validated,
+          precisely formulated, and genuinely effective.
+        </p>
+      </div>
+
+      <div class="vm-card vm-card--mission fade-up">
+        <span class="vm-card__label" style="color:var(--color-primary);">Our Mission</span>
+        <h3 class="vm-card__heading">
+          Reaching Globally, Understanding Locally.
+        </h3>
+        <p class="vm-card__text">
+          Innovation and research to bring happiness to life. We combine world-class
+          science with a deep understanding of local clinical realities — formulating
+          solutions that work where they are needed most.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       HR PHILOSOPHY — NURTURING MINDS
+       ======================================================== -->
+  <section class="hr-section fade-up" aria-labelledby="hr-heading">
+    <div class="hr-box">
+      <span style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-primary);font-weight:700;margin-bottom:16px;">Our Culture</span>
+      <h2 class="heading-xl" id="hr-heading" style="margin-bottom:24px;">Nurturing Minds</h2>
+      <p class="text-body" style="font-size:17px;max-width:640px;margin:0 auto 20px;line-height:1.8;">
+        We believe our people are our greatest formulation. A culture of curiosity, care, and
+        commitment drives everything we do. Our team of scientists, nutritionists, and
+        clinical experts are united by a single purpose — advancing human health through
+        evidence-based nutrition.
+      </p>
+      <p class="text-body" style="max-width:580px;margin:0 auto;">
+        At Azzurra, we invest in knowledge, foster collaboration across disciplines, and hold
+        ourselves to the highest standards of integrity — in our science, in our products,
+        and in our relationships with the clinicians and patients who trust us.
+      </p>
+    </div>
+  </section>
+
+
+  
+
+
+  <!-- ========================================================
+       TECHNICAL COLLABORATION HIGHLIGHT BOX
+       ======================================================== -->
+  <section class="section" aria-labelledby="collab-heading" style="background:var(--color-white);">
+    <div class="container">
+      <div class="collab-box fade-up">
+
+    <!-- Floating Background Medical Shapes -->
+    <div class="floating-shapes-container" aria-hidden="true">
+      <!-- Hexagon -->
+      <svg class="floating-shape float-slow-up" style="top: 10%; left: 4%; width: 45px; height: 45px;" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="50,1 93,25 93,75 50,99 7,75 7,25"/>
+      </svg>
+      <!-- Medical Cross -->
+      <svg class="floating-shape floating-shape--cyan float-medium-down" style="top: 70%; left: 88%; width: 50px; height: 50px;" viewBox="0 0 100 100" fill="currentColor">
+        <path d="M35 15h30v20h20v30h-20v20h-30v-20h-20v-30h20z"/>
+      </svg>
+      <!-- Capsule/Pill -->
+      <svg class="floating-shape floating-shape--white float-fast-up" style="top: 20%; left: 82%; width: 55px; height: 55px;" viewBox="0 0 100 100" fill="currentColor">
+        <rect x="15" y="30" width="70" height="40" rx="20" ry="20" transform="rotate(-45 50 50)"/>
+      </svg>
+      <!-- Molecule -->
+      <svg class="floating-shape float-slow-diag" style="top: 80%; left: 12%; width: 60px; height: 60px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8">
+        <circle cx="25" cy="25" r="12" fill="currentColor"/>
+        <circle cx="75" cy="35" r="10" fill="currentColor"/>
+        <circle cx="50" cy="75" r="14" fill="currentColor"/>
+        <line x1="25" y1="25" x2="75" y2="35"/>
+        <line x1="75" y1="35" x2="50" y2="75"/>
+        <line x1="50" y1="75" x2="25" y2="25"/>
+      </svg>
+      <!-- DNA Inspired Element -->
+      <svg class="floating-shape floating-shape--cyan float-slow-up" style="top: 45%; left: 2%; width: 70px; height: 70px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6">
+        <path d="M10,30 Q25,70 50,30 T90,70" />
+        <path d="M10,70 Q25,30 50,70 T90,30" stroke-dasharray="4,4"/>
+        <line x1="20" y1="42" x2="20" y2="58" />
+        <line x1="35" y1="38" x2="35" y2="62" />
+        <line x1="50" y1="30" x2="50" y2="70" />
+        <line x1="65" y1="38" x2="65" y2="62" />
+        <line x1="80" y1="42" x2="80" y2="58" />
+      </svg>
+    </div>
+        <span class="collab-box__icon" aria-hidden="true">🤝</span>
+        <h2 class="collab-box__heading" id="collab-heading">
+          In Technical Collaboration with Azzurra Pharmaconutrition, USA
+        </h2>
+        <p class="collab-box__text">
+          Our technical partnership with Azzurra Pharmaconutrition, USA allows us to bring
+          the latest advancements in global nutritional science directly to Indian clinical
+          practice. This collaboration ensures that every formulation we develop meets
+          international quality benchmarks while remaining deeply attuned to local patient needs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
+        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="about.html"     class="footer__link">About</a></li>
+          <li><a href="science.html"   class="footer__link">Science</a></li>
+          <li><a href="productss.html" class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Product Series</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="productss.html" class="footer__link">Essential Series</a></li>
+          <li><a href="productss.html" class="footer__link">Vital Series</a></li>
+          <li><a href="productss.html" class="footer__link">Max Series</a></li>
+          <li><a href="productss.html" class="footer__link">Provit Series</a></li>
+          <li><a href="productss.html" class="footer__link">Lifeline Series</a></li>
+          <li><a href="productss.html" class="footer__link">Oral Series</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Contact</h3>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📍</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF, Faridabad (NCR-Delhi) — 121006, India</p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <p class="footer__contact-text"><a href="tel:+919871648649">+91 98 71 648 649</a></p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">✉️</span>
+          <p class="footer__contact-text"><a href="mailto:info@azzurrapharmaconutrition.com">info@azzurrapharmaconutrition.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

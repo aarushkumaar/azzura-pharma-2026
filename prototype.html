@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+  <base href="./">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Azzura | Nurturing Human Lives</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Manrope:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "outline-variant": "#c2c6d3",
+                        "secondary-container": "#316bf3",
+                        "on-tertiary-fixed-variant": "#3e4851",
+                        "tertiary-fixed-dim": "#bec8d2",
+                        "outline": "#737782",
+                        "on-surface-variant": "#424751",
+                        "tertiary": "#2f3941",
+                        "on-tertiary-container": "#b8c2cc",
+                        "on-secondary-fixed": "#00174b",
+                        "secondary-fixed-dim": "#b4c5ff",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#d7e2ff",
+                        "surface-variant": "#dce2f3",
+                        "inverse-on-surface": "#ebf1ff",
+                        "surface-tint": "#265dac",
+                        "surface-container": "#e7eefe",
+                        "primary": "#003674",
+                        "inverse-primary": "#abc7ff",
+                        "primary-container": "#0a4d9b",
+                        "surface-dim": "#d3daea",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#003ea8",
+                        "background": "#f9f9ff",
+                        "surface-bright": "#f9f9ff",
+                        "on-primary-container": "#a1c1ff",
+                        "secondary-fixed": "#dbe1ff",
+                        "tertiary-fixed": "#dae4ee",
+                        "surface-container-low": "#f0f3ff",
+                        "primary-fixed-dim": "#abc7ff",
+                        "on-primary-fixed": "#001b3f",
+                        "error": "#ba1a1a",
+                        "secondary": "#0051d5",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#fefcff",
+                        "on-surface": "#151c27",
+                        "on-tertiary-fixed": "#131d24",
+                        "on-background": "#151c27",
+                        "tertiary-container": "#465059",
+                        "on-primary-fixed-variant": "#00458f",
+                        "surface-container-highest": "#dce2f3",
+                        "inverse-surface": "#2a313d",
+                        "surface": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "margin-mobile": "20px",
+                        "gutter-desktop": "24px",
+                        "gutter-mobile": "16px",
+                        "margin-desktop": "80px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Manrope"],
+                        "headline-lg": ["Manrope"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "title-md": ["Manrope"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    },
+                    "animation": {
+                        "float": "float 6s ease-in-out infinite",
+                        "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                    },
+                    "keyframes": {
+                        "float": {
+                            "0%, 100%": { transform: "translateY(0)" },
+                            "50%": { transform: "translateY(-20px)" },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 30px rgba(10, 77, 155, 0.05);
+        }
+        .ambient-shadow {
+            box-shadow: 0 20px 40px -10px rgba(10, 77, 155, 0.08);
+        }
+        .hero-mesh {
+            background: 
+                radial-gradient(at 0% 0%, rgba(0, 54, 116, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 0%, rgba(49, 107, 243, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(0, 54, 116, 0.15) 0px, transparent 50%);
+        }
+        .glow-dot {
+            width: 4px;
+            height: 4px;
+            background: #316bf3;
+            border-radius: 50%;
+            box-shadow: 0 0 15px 2px #316bf3;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased font-body-md">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm shadow-primary/5">
+<div class="flex justify-between items-center h-20 px-4 md:px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-center gap-2">
+<span class="font-headline-lg text-headline-lg tracking-tighter text-primary dark:text-inverse-primary">Azzura</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="font-title-md text-title-md text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1" href="prototype.html">Home</a>
+<a class="font-title-md text-title-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="productss.html">Shop</a>
+<a class="font-title-md text-title-md text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#">About Us</a>
+</nav>
+<a href="productss.html" class="bg-primary-container text-on-primary px-8 py-3 rounded-full font-title-md text-title-md hover:opacity-90 transition-all duration-300 active:scale-95">
+                Shop Now
+            </a>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative min-h-[85vh] flex items-center overflow-hidden bg-white bg-primary">
+<!-- Biotech Abstract Background -->
+<div class="absolute inset-0 z-0">
+<img alt="Modern high-tech laboratory with clinical precision equipment" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugLkAzAp6xSZmTFZCpqcyGsiB6PXTt7Vdl_CcoHoaQMT94Va0x8muKI7wqD_V_5PX87De_UlXYQi_2RiOi2_GKJ8SYy9v1IP9BSCSZHMkqAK4cAcr0Vbdrb8JXQMIWGMlA9UfKykm6y6uOiQkvLsCvPBFxK8gDVh2qB8p81UN9XaFk1aa784IKVMwnSbLwxdZXGjkQS7EKSP-yPhGciLusrU7bffzJVmgnIzL1Wx9n6eU8V4d9-d0qU7rnc"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/60 via-primary/40 to-transparent"></div>
+<div class="absolute inset-0 bg-primary/20 backdrop-blur-[2px]"></div>
+</div>
+<div class="relative z-10 px-4 md:px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl">
+<span class="text-secondary font-label-sm tracking-[0.2em] uppercase mb-4 block flex items-center gap-2">
+<span class="w-8 h-[1px] bg-secondary"></span> Future of Healthcare
+                    </span>
+<h1 class="font-display-lg text-display-lg mb-6 leading-[1.1] text-white">Advanced Medical Wellness for a Better Tomorrow</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-lg">
+                        We blend clinical precision with high-end wellness to deliver a transformative healthcare experience tailored for longevity and vitality.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<a href="productss.html" class="bg-primary text-white px-10 py-4 rounded-full font-title-md hover:bg-secondary transition-all ambient-shadow flex items-center gap-2">
+                            View Products <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+<button class="glass-card text-primary border border-primary/20 px-10 py-4 rounded-full font-title-md hover:bg-white/50 transition-all">
+                            Our Mission
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Benefits Section -->
+<section class="py-24 px-4 md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-desktop">
+<div class="glass-card p-10 rounded-3xl text-center flex flex-col items-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined text-4xl">verified_user</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-4">Clinically Proven</h3>
+<p class="text-on-surface-variant font-body-md">Rigorous scientific testing ensures every product meets the highest standards of medical efficacy.</p>
+</div>
+<div class="glass-card p-10 rounded-3xl text-center flex flex-col items-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined text-4xl">eco</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-4">Sustainable Sourcing</h3>
+<p class="text-on-surface-variant font-body-md">Ethically sourced ingredients with minimal environmental impact for a healthier planet.</p>
+</div>
+<div class="glass-card p-10 rounded-3xl text-center flex flex-col items-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary">
+<span class="material-symbols-outlined text-4xl">psychology</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-4">Expert Backed</h3>
+<p class="text-on-surface-variant font-body-md">Developed by a world-class board of medical specialists and wellness visionaries.</p>
+</div>
+</div>
+</section>
+<!-- Featured Products -->
+<section class="py-24 bg-surface-container-low">
+<div class="px-4 md:px-margin-desktop max-w-container-max mx-auto">
+<div class="flex justify-between items-end mb-16">
+<div>
+<span class="text-secondary font-label-sm tracking-widest uppercase mb-2 block">Curated Selection</span>
+<h2 class="font-display-lg text-headline-lg text-primary">Premium Solutions</h2>
+</div>
+<a class="text-primary font-title-md flex items-center gap-2 hover:underline" href="productss.html">
+                        View all collection <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter-desktop">
+<!-- Product 1 -->
+<div class="group cursor-pointer glass-card overflow-hidden rounded-[1.5rem] transition-transform duration-300 hover:-translate-y-2" onclick="location.href='product-detail.html?id=1'">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A luxurious blue frosted glass serum bottle with a minimalist white label, set against a pristine, soft-focus laboratory background. The lighting is diffused and high-end, highlighting the sleek curves and premium texture of the packaging. The image reflects a clean, clinical aesthetic with cool blue tones and bright highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVb1bqMby0OVtzyUgnfAHe252ulmiPIdzEzmlh9O_zOuvBrCI8nIRQVUzlKJl-DHpPKEGOi3dEZNDkfvkrZM3EOSM9tLOhPSXMOFbKqnGEnZn_tDLZDx9Knrj8RRxAYsOb_29KuYIz8er7-Qeo6f8zo7WZ29BQANtdfJ3SV12fr_SJR2ud0dzQmhbjuoeQaLk2lTdMh5CgTfSSnXOLENeYnIDeem5dxJG9hMr0wVc1hdh19eMQTqsBtVJqcT-fJQdoO0LsTYkBGpVg"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-md text-primary">Azzura Vitality Serum</h3>
+<span class="font-title-md text-secondary">$89.00</span>
+</div>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">High-potency cellular regeneration formula for optimal skin longevity.</p>
+<div class="flex items-center gap-1 text-[#FFB800]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-on-surface-variant font-label-sm ml-2">(48 reviews)</span>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group cursor-pointer glass-card overflow-hidden rounded-[1.5rem] transition-transform duration-300 hover:-translate-y-2" onclick="location.href='product-detail.html?id=2'">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Modern medical supplement packaging with sharp, clean typography on a white and silver box. The setting is a minimalist, brightly lit clinical space with hints of medical equipment. The visual style is crisp and investor-ready, focusing on pharmaceutical precision and purity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZu1Rmq9q6A6gGE3_DUEevFLzTyhRCMI1rYtslaBODai18poTfTaQXI7BqMKD5GhQdAWyOxkEa9WErdTpobFhFB2iRE8YG-gi1xCeQiT2QJKQCtzAWK4pKmSmmc6XKA12xUSQKBynM1CyhO4G4fLNPhGHRGCZ4cwBtKlxIZOx83nYmROYTQ4e_mccM3-1J-7Dlwyuh0mhBMJHajuxj1aI36grzbImSuB_bhhyRHkUOtG8YfHuqUV4aiPRnXptds561C6yg0CioM5G_"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-md text-primary">Neural Optimization Kit</h3>
+<span class="font-title-md text-secondary">$145.00</span>
+</div>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">Nootropic supplement stack designed by top neuroscientists.</p>
+<div class="flex items-center gap-1 text-[#FFB800]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-on-surface-variant font-label-sm ml-2">(102 reviews)</span>
+</div>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group cursor-pointer glass-card overflow-hidden rounded-[1.5rem] transition-transform duration-300 hover:-translate-y-2" onclick="location.href='product-detail.html?id=3'">
+<div class="aspect-[4/5] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A professional medical diagnostic device with a sleek, futuristic design and glowing light indicators. It is displayed on a clean, reflective surface in a high-tech lab environment. The lighting is cold and clinical, with dominant blue and silver tones, creating a sense of state-of-the-art technological advancement." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVlnkf53fhzyghgyVAbaXkZ23lm03ptwFgg_qnvJWzD8ftBwuxXsIL-eYF5tAMJXSCq0HXqz1pGMDnihprZoSgsdMfVYr-68LEkczv2pi6pV5JAe0nqq2mLUC60d-w6EFqSFiBmSOJCgQfnWAvFvRwqQPorGcUjDWwqKFdU6dn5KI7WztwLNUarajYtMWkYFTdyLDeBIWFKnYsbPHB8sAJ3x9KArS7RDiPcWd6E5YjWndO1xj2EPhbGUeKAmIjVR68gEyl13e9p4vI"/>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-title-md text-primary">Home Biomarker Test</h3>
+<span class="font-title-md text-secondary">$210.00</span>
+</div>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-2">Complete nutritional and metabolic profile from a single finger-prick.</p>
+<div class="flex items-center gap-1 text-[#FFB800]">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-on-surface-variant font-label-sm ml-2">(31 reviews)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Why Choose Azzura -->
+<section class="relative py-32 overflow-hidden bg-primary">
+<div class="absolute inset-0 opacity-20">
+<img class="w-full h-full object-cover" data-alt="Abstract microscopic view of cellular structures and neural networks, glowing with a soft blue luminescence. The background is deep navy, creating a high-contrast, scientific visual that suggests depth, complexity, and biotechnology. The mood is sophisticated and mysterious, highlighting the inner workings of human biology." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7QZGPT89UrevTEJg-tL4a9MB7BJRugBjLbonfCwPqL0duIQjb_NL05ui62Fz7tge752jFT_0dF77fhKUMX8bKYF_YP6Hd0w0ruZFtUT4y4P1rKDjRHKQ1uzlCb9jOJy2SkSiP5cB_KuhD5SzTbXBIs5dbr8op2cMdFkw6PEg7vRuTEro-rDxWLScJqPCmNR4NW-dGuaPcuhGOhWvAaNZQi2Xq5FtftBwUnsTGgv_GR_bSifgbn-WFld_Hh_h7CZkAgIeqRYooPmRm"/>
+</div>
+<div class="relative z-10 px-4 md:px-margin-desktop max-w-container-max mx-auto text-center">
+<div class="max-w-3xl mx-auto">
+<h2 class="font-display-lg text-display-lg text-white mb-8">Redefining Personal Care through Scientific Discovery</h2>
+<p class="font-body-lg text-body-lg text-primary-fixed mb-12">
+                        At Azzura, we believe that longevity is not a matter of luck, but a result of precise intervention. Our research teams work across disciplines to synthesize the latest breakthroughs in molecular biology into daily-use medical grade products.
+                    </p>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div>
+<div class="text-4xl font-bold text-white mb-2">15+</div>
+<div class="text-primary-fixed font-label-sm">Years of Research</div>
+</div>
+<div>
+<div class="text-4xl font-bold text-white mb-2">42</div>
+<div class="text-primary-fixed font-label-sm">Clinical Trials</div>
+</div>
+<div>
+<div class="text-4xl font-bold text-white mb-2">200k+</div>
+<div class="text-primary-fixed font-label-sm">Lives Touched</div>
+</div>
+<div>
+<div class="text-4xl font-bold text-white mb-2">12</div>
+<div class="text-primary-fixed font-label-sm">Global Patents</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="py-24 px-4 md:px-margin-desktop max-w-container-max mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-display-lg text-headline-lg text-primary">Voices of Confidence</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter-desktop">
+<div class="glass-card p-12 rounded-[2rem]">
+<div class="flex items-center gap-1 text-secondary mb-6">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-title-md text-primary italic mb-8">"The vitality serum has fundamentally changed my skin health profile. As a medical professional, I value the clinical evidence backing every Azzura claim."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a female doctor in a white lab coat with a warm, confident expression. The lighting is soft and professional, set against a clean, out-of-focus clinical backdrop. The image communicates trust, expertise, and a friendly medical approach." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7-IV7E5LvAEfsvcYh-ktVrpWhdetj8w71PjDVoqJ1Qlou89Kj2ckNu5lHJ97JQrUNq3x42mj-kQzKj51dCqUyIVOkqYOYnM-qFGx9HHTvpf90gEWxvd_UGpkoOAnoGtVO0gREtBVGZ7zsGQD7esi1gYu90N6ZrGz-giJjsk9BxTYKtpHKR5ujqu-lvPHPV3njYSIywXR4VlprEv0FxC8oP7MlOoBPjQLDZsXkhNaiSh-Ncc107_sVEXbyFRt7CAdTk7WkKVBxAWGa"/>
+</div>
+<div>
+<div class="font-bold text-primary">Dr. Elena Ross</div>
+<div class="text-sm text-on-surface-variant">Dermatologist, NY Medical</div>
+</div>
+</div>
+</div>
+<div class="glass-card p-12 rounded-[2rem]">
+<div class="flex items-center gap-1 text-secondary mb-6">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-title-md text-primary italic mb-8">"Azzura's commitment to transparency and clean science is unparalleled. I've integrated their optimization stack into my daily routine with remarkable results."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-high overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a middle-aged male executive with a professional and healthy appearance. He is dressed in business casual attire and smiles naturally. The background is a modern, brightly lit office space with clean lines and a minimalist feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA__BkGdax6VMmOuMc668DmttG88GbHco5joXWl5aJAHc1mAZtYb358HHvS0wI0xC7FsOjKqdW2KzcoytdDJhNN5uVvvi1ZuxnxFuTHm2ibSo55mRYoaDqJcsrPL4XfzAnMJ3AgMFIioAiERCAG6AtdH_O7wOWE8of7-89h5TcXK7PzQmdf4lcZ3lMO655R6yeNRsf43gU_oez0WXQ_BGFP5vE130N7lVw7t1mV4ttGftuXrV7Gj7MFAn59KDqxOLd_6raR5ErZfUlM"/>
+</div>
+<div>
+<div class="font-bold text-primary">James Whitaker</div>
+<div class="text-sm text-on-surface-variant">Tech Entrepreneur</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-24 bg-surface-container-low">
+<div class="px-4 md:px-margin-desktop max-w-3xl mx-auto">
+<h2 class="font-display-lg text-headline-lg text-primary text-center mb-16">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<div class="glass-card rounded-2xl p-6 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h4 class="font-title-md text-primary">Are Azzura products safe for sensitive skin?</h4>
+<span class="material-symbols-outlined text-primary group-hover:rotate-180 transition-transform">expand_more</span>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-6 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h4 class="font-title-md text-primary">How long do clinical trials typically last?</h4>
+<span class="material-symbols-outlined text-primary group-hover:rotate-180 transition-transform">expand_more</span>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-6 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h4 class="font-title-md text-primary">Where can I find detailed ingredient profiles?</h4>
+<span class="material-symbols-outlined text-primary group-hover:rotate-180 transition-transform">expand_more</span>
+</div>
+</div>
+<div class="glass-card rounded-2xl p-6 cursor-pointer group">
+<div class="flex justify-between items-center">
+<h4 class="font-title-md text-primary">Do you offer international shipping for kits?</h4>
+<span class="material-symbols-outlined text-primary group-hover:rotate-180 transition-transform">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Redesigned Stay at the Forefront Section -->
+<section class="relative py-32 px-4 md:px-margin-desktop bg-[#001b3f] text-white overflow-hidden">
+<!-- Background Visuals -->
+<div class="absolute inset-0 z-0">
+<div class="absolute top-0 left-0 w-full h-full opacity-10">
+<svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<pattern height="100" id="grid" patternunits="userSpaceOnUse" width="100">
+<path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" stroke-width="0.5"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100%" width="100%"></rect>
+</svg>
+</div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-secondary/20 rounded-full blur-[120px]"></div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div>
+<span class="text-secondary font-label-sm tracking-[0.3em] uppercase mb-4 block">Intelligence Network</span>
+<h2 class="font-display-lg text-[44px] md:text-[56px] leading-[1.05] mb-8">Stay at the Forefront of Molecular Innovation</h2>
+<p class="text-primary-fixed-dim font-body-lg mb-12 max-w-xl">
+                            Gain exclusive access to our proprietary clinical findings and emerging wellness technologies before they reach the mainstream market.
+                        </p>
+<!-- Newsletter Form -->
+<form class="flex flex-col sm:flex-row gap-4 mb-16 p-2 bg-white/5 rounded-full backdrop-blur-md border border-white/10 max-w-md">
+<input class="flex-grow bg-transparent border-none px-6 py-4 rounded-full text-white placeholder-white/40 focus:ring-0 outline-none" placeholder="Scientific entry email..." type="email"/>
+<button class="bg-secondary text-white px-8 py-4 rounded-full font-title-md hover:bg-white hover:text-primary transition-all duration-300">
+                                Join Network
+                            </button>
+</form>
+<!-- Highlights -->
+<div class="flex flex-wrap gap-8">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-2xl">analytics</span>
+<span class="text-sm font-semibold tracking-wide uppercase">Real-time Data</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-2xl">verified</span>
+<span class="text-sm font-semibold tracking-wide uppercase">Peer Reviewed</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 relative">
+<!-- Floating UI Decoration -->
+<div class="absolute -top-10 -right-10 w-24 h-24 bg-secondary/10 rounded-full blur-xl animate-pulse"></div>
+<!-- Stat Cards -->
+<div class="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
+<div class="text-secondary mb-4">
+<span class="material-symbols-outlined text-4xl">biotech</span>
+</div>
+<div class="text-3xl font-bold mb-1 tracking-tight">85+</div>
+<div class="text-primary-fixed-dim text-sm uppercase tracking-widest font-semibold">Active Trials</div>
+<div class="mt-4 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-3/4 animate-pulse"></div>
+</div>
+</div>
+<div class="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 sm:mt-8">
+<div class="text-secondary mb-4">
+<span class="material-symbols-outlined text-4xl">bubble_chart</span>
+</div>
+<div class="text-3xl font-bold mb-1 tracking-tight">1.2k</div>
+<div class="text-primary-fixed-dim text-sm uppercase tracking-widest font-semibold">Molecules</div>
+<div class="mt-4 flex gap-1">
+<div class="h-2 w-2 rounded-full bg-secondary"></div>
+<div class="h-2 w-2 rounded-full bg-secondary/40"></div>
+<div class="h-2 w-2 rounded-full bg-secondary/20"></div>
+</div>
+</div>
+<div class="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
+<div class="text-secondary mb-4">
+<span class="material-symbols-outlined text-4xl">hub</span>
+</div>
+<div class="text-3xl font-bold mb-1 tracking-tight">12</div>
+<div class="text-primary-fixed-dim text-sm uppercase tracking-widest font-semibold">Global Nodes</div>
+<p class="mt-4 text-xs text-primary-fixed-dim opacity-60">Connected research facilities across 4 continents.</p>
+</div>
+<div class="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl group hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 sm:mt-8">
+<div class="text-secondary mb-4">
+<span class="material-symbols-outlined text-4xl">database</span>
+</div>
+<div class="text-3xl font-bold mb-1 tracking-tight">24/7</div>
+<div class="text-primary-fixed-dim text-sm uppercase tracking-widest font-semibold">Monitoring</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+</span>
+<span class="text-[10px] text-green-400 uppercase font-bold tracking-tighter">Systems Live</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-16 px-4 md:px-margin-desktop bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant/10">
+<div class="max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-desktop mb-16">
+<div class="col-span-1 md:col-span-1">
+<span class="font-headline-lg text-headline-lg text-primary dark:text-inverse-primary mb-4 block">Azzura</span>
+<p class="text-on-surface-variant font-body-md mb-8">Elevating humanity through medical excellence and ethical innovation.</p>
+</div>
+<div>
+<h5 class="font-title-md text-primary mb-6">Company</h5>
+<ul class="space-y-3">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">About Us</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Clinical Trials</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Sustainability</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Sitemap</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-title-md text-primary mb-6">Resources</h5>
+<ul class="space-y-3">
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Support Center</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Us</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-title-md text-primary mb-6">Connect</h5>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined text-xl">public</span>
+</a>
+</div>
+</div>
+</div>
+<div class="pt-8 border-t border-outline-variant/10 text-center text-on-surface-variant text-sm">
+                © 2024 Azzura Healthcare. Nurturing Human Lives.
+            </div>
+</div>
+</footer>
+</body></html>v

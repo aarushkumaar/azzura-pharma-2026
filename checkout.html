@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Secure checkout for Azzurra biotech wellness products. Powered by Razorpay." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/shop.css" />
+  <link rel="stylesheet" href="assets/css/checkout.css" />
+  <!-- Load order: 1. Razorpay SDK  2. Supabase  3. config.js  4. app scripts -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <style>
+    /* Order success card */
+    #order-success {
+      display: none;
+      min-height: 60vh;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 40px;
+    }
+    #order-success.show { display: flex; }
+    .success-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(26,95,168,0.10);
+      border: 1px solid #E8F1FB;
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #22C55E;
+      color: #fff;
+      font-size: 36px;
+      line-height: 72px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .success-card h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      color: #1A1A2E;
+      margin-bottom: 12px;
+      font-weight: 400;
+    }
+    .success-card .order-id {
+      font-size: 15px;
+      color: #1A5FA8;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .success-card .payment-id {
+      font-size: 13px;
+      color: #6B7280;
+      margin-bottom: 16px;
+      word-break: break-all;
+    }
+    .success-card .thank-you {
+      font-size: 15px;
+      color: #6B7280;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .btn-continue-shopping {
+      display: inline-block;
+      background: #1A5FA8;
+      color: #fff;
+      padding: 13px 32px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .btn-continue-shopping:hover {
+      background: #134a87;
+      transform: scale(1.03);
+    }
+  </style>
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- CHECKOUT MAIN -->
+  <main class="checkout-page" role="main">
+    <div class="checkout-inner">
+
+      <!-- Breadcrumb -->
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="productss.html">Shop</a>
+        <span aria-hidden="true">›</span>
+        <span>Checkout</span>
+      </nav>
+      <h1 class="checkout-heading">Secure Checkout</h1>
+      <p class="checkout-sub">Your order is protected by 256-bit SSL encryption.</p>
+
+      <div class="checkout-grid">
+
+        <!-- LEFT: Shipping Form -->
+        <section class="checkout-form-section" aria-labelledby="shipping-heading">
+          <h2 class="checkout-section-title" id="shipping-heading">
+            <span class="checkout-step-num">1</span> Shipping Information
+          </h2>
+
+          <form id="checkout-form" class="checkout-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="ch-name">Full Name *</label>
+                <input class="form-input" type="text" id="ch-name" name="name" placeholder="Priya Sharma" required autocomplete="name" />
+                <span class="form-error" id="err-name">Please enter your full name.</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ch-phone">Phone *</label>
+                <input class="form-input" type="tel" id="ch-phone" name="phone" placeholder="+91 98765 43210" required autocomplete="tel" />
+                <span class="form-error" id="err-phone">Please enter a valid phone number.</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ch-email">Email Address *</label>
+              <input class="form-input" type="email" id="ch-email" name="email" placeholder="priya@example.com" required autocomplete="email" />
+              <span class="form-error" id="err-email">Please enter a valid email address.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ch-address">Address *</label>
+              <input class="form-input" type="text" id="ch-address" name="address" placeholder="House No., Street, Area" required autocomplete="street-address" />
+              <span class="form-error" id="err-address">Please enter your address.</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="ch-city">City *</label>
+                <input class="form-input" type="text" id="ch-city" name="city" placeholder="New Delhi" required autocomplete="address-level2" />
+                <span class="form-error" id="err-city">Please enter your city.</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ch-state">State *</label>
+                <input class="form-input" type="text" id="ch-state" name="state" placeholder="Haryana" required autocomplete="address-level1" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="ch-pincode">PIN Code *</label>
+                <input class="form-input" type="text" id="ch-pincode" name="pincode" placeholder="121006" pattern="[0-9]{6}" required autocomplete="postal-code" />
+                <span class="form-error" id="err-pincode">Please enter a valid 6-digit PIN code.</span>
+              </div>
+            </div>
+
+            <h2 class="checkout-section-title" style="margin-top: 40px;" id="payment-heading">
+              <span class="checkout-step-num">2</span> Payment Method
+            </h2>
+
+            <div class="payment-options" role="radiogroup" aria-labelledby="payment-heading">
+              <!-- Razorpay (primary) -->
+              <label class="payment-option payment-option--active" for="pay-razorpay" id="label-pay-razorpay" style="cursor: pointer;">
+                <input type="radio" id="pay-razorpay" name="gateway" value="razorpay" checked />
+                <div class="payment-option__icon">💳</div>
+                <div>
+                  <div class="payment-option__name">Razorpay</div>
+                  <div class="payment-option__desc">UPI, Cards, Net Banking, Wallets</div>
+                </div>
+                <span class="payment-option__badge">Recommended</span>
+              </label>
+              <!-- Cash on Delivery (new) -->
+              <label class="payment-option" for="pay-cod" id="label-pay-cod" style="margin-top: 12px; cursor: pointer;">
+                <input type="radio" id="pay-cod" name="gateway" value="cod" />
+                <div class="payment-option__icon">💵</div>
+                <div>
+                  <div class="payment-option__name">Cash on Delivery (COD)</div>
+                  <div class="payment-option__desc">Pay with cash upon delivery</div>
+                </div>
+              </label>
+            </div>
+
+            <p class="checkout-security-note">
+              🔒 Your payment is secured by Razorpay. We never store your card details.
+            </p>
+
+            <!-- Error banner shown if Edge Function fails -->
+            <div class="checkout-error" id="checkout-error" role="alert" aria-live="polite"></div>
+
+            <button type="submit" class="btn btn--primary checkout-submit-btn" id="checkout-submit-btn">
+              Place Order &amp; Pay
+            </button>
+          </form>
+        </section>
+
+        <!-- RIGHT: Order Summary -->
+        <aside class="checkout-summary" aria-label="Order summary">
+          <h2 class="checkout-section-title" id="summary-heading">Order Summary</h2>
+          <div class="summary-items" id="summary-items">
+            <!-- Populated by checkout.js -->
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping</span>
+            <span id="summary-shipping">FREE</span>
+          </div>
+          <div class="summary-divider"></div>
+          <!-- Coupon block -->
+          <div class="checkout-coupon-section" style="padding: 10px 0;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="coupon-code-input" placeholder="Coupon Code" style="flex: 1; padding: 8px 12px; border: 1.5px solid #D1E3F8; border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; text-transform: uppercase;" />
+              <button type="button" id="coupon-apply-btn" style="padding: 8px 16px; background: var(--color-primary); color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">Apply</button>
+            </div>
+            <div id="coupon-message" style="font-size: 12px; margin-top: 6px; font-weight: 600; min-height: 16px;"></div>
+          </div>
+          <!-- Discount display (hidden until applied) -->
+          <div class="summary-row" id="summary-discount-row" style="display: none; color: #48BB78; font-weight: 600;">
+            <span>Discount (<span id="summary-discount-code"></span>)</span>
+            <span id="summary-discount-amount">-₹0</span>
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row summary-row--total">
+            <span>Total</span>
+            <span id="summary-total">₹0</span>
+          </div>
+          <p class="summary-note">Inclusive of all taxes. Free shipping on all orders.</p>
+        </aside>
+
+      </div><!-- /checkout-grid -->
+    </div><!-- /checkout-inner -->
+  </main>
+
+  <!-- ORDER SUCCESS SCREEN (hidden; shown by showOrderSuccess()) -->
+  <div id="order-success" role="alert" aria-live="polite">
+    <div class="success-card">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <h2>Order Placed Successfully!</h2>
+      <p class="order-id">Order #<span id="success-order-id"></span></p>
+      <p class="payment-id" id="success-payment-row">
+        Payment ID: <span id="success-payment-id"></span>
+      </p>
+      <p class="thank-you">Thank you for your order. We'll send a confirmation to your email shortly.</p>
+      <a href="productss.html" class="btn-continue-shopping">Continue Shopping →</a>
+    </div>
+  </div>
+
+  <!-- FOOTER (simplified) -->
+  <footer class="footer" role="contentinfo" style="margin-top: 0;">
+    <div class="footer__bottom" style="max-width:1200px;margin:0 auto;padding:24px 40px;">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script src="assets/js/customer-auth.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/shop.js"></script>
+  <script src="assets/js/checkout.js"></script>
+</body>
+</html>

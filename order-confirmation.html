@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — Azzurra Pharmaconutrition</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .confirm-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: var(--color-white);
+    }
+    .confirm-card {
+      max-width: 540px;
+      width: 100%;
+      text-align: center;
+      padding: 56px 48px;
+      border: 1.5px solid var(--color-border);
+      border-radius: 24px;
+      background: var(--color-white);
+      box-shadow: 0 8px 40px rgba(26,95,168,0.08);
+    }
+    .confirm-icon { font-size: 64px; display: block; margin-bottom: 20px; }
+    .confirm-title {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      color: var(--color-dark);
+      font-weight: 400;
+      margin-bottom: 12px;
+    }
+    .confirm-sub {
+      font-size: 16px;
+      color: var(--color-grey);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .confirm-order-id {
+      display: inline-block;
+      background: var(--color-primary-light);
+      border: 1.5px solid var(--color-border);
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin: 20px 0 32px;
+      word-break: break-all;
+    }
+    .confirm-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="confirm-page">
+    <div class="confirm-card">
+      <span class="confirm-icon">✅</span>
+      <h1 class="confirm-title">Order Confirmed!</h1>
+      <p class="confirm-sub">
+        Thank you for your purchase. We're preparing your order and will notify you
+        when it ships. A confirmation has been sent to your email.
+      </p>
+      <div class="confirm-order-id" id="confirm-order-id">
+        <!-- Populated by JS -->
+        Loading order details…
+      </div>
+      <div class="confirm-actions">
+        <a href="productss.html" class="btn btn--primary">Continue Shopping</a>
+        <a href="index.html" class="btn btn--outline">Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    // Read orderId from URL query param: order-confirmation.html?orderId=xxx
+    const params  = new URLSearchParams(window.location.search);
+    const orderId = params.get('orderId');
+    const el      = document.getElementById('confirm-order-id');
+    if (orderId && el) {
+      el.textContent = `Order ID: ${orderId}`;
+    } else if (el) {
+      el.textContent = 'Order ID not found.';
+    }
+  </script>
+</body>
+</html>

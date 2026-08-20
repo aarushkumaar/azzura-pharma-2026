@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Azzurra Pharmaconutrition Pvt. Ltd.</title>
+  <meta name="description" content="Contact Azzurra Pharmaconutrition — reach our team in Faridabad, NCR-Delhi. Phone, email, address, and contact form." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="assets/js/env-config.js"></script>
+</head>
+<body class="has-main-nav">
+
+  <!-- ========================================================
+       NAVBAR
+       ======================================================== -->
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact" class="active">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+  <!-- ========================================================
+       PAGE HERO
+       ======================================================== -->
+  <header class="page-hero">
+    <div class="container">
+      <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span aria-hidden="true">›</span>
+        <span>Contact</span>
+      </nav>
+      <div class="page-hero__rule" aria-hidden="true"></div>
+      <h1 class="page-hero__heading">Contact Us</h1>
+    </div>
+  </header>
+
+
+  <!-- ========================================================
+       CONTACT — Two-column layout
+       Left: form | Right: info + map
+       ======================================================== -->
+  <section class="contact-page section" aria-labelledby="contact-main-heading">
+
+    <!-- Floating Background Medical Shapes -->
+    <div class="floating-shapes-container" aria-hidden="true">
+      <!-- Hexagon -->
+      <svg class="floating-shape float-slow-up" style="top: 10%; left: 4%; width: 45px; height: 45px;" viewBox="0 0 100 100" fill="currentColor">
+        <polygon points="50,1 93,25 93,75 50,99 7,75 7,25"/>
+      </svg>
+      <!-- Medical Cross -->
+      <svg class="floating-shape floating-shape--cyan float-medium-down" style="top: 70%; left: 88%; width: 50px; height: 50px;" viewBox="0 0 100 100" fill="currentColor">
+        <path d="M35 15h30v20h20v30h-20v20h-30v-20h-20v-30h20z"/>
+      </svg>
+      <!-- Capsule/Pill -->
+      <svg class="floating-shape floating-shape--white float-fast-up" style="top: 20%; left: 82%; width: 55px; height: 55px;" viewBox="0 0 100 100" fill="currentColor">
+        <rect x="15" y="30" width="70" height="40" rx="20" ry="20" transform="rotate(-45 50 50)"/>
+      </svg>
+      <!-- Molecule -->
+      <svg class="floating-shape float-slow-diag" style="top: 80%; left: 12%; width: 60px; height: 60px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="8">
+        <circle cx="25" cy="25" r="12" fill="currentColor"/>
+        <circle cx="75" cy="35" r="10" fill="currentColor"/>
+        <circle cx="50" cy="75" r="14" fill="currentColor"/>
+        <line x1="25" y1="25" x2="75" y2="35"/>
+        <line x1="75" y1="35" x2="50" y2="75"/>
+        <line x1="50" y1="75" x2="25" y2="25"/>
+      </svg>
+      <!-- DNA Inspired Element -->
+      <svg class="floating-shape floating-shape--cyan float-slow-up" style="top: 45%; left: 2%; width: 70px; height: 70px;" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6">
+        <path d="M10,30 Q25,70 50,30 T90,70" />
+        <path d="M10,70 Q25,30 50,70 T90,30" stroke-dasharray="4,4"/>
+        <line x1="20" y1="42" x2="20" y2="58" />
+        <line x1="35" y1="38" x2="35" y2="62" />
+        <line x1="50" y1="30" x2="50" y2="70" />
+        <line x1="65" y1="38" x2="65" y2="62" />
+        <line x1="80" y1="42" x2="80" y2="58" />
+      </svg>
+    </div>
+    <div class="contact-page__grid">
+
+      <!-- ---- LEFT: Contact Form ---- -->
+      <div class="fade-up">
+        <h2 class="heading-lg" id="contact-main-heading" style="margin-bottom:8px;">Send Us a Message</h2>
+        <p class="text-sm" style="margin-bottom:32px;color:var(--color-grey);">
+          Fill out the form below and our team will get back to you within one business day.
+        </p>
+
+        <!-- Success message (shown after valid submit) -->
+        <div class="form-success" id="form-success" role="alert">
+          ✅ Thank you for your message. We'll be in touch soon.
+        </div>
+
+        <form class="contact-form" id="contact-form" novalidate aria-label="Contact form">
+
+          <div class="form-group">
+            <label class="form-label" for="cf-name">Full Name <span aria-hidden="true" style="color:#e53e3e;">*</span></label>
+            <input
+              class="form-input"
+              type="text"
+              id="cf-name"
+              name="name"
+              placeholder="Dr. Priya Sharma"
+              autocomplete="name"
+              required
+              aria-required="true"
+              aria-describedby="err-name"
+            />
+            <span class="form-error" id="err-name" role="alert">Please enter your full name (at least 2 characters).</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cf-email">Email Address <span aria-hidden="true" style="color:#e53e3e;">*</span></label>
+            <input
+              class="form-input"
+              type="email"
+              id="cf-email"
+              name="email"
+              placeholder="you@hospital.com"
+              autocomplete="email"
+              required
+              aria-required="true"
+              aria-describedby="err-email"
+            />
+            <span class="form-error" id="err-email" role="alert">Please enter a valid email address.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cf-phone">Phone Number <span style="color:var(--color-grey);font-weight:400;font-size:12px;">(Optional)</span></label>
+            <input
+              class="form-input"
+              type="tel"
+              id="cf-phone"
+              name="phone"
+              placeholder="+91 98100 00000"
+              autocomplete="tel"
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="cf-message">Message <span aria-hidden="true" style="color:#e53e3e;">*</span></label>
+            <textarea
+              class="form-textarea"
+              id="cf-message"
+              name="message"
+              placeholder="I would like to enquire about your Essential Series for post-surgical recovery patients..."
+              required
+              aria-required="true"
+              aria-describedby="err-message"
+            ></textarea>
+            <span class="form-error" id="err-message" role="alert">Please enter a message (at least 10 characters).</span>
+          </div>
+
+          <button type="submit" class="btn btn--primary" id="submit-btn" style="width:100%;justify-content:center;">
+            Send Message
+          </button>
+
+          <p class="text-sm" style="margin-top:12px;font-size:12px;text-align:center;color:var(--color-grey);">
+            This form does not transmit data — for immediate enquiries call us directly.
+          </p>
+
+        </form>
+      </div>
+
+
+      <!-- ---- RIGHT: Info + Map ---- -->
+      <div class="contact-info fade-up">
+
+        <!-- Office Hours -->
+        <div class="contact-hours">
+          <h3 class="contact-hours__title">🕘 Office Hours</h3>
+          <p class="contact-hours__text">
+            Monday – Saturday &nbsp;|&nbsp; 9:00 AM – 6:00 PM IST<br />
+            Sunday: Closed
+          </p>
+        </div>
+
+        <!-- Address -->
+        <div class="contact-info__item">
+          <div class="contact-info__icon" aria-hidden="true">📍</div>
+          <div>
+            <p class="contact-info__label">Office Address</p>
+            <p class="contact-info__text">
+              F-31, Sector 10, DLF,<br />
+              Faridabad (NCR-Delhi) — 121006<br />
+              Haryana, India
+            </p>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="contact-info__item">
+          <div class="contact-info__icon" aria-hidden="true">📞</div>
+          <div>
+            <p class="contact-info__label">Phone</p>
+            <p class="contact-info__text">
+              <a href="tel:+919871648649">+91 98 71 648 649</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="contact-info__item">
+          <div class="contact-info__icon" aria-hidden="true">✉️</div>
+          <div>
+            <p class="contact-info__label">Email</p>
+            <p class="contact-info__text">
+              <a href="mailto:info@azzurrapharmaconutrition.com">
+                info@azzurrapharmaconutrition.com
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Google Maps embed — Faridabad, Haryana -->
+        <div class="contact-map" aria-label="Office location map">
+          <iframe
+            title="Azzurra Pharmaconutrition Office Location — Faridabad, Haryana"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3508.7456792748927!2d77.31579067549694!3d28.41735797581543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cdc1b7f01e051%3A0xae7cdae5c7c8a0c5!2sSector%2010%2C%20Faridabad%2C%20Haryana%20121006!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__grid">
+      <div>
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
+        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Quick Links</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="index.html"     class="footer__link">Home</a></li>
+          <li><a href="about.html"     class="footer__link">About</a></li>
+          <li><a href="science.html"   class="footer__link">Science</a></li>
+          <li><a href="productss.html" class="footer__link">Shop</a></li>
+          <li><a href="contact.html"   class="footer__link">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Product Series</h3>
+        <ul class="footer__links" role="list">
+          <li><a href="productss.html" class="footer__link">Essential Series</a></li>
+          <li><a href="productss.html" class="footer__link">Vital Series</a></li>
+          <li><a href="productss.html" class="footer__link">Max Series</a></li>
+          <li><a href="productss.html" class="footer__link">Provit Series</a></li>
+          <li><a href="productss.html" class="footer__link">Lifeline Series</a></li>
+          <li><a href="productss.html" class="footer__link">Oral Series</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__col-title">Contact</h3>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📍</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF, Faridabad (NCR-Delhi) — 121006, India</p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <p class="footer__contact-text"><a href="tel:+919871648649">+91 98 71 648 649</a></p>
+        </div>
+        <div class="footer__contact-item">
+          <span class="footer__contact-icon" aria-hidden="true">✉️</span>
+          <p class="footer__contact-text"><a href="mailto:info@azzurrapharmaconutrition.com">info@azzurrapharmaconutrition.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="footer__copy">&copy; 2025 Azzurra Pharmaconutrition Pvt. Ltd. All Rights Reserved.</p>
+      <a href="#" class="footer__legal">Privacy Policy</a>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    (function() {
+      if (typeof window.supabase === 'undefined') {
+        console.error('Supabase client failed to load.');
+        return;
+      }
+      
+      var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      var form = document.getElementById('contact-form');
+      var successMsg = document.getElementById('form-success');
+      var submitBtn = document.getElementById('submit-btn');
+
+      if (!form) return;
+
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        if (successMsg) successMsg.classList.remove('show');
+
+        var errName = document.getElementById('err-name');
+        var errEmail = document.getElementById('err-email');
+        var errMessage = document.getElementById('err-message');
+
+        if (errName) errName.classList.remove('show');
+        if (errEmail) errEmail.classList.remove('show');
+        if (errMessage) errMessage.classList.remove('show');
+
+        var name = document.getElementById('cf-name').value.trim();
+        var email = document.getElementById('cf-email').value.trim();
+        var phone = document.getElementById('cf-phone').value.trim();
+        var message = document.getElementById('cf-message').value.trim();
+
+        var hasError = false;
+
+        if (name.length < 2) {
+          if (errName) errName.classList.add('show');
+          hasError = true;
+        }
+
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+          if (errEmail) errEmail.classList.add('show');
+          hasError = true;
+        }
+
+        if (message.length < 10) {
+          if (errMessage) errMessage.classList.add('show');
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        submitBtn.disabled = true;
+        var origText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+
+        try {
+          var payload = {
+            name: name,
+            email: email,
+            phone: phone || null,
+            message: message,
+            created_at: new Date().toISOString()
+          };
+
+          var r = await sb.from('contact_messages').insert([payload]);
+          if (r.error) throw r.error;
+
+          if (successMsg) successMsg.classList.add('show');
+          form.reset();
+        } catch (err) {
+          alert('Failed to send message: ' + err.message);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = origText;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

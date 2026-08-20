@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account — Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Manage your Azzurra account, orders, addresses and wishlist." />
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- config.js MUST be first — defines SUPABASE_URL, SUPABASE_ANON_KEY -->
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/customer-auth.js"></script>
+  <style>
+    body { opacity: 0; transition: opacity 0.3s ease; }
+    .dash-page { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+    .dash-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1.5px solid #D1E3F8; flex-wrap: wrap; }
+    .dash-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; flex-shrink: 0; }
+    .dash-header-info h1 { font-size: 22px; font-weight: 700; color: #1A1A2E; margin: 0 0 2px; }
+    .dash-header-info p  { font-size: 13px; color: #6B7280; margin: 0; }
+    .dash-header-actions { margin-left: auto; }
+    .dash-signout-btn { background: transparent; color: #FC8181; border: 1.5px solid #FC8181; border-radius: 100px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: inherit; }
+    .dash-signout-btn:hover { background: #FFF5F5; }
+    .dash-layout { display: grid; grid-template-columns: 220px 1fr; gap: 32px; }
+    @media (max-width: 700px) { .dash-layout { grid-template-columns: 1fr; } }
+    /* Sidebar nav */
+    .dash-nav { display: flex; flex-direction: column; gap: 4px; }
+    .dash-tab { display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: 10px; border: none; background: transparent; font-size: 14px; font-weight: 500; color: #1A1A2E; cursor: pointer; text-align: left; width: 100%; transition: background 0.2s, color 0.2s; font-family: inherit; }
+    .dash-tab:hover { background: #f0f6ff; }
+    .dash-tab.active { background: #E8F1FB; color: var(--color-primary); font-weight: 700; }
+    .dash-tab .tab-icon { font-size: 16px; flex-shrink: 0; }
+    /* Panels */
+    .dash-panel { display: none; }
+    .dash-panel.active { display: block; }
+    .panel-title { font-size: 19px; font-weight: 700; color: #1A1A2E; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1.5px solid #D1E3F8; }
+    /* Form */
+    .dash-form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
+    .dash-label { font-size: 13px; font-weight: 600; color: #1A1A2E; }
+    .dash-input { border: 1.5px solid #D1E3F8; border-radius: 8px; padding: 11px 14px; font-size: 14px; width: 100%; box-sizing: border-box; font-family: inherit; transition: border-color 0.2s; outline: none; }
+    .dash-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(26,95,168,0.10); }
+    .dash-input:disabled { background: #f5f7fa; color: #6B7280; }
+    .dash-btn { background: var(--color-primary); color: #fff; border: none; border-radius: 100px; padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s; font-family: inherit; }
+    .dash-btn:hover { background: #134a87; }
+    .dash-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .dash-msg { border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .dash-msg.success { background: #F0FFF4; border: 1.5px solid #48BB78; color: #2E7D32; display: block; }
+    .dash-msg.error   { background: #FFF5F5; border: 1.5px solid #FC8181; color: #C62828; display: block; }
+    /* Address cards */
+    .addr-card { background: #f8fbff; border: 1.5px solid #D1E3F8; border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+    .addr-card__label { font-weight: 700; font-size: 14px; color: #1A1A2E; margin-bottom: 4px; }
+    .addr-card__name  { font-size: 14px; color: #1A1A2E; margin-bottom: 2px; }
+    .addr-card__line  { font-size: 13px; color: #6B7280; margin-bottom: 1px; }
+    .addr-card__actions { margin-top: 10px; display: flex; gap: 8px; }
+    .addr-btn { border: 1.5px solid #D1E3F8; border-radius: 100px; padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer; background: #fff; font-family: inherit; transition: background 0.2s; }
+    .addr-btn:hover { background: #f0f6ff; }
+    .addr-btn--danger { color: #FC8181; border-color: #FC8181; }
+    .addr-btn--danger:hover { background: #FFF5F5; }
+    .addr-default-badge { background: #E8F1FB; color: var(--color-primary); font-size: 11px; padding: 2px 8px; border-radius: 12px; margin-left: 6px; font-weight: 600; }
+    /* Add address section */
+    .add-addr-title { font-size: 15px; font-weight: 700; color: #1A1A2E; margin: 24px 0 12px; padding-top: 20px; border-top: 1px solid #D1E3F8; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
+    /* Orders */
+    .orders-list { display: flex; flex-direction: column; gap: 12px; }
+    .order-card { background: #f8fbff; border: 1.5px solid #D1E3F8; border-radius: 12px; padding: 16px 18px; }
+    .order-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+    .order-card__id   { font-family: monospace; font-size: 14px; font-weight: 700; color: #1A1A2E; }
+    .order-card__date { font-size: 12px; color: #6B7280; }
+    .order-card__meta { font-size: 13px; color: #6B7280; margin-bottom: 8px; }
+    .order-card__footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .order-status { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; text-transform: capitalize; margin-left: auto; }
+    .order-status--pending   { background: #FFF3E0; color: #E65100; }
+    .order-status--confirmed { background: #E8F1FB; color: var(--color-primary); }
+    .order-status--shipped   { background: #F3E5F5; color: #7B1FA2; }
+    .order-status--delivered { background: #E8F5E9; color: #2E7D32; }
+    .order-status--cancelled { background: #FFEBEE; color: #C62828; }
+    /* Wishlist */
+    .wishlist-grid { display: flex; flex-direction: column; gap: 12px; }
+    .wishlist-card { background: #f8fbff; border: 1.5px solid #D1E3F8; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 16px; }
+  </style>
+
+</head>
+<body class="has-main-nav">
+  <nav class="main-nav" id="mainNav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:block;">
+      </a>
+      <div class="nav-right">
+        <ul class="nav-links" id="navLinks">
+          <li><a href="index.html" data-page="home">Home</a></li>
+          <li><a href="about.html" data-page="about">About</a></li>
+          <li><a href="science.html" data-page="science">Science</a></li>
+          <li><a href="events.html" data-page="events">Events</a></li>
+          <li><a href="contact.html" data-page="contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="cart.html" class="nav-icon-btn nav-cart" aria-label="Cart">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </a>
+          <a href="customer-auth.html" class="nav-icon-btn nav-profile active" id="navProfileBtn" aria-label="My Account">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </a>
+          <a href="productss.html" class="nav-shop-btn">Shop</a>
+        </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu" id="navMobileMenu">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="science.html">Science</a></li>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="productss.html">Shop</a></li>
+        <li><a href="customer-auth.html">My Account</a></li>
+        <li><a href="cart.html">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="dash-page">
+
+    <!-- Header -->
+    <div class="dash-header">
+      <div class="dash-avatar" id="dash-avatar">?</div>
+      <div class="dash-header-info">
+        <h1 id="dash-user-name">Loading&hellip;</h1>
+        <p id="dash-user-email"></p>
+      </div>
+      <div class="dash-header-actions">
+        <button class="dash-signout-btn" id="dash-signout-btn">Sign Out</button>
+      </div>
+    </div>
+
+    <div class="dash-layout">
+
+      <!-- Sidebar nav -->
+      <nav class="dash-nav" aria-label="Dashboard navigation">
+        <button class="dash-tab active" data-tab="profile"   onclick="CustomerDashboard.showTab('profile')">
+          <span class="tab-icon">&#128100;</span> Profile
+        </button>
+        <button class="dash-tab" data-tab="addresses" onclick="CustomerDashboard.showTab('addresses')">
+          <span class="tab-icon">&#128205;</span> Addresses
+        </button>
+        <button class="dash-tab" data-tab="orders"   onclick="CustomerDashboard.showTab('orders')">
+          <span class="tab-icon">&#128230;</span> My Orders
+        </button>
+        <button class="dash-tab" data-tab="wishlist" onclick="CustomerDashboard.showTab('wishlist')">
+          <span class="tab-icon">&#10084;&#65039;</span> Wishlist
+        </button>
+        <button class="dash-tab" data-tab="settings" onclick="CustomerDashboard.showTab('settings')">
+          <span class="tab-icon">&#9881;&#65039;</span> Settings
+        </button>
+      </nav>
+
+      <!-- Content -->
+      <div>
+
+        <!-- Profile Panel -->
+        <div class="dash-panel active" id="dash-panel-profile">
+          <div class="panel-title">Profile Information</div>
+          <div class="dash-msg" id="profile-msg"></div>
+          <div class="dash-form-group">
+            <label class="dash-label" for="profile-name">Full Name</label>
+            <input class="dash-input" type="text" id="profile-name" placeholder="Your full name" autocomplete="name" />
+          </div>
+          <div class="dash-form-group">
+            <label class="dash-label" for="profile-email">Email Address</label>
+            <input class="dash-input" type="email" id="profile-email" disabled />
+          </div>
+          <div class="dash-form-group">
+            <label class="dash-label" for="profile-phone">Phone Number</label>
+            <input class="dash-input" type="tel" id="profile-phone" placeholder="+91 98765 43210" autocomplete="tel" />
+          </div>
+          <button class="dash-btn" id="profile-save-btn">Save Profile</button>
+        </div>
+
+        <!-- Addresses Panel -->
+        <div class="dash-panel" id="dash-panel-addresses">
+          <div class="panel-title">Saved Addresses</div>
+          <div id="addresses-container"><p style="color:#6B7280;font-size:14px;">Loading...</p></div>
+          <div class="add-addr-title">Add New Address</div>
+          <div class="dash-msg" id="addr-msg"></div>
+          <form id="add-addr-form" novalidate>
+            <div class="dash-form-group">
+              <label class="dash-label" for="addr-label">Label</label>
+              <input class="dash-input" type="text" id="addr-label" placeholder="Home / Work / Other" value="Home" />
+            </div>
+            <div class="form-row-2">
+              <div class="dash-form-group">
+                <label class="dash-label" for="addr-name">Full Name <span style="color:#e53e3e;">*</span></label>
+                <input class="dash-input" type="text" id="addr-name" placeholder="Priya Sharma" required autocomplete="name" />
+              </div>
+              <div class="dash-form-group">
+                <label class="dash-label" for="addr-phone">Phone <span style="color:#e53e3e;">*</span></label>
+                <input class="dash-input" type="tel" id="addr-phone" placeholder="+91 98765 43210" required autocomplete="tel" />
+              </div>
+            </div>
+            <div class="dash-form-group">
+              <label class="dash-label" for="addr-line">Address Line <span style="color:#e53e3e;">*</span></label>
+              <input class="dash-input" type="text" id="addr-line" placeholder="House/flat, street, area" required autocomplete="street-address" />
+            </div>
+            <div class="form-row-2">
+              <div class="dash-form-group">
+                <label class="dash-label" for="addr-city">City <span style="color:#e53e3e;">*</span></label>
+                <input class="dash-input" type="text" id="addr-city" placeholder="New Delhi" required autocomplete="address-level2" />
+              </div>
+              <div class="dash-form-group">
+                <label class="dash-label" for="addr-state">State <span style="color:#e53e3e;">*</span></label>
+                <input class="dash-input" type="text" id="addr-state" placeholder="Haryana" required autocomplete="address-level1" />
+              </div>
+            </div>
+            <div class="dash-form-group">
+              <label class="dash-label" for="addr-pincode">PIN Code <span style="color:#e53e3e;">*</span></label>
+              <input class="dash-input" type="text" id="addr-pincode" placeholder="121006" pattern="[0-9]{6}" required autocomplete="postal-code" />
+            </div>
+            <button type="submit" class="dash-btn">Add Address</button>
+          </form>
+        </div>
+
+        <!-- Orders Panel -->
+        <div class="dash-panel" id="dash-panel-orders">
+          <div class="panel-title">My Orders</div>
+          <div id="orders-container"><p style="color:#6B7280;font-size:14px;">Loading orders...</p></div>
+        </div>
+
+        <!-- Wishlist Panel -->
+        <div class="dash-panel" id="dash-panel-wishlist">
+          <div class="panel-title">My Wishlist</div>
+          <div id="wishlist-container"><p style="color:#6B7280;font-size:14px;">Loading wishlist...</p></div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="dash-panel" id="dash-panel-settings">
+          <div class="panel-title">Account Settings</div>
+          <div class="dash-msg" id="settings-msg"></div>
+          <p style="font-size:14px;font-weight:700;margin-bottom:16px;">Change Password</p>
+          <div class="dash-form-group">
+            <label class="dash-label" for="settings-new-pwd">New Password <span style="font-weight:400;color:#6B7280;">(min. 6 characters)</span></label>
+            <input class="dash-input" type="password" id="settings-new-pwd" placeholder="Enter new password" minlength="6" autocomplete="new-password" />
+          </div>
+          <div class="dash-form-group">
+            <label class="dash-label" for="settings-confirm-pwd">Confirm New Password</label>
+            <input class="dash-input" type="password" id="settings-confirm-pwd" placeholder="Confirm new password" autocomplete="new-password" />
+          </div>
+          <button class="dash-btn" id="settings-save-pwd-btn">Update Password</button>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /dash-layout -->
+  </main>
+
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/customer-dashboard.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    /* Avatar initials */
+    window.getCustomerSession && window.getCustomerSession().then(function(session) {
+      if (!session) return;
+      var name = (session.user.user_metadata && session.user.user_metadata.full_name) || session.user.email || '';
+      var initials = name.trim().split(' ').map(function(w){ return w[0]||''; }).join('').toUpperCase().slice(0,2) || '?';
+      var av = document.getElementById('dash-avatar');
+      if (av) av.textContent = initials;
+    });
+
+    /* Profile save */
+    var profileSaveBtn = document.getElementById('profile-save-btn');
+    if (profileSaveBtn) profileSaveBtn.addEventListener('click', async function() {
+      var msgEl = document.getElementById('profile-msg');
+      if (msgEl) { msgEl.className = 'dash-msg'; msgEl.textContent = ''; }
+      profileSaveBtn.disabled = true; profileSaveBtn.textContent = 'Saving\u2026';
+      try {
+        await CustomerDashboard.saveProfile();
+        if (msgEl) { msgEl.className = 'dash-msg success'; msgEl.textContent = '\u2713 Profile saved successfully.'; }
+      } catch(err) {
+        if (msgEl) { msgEl.className = 'dash-msg error'; msgEl.textContent = 'Failed: ' + err.message; }
+      }
+      profileSaveBtn.disabled = false; profileSaveBtn.textContent = 'Save Profile';
+    });
+
+    /* Add address form */
+    var addrForm = document.getElementById('add-addr-form');
+    if (addrForm) addrForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var msgEl = document.getElementById('addr-msg');
+      if (msgEl) { msgEl.className = 'dash-msg'; msgEl.textContent = ''; }
+      function gv(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+      var data = { label:gv('addr-label'), full_name:gv('addr-name'), phone:gv('addr-phone'), address_line:gv('addr-line'), city:gv('addr-city'), state:gv('addr-state'), pincode:gv('addr-pincode') };
+      if (!data.full_name||!data.phone||!data.address_line||!data.city||!data.state||!data.pincode) {
+        if (msgEl) { msgEl.className='dash-msg error'; msgEl.textContent='Please fill in all required fields.'; } return;
+      }
+      var btn=addrForm.querySelector('button[type="submit"]');
+      if(btn){btn.disabled=true;btn.textContent='Saving\u2026';}
+      try {
+        await CustomerDashboard.addAddress(data);
+        addrForm.reset();
+        document.getElementById('addr-label').value='Home';
+        if (msgEl) { msgEl.className='dash-msg success'; msgEl.textContent='\u2713 Address added!'; }
+      } catch(err) {
+        if (msgEl) { msgEl.className='dash-msg error'; msgEl.textContent='Failed: '+err.message; }
+      }
+      if(btn){btn.disabled=false;btn.textContent='Add Address';}
+    });
+
+    /* Change password */
+    var pwdBtn = document.getElementById('settings-save-pwd-btn');
+    if (pwdBtn) pwdBtn.addEventListener('click', async function() {
+      var msgEl = document.getElementById('settings-msg');
+      if (msgEl) { msgEl.className='dash-msg'; msgEl.textContent=''; }
+      var pwd1 = document.getElementById('settings-new-pwd').value;
+      var pwd2 = document.getElementById('settings-confirm-pwd').value;
+      if (!pwd1||pwd1.length<6) { if(msgEl){msgEl.className='dash-msg error';msgEl.textContent='Password must be at least 6 characters.';} return; }
+      if (pwd1!==pwd2) { if(msgEl){msgEl.className='dash-msg error';msgEl.textContent='Passwords do not match.';} return; }
+      pwdBtn.disabled=true; pwdBtn.textContent='Updating\u2026';
+      try {
+        await CustomerDashboard.changePassword(pwd1);
+        if(msgEl){msgEl.className='dash-msg success';msgEl.textContent='\u2713 Password updated successfully!';}
+        document.getElementById('settings-new-pwd').value='';
+        document.getElementById('settings-confirm-pwd').value='';
+      } catch(err) { if(msgEl){msgEl.className='dash-msg error';msgEl.textContent='Failed: '+err.message;} }
+      pwdBtn.disabled=false; pwdBtn.textContent='Update Password';
+    });
+
+    /* Sign out */
+    var soBtn = document.getElementById('dash-signout-btn');
+    if (soBtn) soBtn.addEventListener('click', function() {
+      /* Clear session so navbar profile icon reverts to guest state */
+      try { localStorage.removeItem('azzurra_customer_session'); } catch(ex) {}
+      CustomerDashboard.signOut();
+    });
+  });
+  </script>
+</body>
+</html>

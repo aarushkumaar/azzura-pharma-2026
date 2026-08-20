@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="./">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Login — Azzurra Pharmaconutrition</title>
+
+  <!-- Supabase UMD — must load BEFORE any script that uses window.supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary:       #1A5FA8;
+      --color-primary-dark:  #134a87;
+      --color-primary-light: #E8F1FB;
+      --color-dark:          #1A1A2E;
+      --color-grey:          #6B7280;
+      --color-gold:          #C9A84C;
+      --color-border:        #D1E3F8;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--color-primary-light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── Card ─────────────────────────────────────────────── */
+    .card {
+      background: #ffffff;
+      border: 1.5px solid var(--color-border);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 12px 48px rgba(26, 95, 168, 0.10);
+    }
+
+    /* ── Card Header ──────────────────────────────────────── */
+    .card-header { text-align: center; margin-bottom: 32px; }
+
+    .logo-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 26px;
+      color: var(--color-primary);
+      letter-spacing: 0.06em;
+      line-height: 1;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .portal-badge {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--color-gold);
+      margin-bottom: 20px;
+    }
+
+    .divider-line {
+      width: 40px;
+      height: 2px;
+      background: var(--color-border);
+      margin: 0 auto 20px;
+      border-radius: 2px;
+    }
+
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--color-dark);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--color-grey);
+      line-height: 1.5;
+    }
+
+    /* ── Form ─────────────────────────────────────────────── */
+    .form-group { margin-bottom: 16px; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-dark);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper { position: relative; }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      border: 1.5px solid var(--color-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      width: 100%;
+      background: #fff;
+      color: var(--color-dark);
+      transition: border-color 0.18s ease;
+      outline: none;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      border-color: var(--color-primary);
+    }
+
+    #password { padding-right: 44px; }
+
+    /* ── Password Toggle ──────────────────────────────────── */
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      color: var(--color-grey);
+      user-select: none;
+      outline: none;
+    }
+
+    /* ── Sign In Button ───────────────────────────────────── */
+    .btn-signin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 24px;
+      background-color: var(--color-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: background-color 0.2s ease, opacity 0.2s ease;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-signin:hover:not(:disabled) { background-color: var(--color-primary-dark); }
+    .btn-signin:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    /* ── Spinner ──────────────────────────────────────────── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+      font-style: normal;
+      line-height: 1;
+    }
+
+    /* ── Error Message ────────────────────────────────────── */
+    .error-message {
+      display: none;
+      background: #fff5f5;
+      border: 1.5px solid #fc8181;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #c53030;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+    .error-message.show { display: block; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    .card-footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 12px;
+      color: var(--color-grey);
+      border-top: 1px solid var(--color-border);
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Login Card ─────────────────────────────────────── -->
+  <div class="card" role="main">
+
+    <!-- Header -->
+    <div class="card-header">
+      <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:90px; width:auto; display:inline-block; vertical-align:middle; margin-right:10px;">
+        <span class="portal-badge" style="vertical-align:middle;">Admin Portal</span>
+      <div class="divider-line"></div>
+      <h1 class="card-title">Admin Login</h1>
+      <p class="card-subtitle">Azzurra Pharmaconutrition &mdash; Internal Access Only</p>
+    </div>
+
+    <!-- Form — always visible immediately, no hiding, no redirects on load -->
+    <form id="login-form" novalidate>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            id="toggle-password"
+            aria-label="Show password"
+          >&#128065;</button>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-signin" id="signin-btn">
+        Sign In
+      </button>
+
+      <!-- Error (hidden by default) -->
+      <div class="error-message" id="error-message" role="alert" aria-live="polite">
+        Invalid email or password. Please try again.
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <div class="card-footer">
+      &copy; 2025 Azzurra Pharmaconutrition. Restricted access.
+    </div>
+
+  </div><!-- /.card -->
+
+  <!-- ── Auth Logic ─────────────────────────────────────── -->
+  <script>
+    // ── Config ──────────────────────────────────────────────
+    var SUPABASE_URL      = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
+
+    // Initialize Supabase client ONCE using the UMD global
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ── DOM refs ─────────────────────────────────────────────
+    var form        = document.getElementById('login-form');
+    var emailInput  = document.getElementById('email');
+    var pwInput     = document.getElementById('password');
+    var signinBtn   = document.getElementById('signin-btn');
+    var errorMsg    = document.getElementById('error-message');
+    var toggleBtn   = document.getElementById('toggle-password');
+
+    // ── Form submit ──────────────────────────────────────────
+    // NO session check on page load — the login page always shows the form.
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      errorMsg.classList.remove('show');
+      setLoading(true);
+
+      var email    = emailInput.value.trim();
+      var password = pwInput.value;
+
+      if (!email || !password) {
+        setLoading(false);
+        showError('Please enter both email and password.');
+        return;
+      }
+
+      try {
+        var result = await sb.auth.signInWithPassword({ email: email, password: password });
+
+        if (result.error) {
+          setLoading(false);
+          showError('Invalid email or password. Please try again.');
+          console.error('[login] auth error:', result.error.message);
+          return;
+        }
+
+        // Success — session is now in Supabase's own storage.
+        // Replace (not push) so Back button doesn't return to the login page.
+        window.location.replace('./admin.html');
+
+      } catch (err) {
+        setLoading(false);
+        showError('Network error. Please check your connection and try again.');
+        console.error('[login] unexpected error:', err);
+      }
+    });
+
+    // ── Password toggle ──────────────────────────────────────
+    toggleBtn.addEventListener('click', function() {
+      var hidden = pwInput.type === 'password';
+      pwInput.type        = hidden ? 'text' : 'password';
+      toggleBtn.innerHTML = hidden ? '&#128584;' : '&#128065;';
+      toggleBtn.setAttribute('aria-label', hidden ? 'Hide password' : 'Show password');
+    });
+
+    // ── Helpers ──────────────────────────────────────────────
+    function setLoading(loading) {
+      signinBtn.disabled = loading;
+      signinBtn.innerHTML = loading
+        ? '<span class="spinner" aria-hidden="true">&#10227;</span> Signing in&hellip;'
+        : 'Sign In';
+    }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.classList.add('show');
+    }
+  </script>
+
+</body>
+</html>
