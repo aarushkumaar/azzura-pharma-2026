@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home1/azzurrapharmaco/public_html/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R assets $DEPLOYPATH
+    - /bin/cp *.html $DEPLOYPATH
+    - /bin/cp config.js $DEPLOYPATH
+    - /bin/cp cloudinary-products-map.json $DEPLOYPATH
