@@ -4,6 +4,22 @@ deployment:
     - export DEPLOYPATH=/home1/azzurrapharmaco/public_html/
     - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R assets $DEPLOYPATH
-    - /bin/cp *.html $DEPLOYPATH
     - /bin/cp config.js $DEPLOYPATH
     - /bin/cp cloudinary-products-map.json $DEPLOYPATH
+    - /bin/cp about.html $DEPLOYPATH
+    - /bin/cp admin-login.html $DEPLOYPATH
+    - /bin/cp admin.html $DEPLOYPATH
+    - /bin/cp cart.html $DEPLOYPATH
+    - /bin/cp checkout.html $DEPLOYPATH
+    - /bin/cp contact.html $DEPLOYPATH
+    - /bin/cp customer-auth.html $DEPLOYPATH
+    - /bin/cp customer-dashboard.html $DEPLOYPATH
+    - /bin/cp events.html $DEPLOYPATH
+    - /bin/cp index.html $DEPLOYPATH
+    - /bin/cp order-confirmation.html $DEPLOYPATH
+    - /bin/cp product-detail.html $DEPLOYPATH
+    - /bin/cp product-essential-immuno-plus.html $DEPLOYPATH
+    - /bin/cp product-essential-renaprotein.html $DEPLOYPATH
+    - /bin/cp productss.html $DEPLOYPATH
+    - /bin/cp prototype.html $DEPLOYPATH
+    - /bin/cp science.html $DEPLOYPATH
