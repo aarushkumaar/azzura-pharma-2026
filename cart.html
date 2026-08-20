@@ -1,14 +1,13 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <base href="./">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Cart — Azzurra Pharmaconutrition</title>
-  <meta name="description" content="Review your cart and proceed to secure checkout. Azzurra Pharmaconutrition — clinically formulated nutrition." />
+  <title>Your Cart � Azzurra Pharmaconutrition</title>
+  <meta name="description" content="Review your cart and proceed to secure checkout. Azzurra Pharmaconutrition � clinically formulated nutrition." />
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="stylesheet" href="assets/css/cart.css" />
-  <script src="assets/js/env-config.js"></script>
 </head>
 <body class="has-main-nav">
 
@@ -16,7 +15,7 @@
   <div id="scroll-progress" aria-hidden="true"></div>
 
   <!-- ========================================================
-       NAVBAR — same as all pages, no active link on cart
+       NAVBAR � same as all pages, no active link on cart
        ======================================================== -->
   <nav class="main-nav" id="mainNav">
     <div class="nav-inner">
@@ -61,15 +60,15 @@
   </nav>
 
   <!-- ========================================================
-       CART HERO — thin strip with breadcrumb
+       CART HERO � thin strip with breadcrumb
        ======================================================== -->
   <header class="cart-hero">
     <div class="cart-hero__inner">
       <nav class="cart-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="index.html">Home</a>
-        <span class="sep" aria-hidden="true">›</span>
+        <span class="sep" aria-hidden="true">�</span>
         <a href="productss.html">Shop</a>
-        <span class="sep" aria-hidden="true">›</span>
+        <span class="sep" aria-hidden="true">�</span>
         <span aria-current="page">Cart</span>
       </nav>
       <h1 class="cart-hero__heading">Your Cart</h1>
@@ -77,12 +76,12 @@
   </header>
 
   <!-- ========================================================
-       CART MAIN — two-column layout
+       CART MAIN � two-column layout
        ======================================================== -->
   <main class="cart-main" role="main">
     <div class="cart-layout">
 
-      <!-- ── LEFT: Cart Items (65%) ─────────────────────────── -->
+      <!-- -- LEFT: Cart Items (65%) --------------------------- -->
       <section class="cart-items-col" aria-label="Cart items">
         <div class="cart-items-header">
           <h2 class="cart-items-title">Items</h2>
@@ -95,7 +94,7 @@
         </div>
       </section>
 
-      <!-- ── RIGHT: Order Summary (35%) ─────────────────────── -->
+      <!-- -- RIGHT: Order Summary (35%) ----------------------- -->
       <aside class="cart-summary-col" aria-label="Order summary">
         <div class="cart-summary-card">
           <div class="cart-summary__header">
@@ -105,7 +104,7 @@
           <div class="cart-summary__body">
             <div class="summary-line">
               <span>Subtotal</span>
-              <span class="summary-line__value" id="summary-subtotal">₹0</span>
+              <span class="summary-line__value" id="summary-subtotal">?0</span>
             </div>
             <div class="summary-line">
               <span>Shipping</span>
@@ -113,28 +112,28 @@
             </div>
             <div class="summary-line">
               <span>GST (18%)</span>
-              <span class="summary-line__value" id="summary-gst">₹0</span>
+              <span class="summary-line__value" id="summary-gst">?0</span>
             </div>
 
             <div class="summary-divider"></div>
 
             <div class="summary-total-line">
               <span class="summary-total-label">Total</span>
-              <span class="summary-total-value" id="summary-total">₹0</span>
+              <span class="summary-total-value" id="summary-total">?0</span>
             </div>
 
             <!-- Checkout button -->
             <a href="checkout.html" class="cart-checkout-btn" id="cart-checkout-btn">
-              Proceed to Checkout →
+              Proceed to Checkout ?
             </a>
-            <a href="productss.html" class="cart-continue-link">← Continue Shopping</a>
+            <a href="productss.html" class="cart-continue-link">? Continue Shopping</a>
           </div>
 
           <!-- Trust badges -->
           <div class="cart-trust-badges">
-            <span class="cart-trust-badge">🔒 Secure Checkout</span>
-            <span class="cart-trust-badge">✓ Genuine Products</span>
-            <span class="cart-trust-badge">📦 Pan-India Delivery</span>
+            <span class="cart-trust-badge">?? Secure Checkout</span>
+            <span class="cart-trust-badge">? Genuine Products</span>
+            <span class="cart-trust-badge">?? Pan-India Delivery</span>
           </div>
         </div>
       </aside>
@@ -153,7 +152,7 @@
   </footer>
 
   <!-- Back to Top -->
-  <button id="back-to-top" aria-label="Back to top" title="Back to top">↑</button>
+  <button id="back-to-top" aria-label="Back to top" title="Back to top">?</button>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
@@ -161,7 +160,7 @@
   <script src="assets/js/main.js"></script>
   <script>
   /* ============================================================
-     CART PAGE — Read/update localStorage cart
+     CART PAGE � Read/update localStorage cart
      ============================================================ */
   (function initCartPage() {
 
@@ -187,7 +186,7 @@
 
     /* ---- Format currency ---- */
     function fmt(amount) {
-      return '₹' + Math.round(amount).toLocaleString('en-IN');
+      return '?' + Math.round(amount).toLocaleString('en-IN');
     }
 
     /* ---- Update order summary totals ---- */
@@ -238,16 +237,16 @@
         '<div class="cart-item__info">' +
           '<p class="cart-item__series">' + (item.series || 'Essential Series') + '</p>' +
           '<h3 class="cart-item__name">' + item.name + '</h3>' +
-          '<p class="cart-item__unit-price">₹' + item.price.toLocaleString('en-IN') + ' per unit</p>' +
+          '<p class="cart-item__unit-price">?' + item.price.toLocaleString('en-IN') + ' per unit</p>' +
         '</div>' +
         '<div class="cart-item__controls">' +
           '<div class="qty-control" role="group" aria-label="Quantity for ' + item.name + '">' +
-            '<button class="qty-control__btn qty-dec" aria-label="Decrease quantity">−</button>' +
+            '<button class="qty-control__btn qty-dec" aria-label="Decrease quantity">-</button>' +
             '<span class="qty-control__num">' + (item.quantity || 1) + '</span>' +
             '<button class="qty-control__btn qty-inc" aria-label="Increase quantity">+</button>' +
           '</div>' +
           '<span class="cart-item__subtotal" id="item-subtotal-' + index + '">' + fmt(subtotal) + '</span>' +
-          '<button class="cart-item__remove" aria-label="Remove ' + item.name + ' from cart">× Remove</button>' +
+          '<button class="cart-item__remove" aria-label="Remove ' + item.name + ' from cart">� Remove</button>' +
         '</div>';
 
       /* Quantity decrease */
@@ -302,7 +301,7 @@
         /* Empty state */
         listEl.innerHTML =
           '<div class="cart-empty">' +
-            '<div class="cart-empty__icon">🛒</div>' +
+            '<div class="cart-empty__icon">??</div>' +
             '<p class="cart-empty__msg">Your cart is empty.</p>' +
             '<a href="productss.html" class="btn btn--primary" style="margin-top:8px;">Browse Products</a>' +
           '</div>';

@@ -1,13 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <base href="./">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Medical Events &amp; Conferences — Azzurra Pharmaconutrition</title>
+  <title>Medical Events &amp; Conferences � Azzurra Pharmaconutrition</title>
   <meta name="description" content="Stay updated with Azzurra's clinical outreach, product launches, and healthcare events across India. Upcoming and past medical events and conferences." />
   <link rel="stylesheet" href="assets/css/style.css" />
-  <script src="assets/js/env-config.js"></script>
 </head>
 <body class="has-main-nav">
 
@@ -64,7 +63,7 @@
     <div class="container">
       <nav class="page-hero__breadcrumb" aria-label="Breadcrumb">
         <a href="index.html">Home</a>
-        <span aria-hidden="true">›</span>
+        <span aria-hidden="true">�</span>
         <span>Events</span>
       </nav>
       <div class="page-hero__rule" aria-hidden="true"></div>
@@ -85,10 +84,10 @@
     <h2 class="heading-xl" style="margin-bottom:32px;">Upcoming Events</h2>
     <div id="upcoming-events-container">
       <!-- Populated by JS -->
-      <div style="text-align:center;padding:40px;"><span style="font-size:24px;">⏳</span><p style="color:var(--color-grey);margin-top:12px;">Loading events…</p></div>
+      <div style="text-align:center;padding:40px;"><span style="font-size:24px;">?</span><p style="color:var(--color-grey);margin-top:12px;">Loading events�</p></div>
     </div>
 
-    <!-- ── PAST EVENTS ── -->
+    <!-- -- PAST EVENTS -- -->
     <h2 class="heading-xl" style="margin-top:64px;margin-bottom:32px;">Past Events</h2>
     <div id="past-events-container" class="past-events-grid">
       <!-- Populated by JS -->
@@ -103,7 +102,7 @@
     <div class="footer__grid">
       <div>
         <img src="assets/images/logo.png" alt="Azzurra Logo" style="height:110px; width:auto; display:block; margin-bottom:12px;">
-        <p class="footer__tagline">Reaching globally and understanding locally — innovation and research to bring happiness to life.</p>
+        <p class="footer__tagline">Reaching globally and understanding locally � innovation and research to bring happiness to life.</p>
         <p class="footer__collab">Technical Collaboration: Azzurra Pharmaconutrition, USA</p>
       </div>
       <div>
@@ -131,15 +130,15 @@
       <div>
         <h3 class="footer__col-title">Contact</h3>
         <div class="footer__contact-item">
-          <span class="footer__contact-icon" aria-hidden="true">📍</span>
-          <p class="footer__contact-text">F-31, Sector 10, DLF, Faridabad (NCR-Delhi) — 121006, India</p>
+          <span class="footer__contact-icon" aria-hidden="true">??</span>
+          <p class="footer__contact-text">F-31, Sector 10, DLF, Faridabad (NCR-Delhi) � 121006, India</p>
         </div>
         <div class="footer__contact-item">
-          <span class="footer__contact-icon" aria-hidden="true">📞</span>
+          <span class="footer__contact-icon" aria-hidden="true">??</span>
           <p class="footer__contact-text"><a href="tel:+919871648649">+91 98 71 648 649</a></p>
         </div>
         <div class="footer__contact-item">
-          <span class="footer__contact-icon" aria-hidden="true">✉️</span>
+          <span class="footer__contact-icon" aria-hidden="true">??</span>
           <p class="footer__contact-text"><a href="mailto:info@azzurrapharmaconutrition.com">info@azzurrapharmaconutrition.com</a></p>
         </div>
       </div>
@@ -157,7 +156,7 @@
 
   <script>
   /* ============================================================
-     EVENTS PAGE — fetch & render events from Supabase
+     EVENTS PAGE � fetch & render events from Supabase
   ============================================================ */
   (async function initEventsPage() {
     var SUPA_URL = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
@@ -177,7 +176,7 @@
       return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
     }
 
-    /* ── Countdown timer for events within 30 days ── */
+    /* -- Countdown timer for events within 30 days -- */
     function getCountdown(dateStr) {
       if (!dateStr) return null;
       var target = new Date(dateStr + 'T00:00:00');
@@ -195,7 +194,7 @@
       return days + 'd ' + hrs + 'h ' + mins + 'm ' + secs + 's';
     }
 
-    /* ── Fetch events ── */
+    /* -- Fetch events -- */
     async function fetchEvents(filter) {
       try {
         var url = SUPA_URL + '/rest/v1/events?' + filter + '&is_active=eq.true&order=date.' + (filter.includes('gte') ? 'asc' : 'desc');
@@ -214,14 +213,14 @@
       }
     }
 
-    /* ── Render upcoming event card ── */
+    /* -- Render upcoming event card -- */
     function renderUpcomingCard(ev) {
       var imgHtml = ev.banner_image_url
         ? '<img src="' + ev.banner_image_url + '" alt="' + ev.title + '" class="event-banner-image" loading="lazy" />'
         : '<div class="event-banner-placeholder">' + (ev.title || 'Event') + '</div>';
 
       var regBtn = ev.registration_url
-        ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="event-register-btn">Register / Learn More →</a>'
+        ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="event-register-btn">Register / Learn More ?</a>'
         : '<span class="event-register-btn disabled">Coming Soon</span>';
 
       var countdownMs = getCountdown(ev.date);
@@ -235,8 +234,8 @@
           '<span class="event-type-tag">' + (ev.event_type || 'Event') + '</span>' +
           '<h3 class="event-title">' + (ev.title || '') + '</h3>' +
           '<p class="event-desc">' + (ev.short_description || '') + '</p>' +
-          (ev.location ? '<p class="event-meta">📍 ' + ev.location + (ev.city ? ', ' + ev.city : '') + '</p>' : '') +
-          (ev.time ? '<p class="event-meta">🕐 ' + ev.time + '</p>' : '') +
+          (ev.location ? '<p class="event-meta">?? ' + ev.location + (ev.city ? ', ' + ev.city : '') + '</p>' : '') +
+          (ev.time ? '<p class="event-meta">?? ' + ev.time + '</p>' : '') +
           countdownHtml +
           regBtn +
         '</div>' +
@@ -244,7 +243,7 @@
       '</article>';
     }
 
-    /* ── Render past event card ── */
+    /* -- Render past event card -- */
     function renderPastCard(ev) {
       var imgHtml = ev.banner_image_url
         ? '<img src="' + ev.banner_image_url + '" alt="' + ev.title + '" class="past-event-img" loading="lazy" />'
@@ -256,14 +255,14 @@
           '<span class="past-event-concluded">Event Concluded</span>' +
           '<div class="past-event-title">' + (ev.title || '') + '</div>' +
           '<div class="past-event-meta">' +
-            (ev.date ? '📅 ' + formatDate(ev.date) : '') +
-            (ev.city ? ' · 📍 ' + ev.city : '') +
+            (ev.date ? '?? ' + formatDate(ev.date) : '') +
+            (ev.city ? ' � ?? ' + ev.city : '') +
           '</div>' +
         '</div>' +
       '</div>';
     }
 
-    /* ── Load and render ── */
+    /* -- Load and render -- */
     var upcomingEl = document.getElementById('upcoming-events-container');
     var pastEl     = document.getElementById('past-events-container');
 
@@ -273,7 +272,7 @@
     // Upcoming
     if (upcomingEl) {
       if (!upcoming || upcoming.length === 0) {
-        upcomingEl.innerHTML = '<div class="no-events-card">📅 No upcoming events scheduled. Check back soon.</div>';
+        upcomingEl.innerHTML = '<div class="no-events-card">?? No upcoming events scheduled. Check back soon.</div>';
       } else {
         upcomingEl.innerHTML = upcoming.map(renderUpcomingCard).join('');
 
