@@ -139,15 +139,16 @@
         return res.json();
       })
       .then(function (rows) {
-        if (!rows || !rows.length) return false;
-        window.PRODUCTS = rows.map(mapSupabaseProduct);
+        var products = Array.isArray(rows) ? rows.map(mapSupabaseProduct) : [];
+        window.PRODUCTS = products;
         window.__PRODUCTS_SOURCE = 'supabase';
-        console.info('[Azzurra] Products loaded from Supabase (' + rows.length + ')');
+        console.info('[Azzurra] Products loaded from Supabase (' + products.length + ')');
         return true;
       })
       .catch(function (err) {
-        console.warn('[Azzurra] Supabase unavailable, using static fallback:', err.message);
-        window.__PRODUCTS_SOURCE = 'static';
+        console.warn('[Azzurra] Supabase products query failed:', err.message);
+        window.PRODUCTS = [];
+        window.__PRODUCTS_SOURCE = 'supabase';
         return false;
       });
   };
@@ -179,7 +180,7 @@
         return res.json();
       })
       .then(function (rows) {
-        return (rows || []).map(mapSupabaseProduct);
+        return Array.isArray(rows) ? rows.map(mapSupabaseProduct) : [];
       })
       .catch(function (err) {
         console.warn('[Azzurra] Featured products fetch failed:', err.message);
