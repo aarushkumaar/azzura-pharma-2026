@@ -49,6 +49,42 @@
     return session ? session.user : null;
   };
 
+  /* ── Sync Customer Profile & Customer Table ── */
+  window.syncCustomerData = async function (user, extraData) {
+    if (!user) return;
+    var sb = getClient();
+    if (!sb) return;
+    var email = user.email || (extraData && extraData.email) || '';
+    var meta = user.user_metadata || {};
+    var name = (extraData && extraData.name) || meta.full_name || meta.name || (email ? email.split('@')[0] : '');
+    var phone = (extraData && extraData.phone) || meta.phone || user.phone || '';
+    var nowIso = new Date().toISOString();
+
+    // 1. Sync to customer_profiles (by user_id)
+    if (user.id) {
+      try {
+        await sb.from('customer_profiles').upsert({
+          user_id: user.id,
+          full_name: name,
+          phone: phone || null,
+          updated_at: nowIso
+        }, { onConflict: 'user_id' });
+      } catch (_) {}
+    }
+
+    // 2. Sync to customers table (by email) for Admin Panel Customers
+    if (email) {
+      try {
+        await sb.from('customers').upsert({
+          name: name || email,
+          email: email,
+          phone: phone || null,
+          last_activity: nowIso
+        }, { onConflict: 'email' });
+      } catch (_) {}
+    }
+  };
+
   /* ── Sign Up ── */
   window.customerSignUp = async function (email, password, fullName) {
     var sb = getClient();
@@ -75,13 +111,9 @@
       }
       throw res.error;
     }
-    /* Create a customer_profiles row immediately */
+    /* Sync customer profile and customers table */
     if (res.data && res.data.user) {
-      await sb.from('customer_profiles').upsert({
-        user_id:    res.data.user.id,
-        full_name:  fullName || '',
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id', ignoreDuplicates: false }).then(function(){});
+      await window.syncCustomerData(res.data.user, { name: fullName, email: email });
     }
     return res.data;
   };
@@ -92,14 +124,9 @@
     if (!sb) throw new Error('Auth not available');
     var res = await sb.auth.signInWithPassword({ email: email, password: password });
     if (res.error) throw res.error;
-    /* Ensure profile row exists */
+    /* Ensure profile row and customers row exist */
     if (res.data && res.data.user) {
-      var name = (res.data.user.user_metadata && res.data.user.user_metadata.full_name) || '';
-      await sb.from('customer_profiles').upsert({
-        user_id:    res.data.user.id,
-        full_name:  name,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id', ignoreDuplicates: false }).then(function(){});
+      await window.syncCustomerData(res.data.user, { email: email });
     }
     return res.data;
   };

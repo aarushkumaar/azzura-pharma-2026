@@ -302,14 +302,19 @@
     document.getElementById('switch-to-signup').addEventListener('click', function(){ showPanel('signup'); });
     document.getElementById('switch-to-login') .addEventListener('click', function(){ showPanel('login'); });
 
-    /* ── Redirect if already logged in ── */
+    /* ── Redirect if already logged in / Google OAuth callback ── */
     var urlParams = new URLSearchParams(window.location.search);
-    window.getCustomerSession && window.getCustomerSession().then(function(session) {
-      if (session) {
-        var returnTo = urlParams.get('returnTo') || 'customer-dashboard.html';
-        window.location.replace(returnTo);
-      }
-    });
+    if (window.getCustomerSession) {
+      window.getCustomerSession().then(async function(session) {
+        if (session && session.user) {
+          if (typeof window.syncCustomerData === 'function') {
+            try { await window.syncCustomerData(session.user); } catch(_) {}
+          }
+          var returnTo = urlParams.get('returnTo') || 'customer-dashboard.html';
+          window.location.replace(returnTo);
+        }
+      });
+    }
 
     /* ── Helpers ── */
     function showMsg(elId, msg, isError) {

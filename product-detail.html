@@ -678,6 +678,9 @@
     }
     function cldUrl(url, w) {
       if (!url || url.indexOf('res.cloudinary.com') === -1) return url;
+      if (url.indexOf('/f_auto,q_auto/') !== -1) {
+        return url.replace('/f_auto,q_auto/', '/f_auto,q_auto,w_' + w + '/');
+      }
       return url.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_' + w + '/');
     }
     function showToast(msg) {

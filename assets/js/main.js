@@ -159,6 +159,9 @@ function updateProfileIcon() {
       if (session && session.user) {
         var email = session.user.email || '';
         _setProfileLoggedIn(btn, email);
+        if (typeof window.syncCustomerData === 'function') {
+          try { window.syncCustomerData(session.user); } catch(_) {}
+        }
         try { localStorage.setItem('azzurra_customer_session', JSON.stringify({ email: email, signedIn: true })); } catch(_) {}
       } else {
         try { localStorage.removeItem('azzurra_customer_session'); } catch(_) {}

@@ -423,9 +423,16 @@
       var addBtnId    = 'add-btn-' + product.id;
       var outOfStock  = !product.inStock;
       var images      = product.images || [];
-      /* Images already have f_auto,q_auto — just add w_400 */
-      var img0 = images[0] ? images[0].replace('f_auto,q_auto/', 'f_auto,q_auto,w_400/') : '';
-      var img1 = images[1] ? images[1].replace('f_auto,q_auto/', 'f_auto,q_auto,w_400/') : '';
+      function formatShopImgUrl(u) {
+        if (!u) return '';
+        if (u.indexOf('res.cloudinary.com') === -1) return u;
+        if (u.indexOf('/f_auto,q_auto/') !== -1) {
+          return u.replace('/f_auto,q_auto/', '/f_auto,q_auto,w_400/');
+        }
+        return u.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_400/');
+      }
+      var img0 = images[0] ? formatShopImgUrl(images[0]) : '';
+      var img1 = images[1] ? formatShopImgUrl(images[1]) : '';
       /* Stagger index for animation */
       var cardIndex = renderCard._count = (renderCard._count || 0) + 1;
       var isEager   = cardIndex <= 6;

@@ -1554,13 +1554,13 @@ async function uploadToCloudinary(blob, folder, baseName) {
   var fd = new FormData();
   fd.append('file',         blob);
   fd.append('upload_preset', PRESET);
-  fd.append('folder',       'azzura_products/' + (folder || 'uncategorized'));
-  fd.append('public_id',    (folder || 'uncategorized') + '/' + baseName);
-  fd.append('format',       'webp');
+  if (folder) {
+    fd.append('folder', 'azzura_products/' + folder);
+  }
   var res  = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', { method: 'POST', body: fd });
   var data = await res.json();
   if (!res.ok || data.error) throw new Error(data.error ? data.error.message : 'Upload failed');
-  return 'https://res.cloudinary.com/' + CLOUD_NAME + '/image/upload/f_auto,q_auto/' + data.public_id;
+  return data.secure_url || ('https://res.cloudinary.com/' + CLOUD_NAME + '/image/upload/' + data.public_id);
 }
 
 if (doUploadBtn) doUploadBtn.addEventListener('click', async function() {
@@ -1973,7 +1973,7 @@ function renderCustomers(customers, ordersByEmail) {
   tbody.innerHTML = customers.map(function(c) {
     var email  = (c.email||'').toLowerCase();
     var orders = ordersByEmail[email] || [];
-    var lastTs = orders.length ? orders.reduce(function(a,b) { return a.created_at > b.created_at ? a : b; }).created_at : null;
+    var lastTs = orders.length ? orders.reduce(function(a,b) { return a.created_at > b.created_at ? a : b; }).created_at : (c.last_activity || c.first_seen || c.created_at || null);
     return '<tr id="cust-row-' + c.id + '" style="cursor:pointer;" onclick="toggleCustDetail(' + c.id + ')">'
       + '<td style="font-weight:600;">' + esc(c.name||'&mdash;') + '</td>'
       + '<td style="font-size:13px;">' + esc(c.email||'&mdash;') + '</td>'

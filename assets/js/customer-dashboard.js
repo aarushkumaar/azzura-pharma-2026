@@ -30,20 +30,19 @@ window.CustomerDashboard = (function () {
     }
     _user = session.user;
 
-    // Ensure profile row exists for OAuth users (and others)
-    var name = (_user.user_metadata && _user.user_metadata.full_name) || '';
-    if (name || _user.email) {
-      try {
-        var profileRes = await _sb.from('customer_profiles').select('user_id').eq('user_id', _user.id).single();
-        if (!profileRes.data) {
-          await _sb.from('customer_profiles').insert({
+    // Ensure customer profile and customers table rows exist (for OAuth & email users)
+    if (window.syncCustomerData) {
+      try { await window.syncCustomerData(_user); } catch (e) {}
+    } else {
+      var name = (_user.user_metadata && _user.user_metadata.full_name) || '';
+      if (name || _user.email) {
+        try {
+          await _sb.from('customer_profiles').upsert({
             user_id:    _user.id,
             full_name:  name || _user.email,
             updated_at: new Date().toISOString()
-          });
-        }
-      } catch (e) {
-        // Ignored: profile likely exists or other error
+          }, { onConflict: 'user_id' });
+        } catch (e) {}
       }
     }
 
@@ -90,14 +89,18 @@ window.CustomerDashboard = (function () {
     var phoneEl = document.getElementById('profile-phone');
     var name  = nameEl  ? nameEl.value.trim()  : '';
     var phone = phoneEl ? phoneEl.value.trim() : '';
-    var r = await _sb.from('customer_profiles').upsert({
-      user_id:    _user.id,
-      full_name:  name,
-      phone:      phone,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
-    if (r.error) throw r.error;
-    await _sb.auth.updateUser({ data: { full_name: name } });
+    if (window.syncCustomerData) {
+      await window.syncCustomerData(_user, { name: name, phone: phone });
+    } else {
+      var r = await _sb.from('customer_profiles').upsert({
+        user_id:    _user.id,
+        full_name:  name,
+        phone:      phone,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+      if (r.error) throw r.error;
+    }
+    await _sb.auth.updateUser({ data: { full_name: name, phone: phone } });
     return true;
   }
 

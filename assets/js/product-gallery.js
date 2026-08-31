@@ -20,6 +20,9 @@
   function cldUrl(url, transform) {
     if (!url) return '';
     if (url.indexOf('res.cloudinary.com') === -1) return url;
+    if (url.indexOf('/f_auto,q_auto/') !== -1) {
+      return url.replace('/f_auto,q_auto/', '/' + transform + '/');
+    }
     return url.replace('/image/upload/', '/image/upload/' + transform + '/');
   }
 
