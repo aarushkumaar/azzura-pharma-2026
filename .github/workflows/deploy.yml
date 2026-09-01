@@ -1,12 +1,6 @@
+```yaml
 # ============================================================
-# AZZURRA — GitHub Pages Deploy Workflow
-# Deploys the static site on every push to main.
-# No build step needed — the site is pure HTML/CSS/JS.
-#
-# Also runs a Supabase edge function deploy step.
-# Requires these GitHub Actions secrets:
-#   SUPABASE_ACCESS_TOKEN   — from https://supabase.com/dashboard/account/tokens
-#   SUPABASE_PROJECT_ID     — "ilduyhuvpiqhvbnocqxf" (your project ref)
+# AZZURRA — GitHub Pages + Supabase Edge Functions
 # ============================================================
 
 name: Deploy to GitHub Pages
@@ -14,38 +8,39 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main          # Triggers on every push to main
-  workflow_dispatch:  # Allow manual trigger from the Actions tab
+      - main
+  workflow_dispatch:
 
-# Grant GITHUB_TOKEN permission to write to Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, cancel in-progress runs
 concurrency:
   group: "pages"
   cancel-in-progress: true
 
 jobs:
-  # ── Job 1: Deploy static site to GitHub Pages ──────────────
+
+  # ==========================================================
+  # JOB 1 — Deploy Static Website to GitHub Pages
+  # ==========================================================
   deploy-pages:
     name: Deploy Static Site
     runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
-      # Upload the entire repo root as the Pages artifact.
-      # Exclude node_modules, .git, and supabase backend directories.
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -55,42 +50,110 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # ── Job 2: Deploy Supabase Edge Functions ──────────────────
+
+  # ==========================================================
+  # JOB 2 — Deploy Supabase Edge Functions
+  # ==========================================================
   deploy-functions:
-    name: Deploy Edge Functions
+    name: Deploy Supabase Edge Functions
     runs-on: ubuntu-latest
-    needs: []   # Runs in parallel with deploy-pages
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_ID: ilduyhuvpiqhvbnocqxf
 
     steps:
+
+      # ------------------------------------------------------
+      # Checkout
+      # ------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ------------------------------------------------------
+      # Setup Supabase CLI
+      #
+      # IMPORTANT:
+      # Do NOT use "latest" here.
+      # Pinning the version avoids GitHub release API
+      # rate-limit errors when setup-cli tries to resolve latest.
+      # ------------------------------------------------------
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.116.0
 
+      # ------------------------------------------------------
+      # Verify CLI installation
+      # ------------------------------------------------------
+      - name: Check Supabase CLI
+        run: supabase --version
+
+      # ------------------------------------------------------
+      # Check that the access token exists
+      # ------------------------------------------------------
+      - name: Verify Supabase credentials
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "ERROR: SUPABASE_ACCESS_TOKEN is not configured."
+            echo "Go to GitHub → Settings → Secrets and variables → Actions"
+            echo "and create a repository secret named SUPABASE_ACCESS_TOKEN."
+            exit 1
+          fi
+
+          echo "Supabase access token detected."
+
+      # ------------------------------------------------------
+      # Link repository to Supabase project
+      # ------------------------------------------------------
       - name: Link Supabase project
-        run: supabase link --project-ref ilduyhuvpiqhvbnocqxf
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase link \
+            --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Deploy createRazorpayOrder function
-        run: supabase functions deploy createRazorpayOrder --no-verify-jwt
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      # ------------------------------------------------------
+      # Deploy createRazorpayOrder
+      # ------------------------------------------------------
+      - name: Deploy createRazorpayOrder
+        run: |
+          supabase functions deploy createRazorpayOrder \
+            --no-verify-jwt \
+            --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Deploy createOrder function
-        run: supabase functions deploy createOrder --no-verify-jwt
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      # ------------------------------------------------------
+      # Deploy createOrder
+      # ------------------------------------------------------
+      - name: Deploy createOrder
+        run: |
+          supabase functions deploy createOrder \
+            --no-verify-jwt \
+            --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Deploy verifyPayment function
-        run: supabase functions deploy verifyPayment --no-verify-jwt
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      # ------------------------------------------------------
+      # Deploy verifyPayment
+      # ------------------------------------------------------
+      - name: Deploy verifyPayment
+        run: |
+          supabase functions deploy verifyPayment \
+            --no-verify-jwt \
+            --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Deploy initiateRefund function
-        run: supabase functions deploy initiateRefund --no-verify-jwt
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      # ------------------------------------------------------
+      # Deploy initiateRefund
+      # ------------------------------------------------------
+      - name: Deploy initiateRefund
+        run: |
+          supabase functions deploy initiateRefund \
+            --no-verify-jwt \
+            --project-ref "$SUPABASE_PROJECT_ID"
+
+      # ------------------------------------------------------
+      # Finished
+      # ------------------------------------------------------
+      - name: Deployment complete
+        run: |
+          echo "=========================================="
+          echo "Supabase Edge Functions deployed!"
+          echo "Project: $SUPABASE_PROJECT_ID"
+          echo "=========================================="
+```
