@@ -718,7 +718,10 @@ function initCheckout() {
       /* 1. Request secure Razorpay Order ID from backend */
       var rzpOrderRes = await fetch(_CHECKOUT_SUPABASE_URL + '/functions/v1/createRazorpayOrder', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + accessToken
+        },
         body: JSON.stringify({
           orderId: savedOrderId,
           amount: finalAmount,
@@ -754,7 +757,10 @@ function initCheckout() {
           try {
             var verifyRes = await fetch(_CHECKOUT_SUPABASE_URL + '/functions/v1/verifyPayment', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + accessToken
+              },
               body: JSON.stringify({
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id:   response.razorpay_order_id,

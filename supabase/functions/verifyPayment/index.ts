@@ -39,6 +39,40 @@ serve(async (req: Request) => {
       return errorResponse('Missing required payment verification fields', 400);
     }
 
+    // ---- Verify User Authorization ----
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing Authorization header');
+    }
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Initialize supabase client to use auth
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    );
+    
+    const { data: { user }, error: userErr } = await supabase.auth.getUser(token);
+    
+    if (userErr || !user) {
+      throw new Error('Unauthorized: Invalid or missing user token.');
+    }
+
+    // Check if user owns the order
+    const { data: order, error: orderErr } = await supabase
+      .from('orders')
+      .select('customer_user_id, customer_id, total_amount')
+      .eq('id', orderId)
+      .single();
+
+    if (orderErr || !order) {
+      throw new Error(`Order not found or database error: ${orderErr?.message}`);
+    }
+
+    if (order.customer_user_id !== user.id) {
+      throw new Error('Unauthorized: You do not have permission to verify this order.');
+    }
+
     // ---- Verify HMAC signature ----
     // Razorpay signature = HMAC-SHA256(razorpay_order_id + "|" + razorpay_payment_id, key_secret)
     const secret    = (Deno.env.get('RAZORPAY_KEY_SECRET') || '').trim();
@@ -74,10 +108,7 @@ serve(async (req: Request) => {
     }
 
     // ---- Signature is valid: update order and payment ----
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    );
+    // (supabase client is already initialized above)
 
     // 1. Update order status to 'paid'
     const { error: orderError } = await supabase
@@ -107,14 +138,37 @@ serve(async (req: Request) => {
       console.error('[verifyPayment] Failed to update payment row:', paymentError.message);
     }
 
-    // 3. Update customer lifetime value (best-effort)
-    try {
-      const { data: order } = await supabase
-        .from('orders')
-        .select('customer_id, total_amount')
-        .eq('id', orderId)
-        .single();
+    // 3. Record secure coupon usage
+    if (order?.coupon_code && order?.customer_id) {
+      try {
+        const { data: couponData } = await supabase
+          .from('coupons')
+          .select('id, used_count')
+          .eq('code', order.coupon_code)
+          .single();
 
+        if (couponData) {
+          // Insert usage record
+          await supabase.from('coupon_usage').insert({
+            coupon_id: couponData.id,
+            customer_user_id: order.customer_user_id,
+            customer_email: order.customer_email || 'unknown',
+            order_id: orderId,
+          });
+          
+          // Increment used_count
+          await supabase
+            .from('coupons')
+            .update({ used_count: (couponData.used_count || 0) + 1 })
+            .eq('id', couponData.id);
+        }
+      } catch (err) {
+        console.error('[verifyPayment] Failed to record coupon usage:', err);
+      }
+    }
+
+    // 4. Update customer lifetime value (best-effort)
+    try {
       if (order?.customer_id) {
         await supabase.rpc('increment_customer_ltv', {
           customer_id: order.customer_id,
