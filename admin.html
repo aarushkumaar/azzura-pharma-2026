@@ -12,6 +12,7 @@
 
   <!-- ── Supabase UMD — MUST come before any script using window.supabase ── -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/cloudinary-utils.js"></script>
 
   <!-- ── AUTH GUARD ────────────────────────────────────────────────────────
        Runs synchronously as soon as Supabase is available.
@@ -1241,7 +1242,7 @@ function renderProducts() {
     var imgSrc = getFirstImage(p.images);
     // Add f_auto,q_auto,w_120 for admin thumbnails
     if (imgSrc && imgSrc.indexOf('res.cloudinary.com') !== -1) {
-      imgSrc = imgSrc.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_120/');
+      imgSrc = typeof window.cldUrl === 'function' ? window.cldUrl(imgSrc, 'f_auto,q_auto,w_120') : imgSrc.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_120/');
     }
     var thumb  = imgSrc
       ? '<img src="' + esc(imgSrc) + '" class="prod-thumb" loading="lazy" alt="' + esc(p.name||'') + '" />'
@@ -1397,7 +1398,7 @@ function renderImgEditor() {
   grid.innerHTML = currentImgs.map(function(url, idx) {
     var isCover = idx === 0;
     return '<div class="img-card" id="imgcard-' + idx + '" data-idx="' + idx + '">'
-      + '<img src="' + esc(url.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_200/')) + '" alt="Image ' + (idx+1) + '" loading="lazy" />'
+      + '<img src="' + esc(typeof window.cldUrl === 'function' ? window.cldUrl(url, 'f_auto,q_auto,w_200') : url.replace('/image/upload/', '/image/upload/f_auto,q_auto,w_200/')) + '" alt="Image ' + (idx+1) + '" loading="lazy" />'
       + (isCover ? '<div class="img-cover-badge">&#11088; Cover</div>' : '')
       + '<div class="img-card-actions">'
         + '<button class="img-action-btn' + (isCover?' cover-active':'') + '" title="Set as cover" onclick="imgSetCover(' + idx + ')" type="button">&#11088;</button>'
@@ -1455,15 +1456,31 @@ if (saveImagesBtn) saveImagesBtn.addEventListener('click', async function() {
   if (!currentEditId) { showToast('Open an existing product to save images', 'warning'); return; }
   this.disabled = true; this.textContent = 'Saving\u2026';
   try {
-    var r = await sb.from('products').update({ images: JSON.stringify(currentImgs) }).eq('id', currentEditId);
+    var finalImgs = [];
+    for (var i = 0; i < currentImgs.length; i++) {
+      var rot = imgRotations[i] || 0;
+      var newUrl = rot !== 0 && typeof window.cldRotateUrl === 'function' 
+        ? window.cldRotateUrl(currentImgs[i], rot) 
+        : currentImgs[i];
+      finalImgs.push(newUrl);
+    }
+    
+    var r = await sb.from('products').update({ images: JSON.stringify(finalImgs) }).eq('id', currentEditId);
     if (r.error) throw r.error;
+    
     // Update in-memory
+    currentImgs = finalImgs;
+    imgRotations = {}; // reset rotations
+    
     var p = allProducts.find(function(x) { return x.id === currentEditId; });
     if (p) p.images = JSON.stringify(currentImgs);
     this.classList.remove('has-changes');
+    
     // Refresh thumbnail in table
     var img = document.querySelector('#prod-row-' + currentEditId + ' .prod-thumb');
-    if (img && currentImgs[0]) img.src = currentImgs[0].replace('/image/upload/', '/image/upload/f_auto,q_auto,w_120/');
+    if (img && currentImgs[0]) {
+      img.src = typeof window.cldUrl === 'function' ? window.cldUrl(currentImgs[0], 'f_auto,q_auto,w_120') : currentImgs[0].replace('/image/upload/', '/image/upload/f_auto,q_auto,w_120/');
+    }
     showToast('\u2713 Images saved', 'success');
   } catch(err) { showToast('Save failed: ' + err.message, 'error'); }
   finally { this.disabled = false; this.textContent = '\u{1F4BE} Save Image Changes'; }

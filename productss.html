@@ -335,6 +335,7 @@
   <script src="assets/js/supabase-products.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/customer-auth.js"></script>
+  <script src="assets/js/cloudinary-utils.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
   /* ============================================================
@@ -344,6 +345,7 @@
 
     /* ── Cloudinary URL transformer ── */
     function cldUrl(url, transform) {
+      if (typeof window.cldUrl === 'function') return window.cldUrl(url, transform);
       if (!url) return '';
       if (url.indexOf('res.cloudinary.com') === -1) return url;
       return url.replace('/image/upload/', '/image/upload/' + transform + '/');

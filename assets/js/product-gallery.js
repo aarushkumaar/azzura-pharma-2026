@@ -18,6 +18,7 @@
 
   /* ── Cloudinary URL transformer ──────────────────────────── */
   function cldUrl(url, transform) {
+    if (typeof window.cldUrl === 'function') return window.cldUrl(url, transform);
     if (!url) return '';
     if (url.indexOf('res.cloudinary.com') === -1) return url;
     if (url.indexOf('/f_auto,q_auto/') !== -1) {
