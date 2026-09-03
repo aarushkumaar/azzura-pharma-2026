@@ -871,9 +871,10 @@
         mainImgHtml = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;color:#1A5FA8;opacity:.3;">📦</div>';
       }
 
-      /* Tags HTML */
-      var tagsHtml = tags.length
-        ? '<div class="pd-tags">' + tags.map(function(t) { return '<span class="pd-tag">' + esc(t) + '</span>'; }).join('') + '</div>'
+      /* Tags HTML — limit display to first 3-4 tags in hero section */
+      var displayTags = tags.slice(0, 4);
+      var tagsHtml = displayTags.length
+        ? '<div class="pd-tags">' + displayTags.map(function(t) { return '<span class="pd-tag">' + esc(t) + '</span>'; }).join('') + '</div>'
         : '';
 
       /* Build full HTML */
@@ -945,13 +946,13 @@
             '<button class="pd-tab-btn" data-tab="nutrition">Nutrition Facts</button>' +
             '<button class="pd-tab-btn" data-tab="reviews" id="tab-reviews">Reviews</button>' +
           '</div>' +
-          buildTabPanel('overview', buildBenefits(p.benefits)) +
+          buildTabPanel('overview', buildOverview(p)) +
           buildTabPanel('ingredients', p.ingredients
             ? '<p style="font-size:15px;line-height:1.8;color:var(--color-grey);">' + esc(p.ingredients).replace(/\n/g,'<br/>') + '</p>'
-            : '<p style="color:var(--color-grey);">Detailed ingredient list coming soon.</p>') +
+            : '<p style="color:var(--color-grey);">Ingredient information will be available soon.</p>') +
           buildTabPanel('how-to-use', p.how_to_use
             ? '<p style="font-size:15px;line-height:1.8;">' + esc(p.how_to_use).replace(/\n/g,'<br/>') + '</p>'
-            : '<p style="color:var(--color-grey);">Usage instructions coming soon. Please consult your healthcare provider.</p>') +
+            : '<p style="color:var(--color-grey);">Usage instructions will be available soon. Please consult your healthcare provider.</p>') +
           buildTabPanel('nutrition', buildNutritionTable(p.nutrition_facts)) +
           buildTabPanel('reviews', buildReviews()) +
         '</div>' +
@@ -978,6 +979,65 @@
         contentHtml + '</div>';
     }
 
+    function buildOverview(p) {
+      // Auto-generate professional overview from existing product data
+      // DO NOT invent information; only reorganize existing fields
+      if (!p) return '<p style="color:var(--color-grey);">Product information coming soon.</p>';
+
+      var parts = [];
+
+      // 1. Intro paragraph from short_description or name + series
+      if (p.short_description && p.short_description.trim()) {
+        parts.push('<p style="font-size:15px;line-height:1.6;margin-bottom:16px;color:var(--color-text);">' +
+          esc(p.short_description) + '</p>');
+      }
+
+      // 2. Key Benefits section from tags and benefits
+      var keyBenefits = [];
+
+      // Extract key use cases from tags (first 3-5 meaningful ones)
+      if (Array.isArray(p.tags) && p.tags.length) {
+        // Already have array from supabase-products.js
+        p.tags.forEach(function(tag, idx) {
+          if (idx < 5 && tag && tag.trim()) {
+            keyBenefits.push(tag);
+          }
+        });
+      } else if (p.tags && typeof p.tags === 'string') {
+        // Fallback if tags are string
+        var tagList = p.tags.split(',');
+        tagList.forEach(function(tag, idx) {
+          if (idx < 5 && tag && tag.trim()) {
+            keyBenefits.push(tag.trim());
+          }
+        });
+      }
+
+      // If we have key benefits, display them
+      if (keyBenefits.length > 0) {
+        parts.push('<div style="margin-top:16px;"><strong style="font-size:14px;color:var(--color-text);">Key Benefits:</strong>');
+        parts.push('<ul style="margin-top:8px;list-style:none;padding-left:0;">');
+        keyBenefits.forEach(function(benefit) {
+          parts.push('<li style="font-size:14px;margin-bottom:6px;color:var(--color-grey);">✓ ' + esc(benefit) + '</li>');
+        });
+        parts.push('</ul></div>');
+      }
+
+      // 3. Series/Clinical Use info if available
+      if (p.series && p.series.trim()) {
+        parts.push('<div style="margin-top:16px;padding:12px;background-color:#F7FAFC;border-left:3px solid #1A5FA8;border-radius:4px;">');
+        parts.push('<strong style="font-size:13px;color:var(--color-text);">Product Series:</strong>');
+        parts.push('<p style="font-size:13px;margin-top:4px;color:var(--color-grey);">' + esc(p.series) + '</p>');
+        parts.push('</div>');
+      }
+
+      if (parts.length === 0) {
+        return '<p style="color:var(--color-grey);">Product overview information coming soon.</p>';
+      }
+
+      return parts.join('');
+    }
+
     function buildBenefits(raw) {
       if (!raw || !raw.trim()) return '<p style="color:var(--color-grey);">Product benefits coming soon.</p>';
       var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
@@ -987,7 +1047,7 @@
     }
 
     function buildNutritionTable(raw) {
-      if (!raw || !raw.trim()) return '<p style="color:var(--color-grey);">Nutrition facts coming soon.</p>';
+      if (!raw || !raw.trim()) return '<p style="color:var(--color-grey);">Nutrition information will be available soon.</p>';
       // Simple format: each line "Nutrient: value"
       var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
       return '<table class="pd-nutrition-table">' +
