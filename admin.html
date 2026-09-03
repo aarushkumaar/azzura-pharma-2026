@@ -1094,6 +1094,13 @@ function countItems(items) {
 function toTitleCase(str) {
   return str.replace(/_/g,' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
 }
+/* formatPhone: returns safe HTML for a phone value.
+   Returns em-dash literal (not HTML entity) for null/empty/undefined,
+   then the esc()-escaped number for real values — avoiding double-escaping. */
+function formatPhone(p) {
+  if (!p || !String(p).trim() || String(p).trim() === '&mdash;') return '\u2014';
+  return esc(String(p).trim());
+}
 
 /* ── DASHBOARD ── */
 async function loadDashboard() {
@@ -1152,7 +1159,7 @@ function renderRecentOrders(orders) {
   if (!orders.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128230;</div><p>No orders yet</p></div>'; return; }
   c.innerHTML = '<table><thead><tr><th>ID</th><th>Customer</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody>'
     + orders.map(function(o) {
-        return '<tr><td style="font-size:12px;color:var(--color-grey);">#' + String(o.id).slice(-6) + '</td><td>' + esc(o.customer_name||'&mdash;') + '</td><td>&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</td><td style="font-size:12px;">' + fmtDate(o.created_at) + '</td><td>' + statusBadge(o.status) + '</td></tr>';
+        return '<tr><td style="font-size:12px;color:var(--color-grey);">#' + String(o.id).slice(-6) + '</td><td>' + esc(o.customer_name||'—') + '</td><td>&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</td><td style="font-size:12px;">' + fmtDate(o.created_at) + '</td><td>' + statusBadge(o.status) + '</td></tr>';
       }).join('')
     + '</tbody></table>';
 }
@@ -1162,7 +1169,7 @@ function renderLowStock(products) {
   if (!c) return;
   if (!products.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#10003;</div><p>All products in stock</p></div>'; return; }
   c.innerHTML = products.map(function(p) {
-    return '<div class="low-stock-item"><span class="badge badge-outofstock">Out of Stock</span><span>' + esc(p.name||'&mdash;') + '</span>'
+    return '<div class="low-stock-item"><span class="badge badge-outofstock">Out of Stock</span><span>' + esc(p.name||'—') + '</span>'
       + (p.series ? '<span style="font-size:12px;color:var(--color-grey);margin-left:auto;">' + esc(p.series) + '</span>' : '') + '</div>';
   }).join('');
 }
@@ -1859,7 +1866,7 @@ function renderOrders() {
     var itemCount = countItems(o.items);
     return '<tr id="order-row-' + o.id + '" class="order-main-row" style="cursor:pointer;" onclick="toggleOrderDetail(' + o.id + ')">' 
       + '<td style="font-size:12px;color:var(--color-grey);font-family:monospace;">#' + String(o.id).slice(-8) + '</td>'
-      + '<td style="font-weight:600;">' + esc(o.customer_name||'&mdash;') + '</td>'
+      + '<td style="font-weight:600;">' + esc(o.customer_name||'—') + '</td>'
       + '<td>' + itemCount + ' item' + (itemCount!==1?'s':'') + '</td>'
       + '<td>&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</td>'
       + '<td>' + statusBadge(o.status) + '</td>'
@@ -1902,22 +1909,74 @@ function buildOrderDetail(o) {
   var paymentBlock = '<div class="order-detail-group">'
     + '<h4>Payment</h4>'
     + '<p style="font-size:13px;">Method: <strong>' + esc(payMethod.toUpperCase()) + '</strong></p>'
-    + '<p style="font-size:13px;">Status: ' + paymentBadge(payStatus, payMethod) + '</p>'
+    + '<p style="font-size:13px;">Status: ' + paymentBadge(payStatus, payMethod) + ' <span style="font-size:11px;color:var(--color-grey);margin-left:6px;">(managed by payment system)</span></p>'
     + '<p style="font-size:13px;">Razorpay ID: ' + payIdHtml + '</p>'
     + couponHtml
     + '</div>';
 
-  return '<div class="order-detail-grid">'
-    + '<div class="order-detail-group"><h4>Customer</h4><p>' + esc(o.customer_name||'&mdash;') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_email||'&mdash;') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_phone||'&mdash;') + '</p></div>'
-    + '<div class="order-detail-group"><h4>Delivery Address</h4><p style="font-size:13px;">' + esc(o.address||'&mdash;') + '</p></div>'
-    + paymentBlock
-    + '</div>' + itemsHtml
-    + '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;"><span style="font-size:13px;font-weight:600;">Update Status:</span>'
-    + '<select class="status-select" onchange="updateOrderStatus(' + o.id + ',this.value)">'
+  var statusSelect = '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;">'
+    + '<span style="font-size:13px;font-weight:600;">Update Status:</span>'
+    + '<select id="status-select-' + o.id + '" class="status-select" onchange="updateOrderStatus(' + o.id + ',this.value,this)">'
     + ['pending','confirmed','shipped','delivered','cancelled'].map(function(s) {
         return '<option value="' + s + '" ' + ((o.status||'').toLowerCase()===s?'selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
       }).join('')
-    + '</select></div>';
+    + '</select>'
+    + '<span id="status-saving-' + o.id + '" style="font-size:12px;color:var(--color-grey);display:none;">Saving…</span>'
+    + '</div>';
+
+  var auditSection = '<div class="order-detail-group" style="margin-top:16px;border-top:1px solid #E5E7EB;padding-top:16px;">'
+    + '<h4 style="margin-bottom:8px;">Order History</h4>'
+    + '<div id="audit-log-' + o.id + '" style="font-size:13px;color:var(--color-grey);">Loading history…</div>'
+    + '</div>';
+
+  // Kick off async audit load
+  setTimeout(function() { loadAuditLog(o.id); }, 0);
+
+  return '<div class="order-detail-grid">'
+    + '<div class="order-detail-group"><h4>Customer</h4><p>' + esc(o.customer_name||'—') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_email||'—') + '</p><p style="font-size:13px;color:var(--color-grey);">' + formatPhone(o.customer_phone) + '</p></div>'
+    + '<div class="order-detail-group"><h4>Delivery Address</h4><p style="font-size:13px;">' + esc(o.address||'—') + '</p></div>'
+    + paymentBlock
+    + '</div>' + itemsHtml
+    + statusSelect
+    + auditSection;
+}
+
+async function loadAuditLog(orderId) {
+  var container = document.getElementById('audit-log-' + orderId);
+  if (!container) return;
+  try {
+    var r = await sb.from('order_audit_log')
+      .select('*')
+      .eq('order_id', orderId)
+      .order('changed_at', { ascending: true });
+    if (r.error) throw r.error;
+    var logs = r.data || [];
+    if (!logs.length) {
+      container.innerHTML = '<span style="color:var(--color-grey);font-size:13px;">No history recorded yet.</span>';
+      return;
+    }
+    container.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">'
+      + logs.map(function(log) {
+          var ts = new Date(log.changed_at).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+          var who = log.changed_by_email || 'system';
+          var action = (log.action || '').replace(/_/g, ' ');
+          var parts = [];
+          if (log.old_status !== log.new_status && log.new_status != null) {
+            parts.push('Status: <strong>' + esc(log.old_status || '—') + '</strong> → <strong>' + esc(log.new_status) + '</strong>');
+          }
+          if (log.old_payment_status !== log.new_payment_status && log.new_payment_status != null) {
+            parts.push('Payment: <strong>' + esc(log.old_payment_status || '—') + '</strong> → <strong>' + esc(log.new_payment_status) + '</strong>');
+          }
+          if (!parts.length) parts.push('<strong>' + esc(action) + '</strong>');
+          return '<div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid #F3F4F6;">'
+            + '<span style="font-size:11px;color:var(--color-grey);white-space:nowrap;min-width:130px;">' + ts + '</span>'
+            + '<span style="font-size:12px;">' + parts.join(' &nbsp;|&nbsp; ') + ' <span style="color:var(--color-grey);font-size:11px;">by ' + esc(who) + '</span></span>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+  } catch(err) {
+    if (container) container.innerHTML = '<span style="color:var(--color-grey);font-size:12px;">Could not load order history.</span>';
+  }
 }
 
 window.toggleOrderDetail = function(id) {
@@ -1933,19 +1992,43 @@ window.toggleOrderDetail = function(id) {
   }
 };
 
-window.updateOrderStatus = async function(id, status) {
+window.updateOrderStatus = async function(id, newStatus, selectEl) {
+  var sel     = selectEl || document.getElementById('status-select-' + id);
+  var saving  = document.getElementById('status-saving-' + id);
+  var prevStatus = '';
+  // Find the current status in allOrders to allow revert
+  var idx = allOrders.findIndex(function(o) { return o.id === id; });
+  if (idx !== -1) prevStatus = allOrders[idx].status || '';
+
+  // Show loading state
+  if (sel)    { sel.disabled = true; }
+  if (saving) { saving.style.display = 'inline'; }
+
   try {
-    var r = await sb.from('orders').update({ status }).eq('id', id);
+    var r = await sb.from('orders').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', id);
     if (r.error) throw r.error;
-    var idx = allOrders.findIndex(function(o) { return o.id === id; });
-    if (idx !== -1) allOrders[idx].status = status;
+    // Update in-memory cache
+    if (idx !== -1) allOrders[idx].status = newStatus;
+    // Update the status badge in the main row
     var mainRow = document.getElementById('order-row-' + id);
     if (mainRow) {
       var cell = mainRow.querySelector('td:nth-child(5)');
-      if (cell) cell.innerHTML = statusBadge(status);
+      if (cell) cell.innerHTML = statusBadge(newStatus);
     }
-    showToast('Order status updated to ' + status, 'success');
-  } catch(err) { showToast('Status update failed: ' + err.message, 'error'); }
+    showToast('Order status updated to ' + newStatus, 'success');
+  } catch(err) {
+    // Revert select to actual DB value on failure
+    if (sel && prevStatus) {
+      var opts = sel.options;
+      for (var i = 0; i < opts.length; i++) {
+        opts[i].selected = (opts[i].value === prevStatus);
+      }
+    }
+    showToast('Status update failed: ' + err.message, 'error');
+  } finally {
+    if (sel)    { sel.disabled = false; }
+    if (saving) { saving.style.display = 'none'; }
+  }
 };
 
 var ordersFilterTabs = document.getElementById('orders-filter-tabs');
@@ -1992,9 +2075,9 @@ function renderCustomers(customers, ordersByEmail) {
     var orders = ordersByEmail[email] || [];
     var lastTs = orders.length ? orders.reduce(function(a,b) { return a.created_at > b.created_at ? a : b; }).created_at : (c.last_activity || c.first_seen || c.created_at || null);
     return '<tr id="cust-row-' + c.id + '" style="cursor:pointer;" onclick="toggleCustDetail(' + c.id + ')">'
-      + '<td style="font-weight:600;">' + esc(c.name||'&mdash;') + '</td>'
-      + '<td style="font-size:13px;">' + esc(c.email||'&mdash;') + '</td>'
-      + '<td style="font-size:13px;">' + esc(c.phone||'&mdash;') + '</td>'
+      + '<td style="font-weight:600;">' + esc(c.name||'—') + '</td>'
+      + '<td style="font-size:13px;">' + esc(c.email||'—') + '</td>'
+      + '<td style="font-size:13px;">' + formatPhone(c.phone) + '</td>'
       + '<td>' + orders.length + '</td>'
       + '<td style="font-size:13px;color:var(--color-grey);">' + fmtDate(lastTs) + '</td>'
       + '</tr>'
