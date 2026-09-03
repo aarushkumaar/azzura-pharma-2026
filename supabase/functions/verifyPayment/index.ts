@@ -110,13 +110,18 @@ serve(async (req: Request) => {
     // ---- Signature is valid: update order and payment ----
     // (supabase client is already initialized above)
 
-    // 1. Update order status to 'paid'
+    // 1. Update order payment_status to 'paid' and status to 'confirmed'
     const { error: orderError } = await supabase
       .from('orders')
-      .update({ status: 'paid' })
+      .update({
+        payment_status:      'paid',
+        status:              'confirmed',
+        razorpay_payment_id: razorpay_payment_id,
+        updated_at:          new Date().toISOString()
+      })
       .eq('id', orderId);
 
-    if (orderError) throw new Error(`Failed to update order status: ${orderError.message}`);
+    if (orderError) throw new Error(`Failed to update order payment status: ${orderError.message}`);
 
     // 2. Update the payment row — find by gateway_payment_id (Razorpay order ID)
     const { error: paymentError } = await supabase

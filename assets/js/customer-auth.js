@@ -63,24 +63,26 @@
     // 1. Sync to customer_profiles (by user_id)
     if (user.id) {
       try {
-        await sb.from('customer_profiles').upsert({
+        var profilePayload = {
           user_id: user.id,
           full_name: name,
-          phone: phone || null,
           updated_at: nowIso
-        }, { onConflict: 'user_id' });
+        };
+        if (phone && phone.trim()) profilePayload.phone = phone.trim();
+        await sb.from('customer_profiles').upsert(profilePayload, { onConflict: 'user_id' });
       } catch (_) {}
     }
 
     // 2. Sync to customers table (by email) for Admin Panel Customers
     if (email) {
       try {
-        await sb.from('customers').upsert({
+        var custPayload = {
           name: name || email,
           email: email,
-          phone: phone || null,
           last_activity: nowIso
-        }, { onConflict: 'email' });
+        };
+        if (phone && phone.trim()) custPayload.phone = phone.trim();
+        await sb.from('customers').upsert(custPayload, { onConflict: 'email' });
       } catch (_) {}
     }
   };

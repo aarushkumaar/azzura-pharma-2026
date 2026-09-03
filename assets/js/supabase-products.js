@@ -123,6 +123,7 @@
     var url = SUPABASE_URL +
       '/rest/v1/products' +
       '?select=*' +
+      '&series=eq.Essential%20Series' +
       '&order=is_featured.desc,name.asc';
 
     return fetch(url, {
@@ -162,6 +163,7 @@
     var url = SUPABASE_URL +
       '/rest/v1/products' +
       '?select=*' +
+      '&series=eq.Essential%20Series' +
       '&is_featured=eq.true' +
       '&order=name.asc' +
       '&limit=' + n;

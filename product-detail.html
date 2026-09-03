@@ -1148,8 +1148,8 @@
           .neq('id', p.id)
           .limit(4);
         if (r.error || !r.data || !r.data.length) {
-          // Fallback: get any 4 products
-          var r2 = await sb.from('products').select('id,name,series,images').neq('id', p.id).limit(4);
+          // Fallback: get any 4 Essential Series products
+          var r2 = await sb.from('products').select('id,name,series,images').eq('series', 'Essential Series').neq('id', p.id).limit(4);
           if (r2.error || !r2.data || !r2.data.length) {
             grid.innerHTML = '<p style="color:var(--color-grey);font-size:14px;">No related products found.</p>';
             return;

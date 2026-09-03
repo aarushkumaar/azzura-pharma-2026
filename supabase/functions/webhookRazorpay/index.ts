@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // AZZURRA — SUPABASE EDGE FUNCTION: webhookRazorpay
 // Deno runtime. Deploy via: supabase functions deploy webhookRazorpay
 //
@@ -126,7 +126,12 @@ serve(async (req: Request) => {
     if (event === 'payment.captured' || event === 'payment.authorized') {
       await supabase
         .from('orders')
-        .update({ status: 'paid', updated_at: new Date().toISOString() })
+        .update({
+          payment_status:      'paid',
+          status:              'confirmed',
+          razorpay_payment_id: rzpPaymentId,
+          updated_at:          new Date().toISOString()
+        })
         .eq('id', internalOrderId);
 
       await supabase
@@ -145,7 +150,11 @@ serve(async (req: Request) => {
     } else if (event === 'payment.failed') {
       await supabase
         .from('orders')
-        .update({ status: 'payment_failed', updated_at: new Date().toISOString() })
+        .update({
+          payment_status: 'failed',
+          status:         'cancelled',
+          updated_at:     new Date().toISOString()
+        })
         .eq('id', internalOrderId);
 
       await supabase
