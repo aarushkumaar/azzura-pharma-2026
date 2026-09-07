@@ -28,7 +28,7 @@ const COUPONS = {
 };
 const SHIPPING_THRESHOLD = 5000;
 const SHIPPING_COST = 199;
-const GST_RATE = 0.18;
+const GST_RATE = 0;
 
 // Utility to calculate totals securely on server
 function calculateTotals(cart, couponCode) {
