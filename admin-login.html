@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <base href="./">
@@ -327,9 +327,17 @@
           return;
         }
 
-        // Success — session is now in Supabase's own storage.
-        // Replace (not push) so Back button doesn't return to the login page.
-        window.location.replace('./admin.html');
+// Success — session is now in Supabase's own storage.
+// Verify authorized admin email
+if (result.user && result.user.email !== 'info@azzurrapharmaconutrition.com') {
+  // Unauthorized admin – sign out and show error
+  await sb.auth.signOut();
+  setLoading(false);
+  showError('Access denied: unauthorized admin account.');
+  return;
+}
+// Authorized admin – redirect to admin panel
+window.location.replace('./admin.html');
 
       } catch (err) {
         setLoading(false);
