@@ -28,7 +28,6 @@ const COUPONS = {
 };
 const SHIPPING_THRESHOLD = 5000;
 const SHIPPING_COST = 199;
-const GST_RATE = 0;
 
 // Utility to calculate totals securely on server
 function calculateTotals(cart, couponCode) {
@@ -46,10 +45,9 @@ function calculateTotals(cart, couponCode) {
 
   const afterDiscount = subtotal - discount;
   const shipping = afterDiscount >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-  const gst = Math.round(afterDiscount * GST_RATE);
-  const total = afterDiscount + shipping + gst;
+  const total = afterDiscount + shipping;
 
-  return { subtotal, discount, shipping, tax: gst, total };
+  return { subtotal, discount, shipping, tax: 0, total };
 }
 
 // 1. Create Order

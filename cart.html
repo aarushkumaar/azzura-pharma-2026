@@ -8,43 +8,7 @@
   <meta name="description" content="Review your cart and proceed to secure checkout. Azzurra Pharmaconutrition — clinically formulated nutrition." />
   <link rel="stylesheet" href="assets/css/style.css" />
   <link rel="stylesheet" href="assets/css/cart.css" />
-<style>
-/* Auth modal */
-.modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal.hidden { display: none; }
-.modal-content {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-}
-.modal-content h2 {
-  margin-top: 0;
-}
-.modal-content label {
-  display: block;
-  margin-top: 10px;
-}
-.modal-content input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  box-sizing: border-box;
-}
-.modal-content button {
-  margin-top: 15px;
-  margin-right: 10px;
-}
-</style>
+
 </head>
 <body class="has-main-nav">
 
@@ -147,17 +111,13 @@
               <span>Shipping</span>
               <span class="summary-line__value summary-line__note">Calculated at checkout</span>
             </div>
-            <div class="summary-line">
-              <span>GST (included)</span>
-              <span class="summary-line__value" id="summary-gst">₹0</span>
-            </div>
-
             <div class="summary-divider"></div>
 
             <div class="summary-total-line">
               <span class="summary-total-label">Total</span>
               <span class="summary-total-value" id="summary-total">₹0</span>
             </div>
+            <p class="summary-line__note" style="text-align: right; margin-top: -18px; margin-bottom: 20px;">GST is included in MRP</p>
 
             <!-- Checkout button -->
             <a href="checkout.html" class="cart-checkout-btn" id="cart-checkout-btn">
@@ -202,7 +162,6 @@
   (function initCartPage() {
 
     var STORAGE_KEY = 'azzurra_cart';
-    var GST_RATE    = 0;
 
     /* ---- Load cart from localStorage ---- */
     function loadCart() {
@@ -231,17 +190,14 @@
       var subtotal = cart.reduce(function(sum, item) {
         return sum + (item.price * (item.quantity || 1));
       }, 0);
-      var gst   = subtotal * GST_RATE;
-      var total = subtotal + gst;
+      var total = subtotal;
 
       var subtotalEl = document.getElementById('summary-subtotal');
-      var gstEl      = document.getElementById('summary-gst');
       var totalEl    = document.getElementById('summary-total');
       var countLabel = document.getElementById('cart-item-count-label');
       var checkoutBtn = document.getElementById('cart-checkout-btn');
 
       if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
-      if (gstEl)      gstEl.textContent      = fmt(gst);
       if (totalEl)    totalEl.textContent     = fmt(total);
 
       var totalItems = cart.reduce(function(n, item) { return n + (item.quantity || 1); }, 0);
@@ -359,56 +315,25 @@
     }
 
    // Checkout button - require login
-   var checkoutBtn = document.getElementById('cart-checkout-btn');
-   if (checkoutBtn) {
-     checkoutBtn.addEventListener('click', async function(e) {
-       e.preventDefault();
-       var user = await window.getCurrentCustomer();
-       if (!user) {
-         var modal = document.getElementById('auth-modal');
-         if (modal) modal.classList.remove('hidden');
-       } else {
-         window.location.href = 'checkout.html';
-       }
-     });
-   }
+    var checkoutBtn = document.getElementById('cart-checkout-btn');
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        var user = await window.getCurrentCustomer();
+        if (!user) {
+          // Redirect to authentication page with returnTo parameter
+          var returnUrl = 'customer-auth.html?returnTo=' + encodeURIComponent('checkout.html');
+          window.location.href = returnUrl;
+        } else {
+          window.location.href = 'checkout.html';
+        }
+      });
+    }
 
-   // Modal handlers
-   var modalClose = document.getElementById('modal-close');
-   if (modalClose) {
-     modalClose.addEventListener('click', function() {
-       var modal = document.getElementById('auth-modal');
-       if (modal) modal.classList.add('hidden');
-     });
-   }
 
-   var modalSignIn = document.getElementById('modal-signin');
-   if (modalSignIn) {
-     modalSignIn.addEventListener('click', async function() {
-       var email = document.getElementById('modal-email').value.trim();
-       var password = document.getElementById('modal-password').value;
-       try {
-         await window.customerSignIn(email, password);
-         document.getElementById('auth-modal').classList.add('hidden');
-         window.location.href = 'checkout.html';
-       } catch (err) {
-         alert('Login failed: ' + err.message);
-       }
-     });
-   }
 
    }());
   </script>
-<div id="auth-modal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Sign In to Continue</h2>
-    <label for="modal-email">Email:</label>
-    <input type="email" id="modal-email" />
-    <label for="modal-password">Password:</label>
-    <input type="password" id="modal-password" />
-    <button id="modal-signin">Sign In</button>
-    <button id="modal-close">Cancel</button>
-  </div>
-</div>
+
 </body>
 </html>
