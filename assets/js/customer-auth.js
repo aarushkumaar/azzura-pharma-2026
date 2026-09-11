@@ -60,9 +60,15 @@
     var phone = (extraData && extraData.phone) || meta.phone || user.phone || '';
     var nowIso = new Date().toISOString();
 
+    var isBrandNewUser = false;
+
     // 1. Sync to customer_profiles (by user_id)
     if (user.id) {
       try {
+        var existing = await sb.from('customer_profiles').select('user_id').eq('user_id', user.id).maybeSingle();
+        if (!existing || !existing.data) {
+          isBrandNewUser = true;
+        }
         var profilePayload = {
           user_id: user.id,
           full_name: name,
@@ -84,6 +90,32 @@
         if (phone && phone.trim()) custPayload.phone = phone.trim();
         await sb.from('customers').upsert(custPayload, { onConflict: 'email' });
       } catch (_) {}
+    }
+
+    // 3. For Google OAuth: send welcome email only on first account creation (never on re-login)
+    if (isBrandNewUser && user.app_metadata && user.app_metadata.provider === 'google' && email) {
+      var welcomeKey = 'azzurra_welcome_sent_' + user.id;
+      if (!localStorage.getItem(welcomeKey)) {
+        try {
+          localStorage.setItem(welcomeKey, '1');
+          var sessionRes = await sb.auth.getSession();
+          var _token = (sessionRes && sessionRes.data && sessionRes.data.session) ? sessionRes.data.session.access_token : _KEY;
+          if (_URL && _token) {
+            fetch(_URL + '/functions/v1/sendEmail', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + _token
+              },
+              body: JSON.stringify({
+                type: 'welcome',
+                email: email,
+                name: name || email.split('@')[0]
+              })
+            }).catch(function(e) { console.warn('[OAuth Welcome] email failed:', e); });
+          }
+        } catch (_) {}
+      }
     }
   };
 
@@ -116,6 +148,24 @@
     /* Sync customer profile and customers table */
     if (res.data && res.data.user) {
       await window.syncCustomerData(res.data.user, { name: fullName, email: email });
+      /* Send welcome email on account creation (best-effort, non-blocking) */
+      try {
+        var _token = (res.data.session && res.data.session.access_token) ? res.data.session.access_token : _KEY;
+        if (_URL && _token) {
+          fetch(_URL + '/functions/v1/sendEmail', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + _token
+            },
+            body: JSON.stringify({
+              type: 'welcome',
+              email: email,
+              name: fullName || (email ? email.split('@')[0] : '')
+            })
+          }).catch(function(e) { console.warn('[customerSignUp] Welcome email failed:', e); });
+        }
+      } catch(_) { /* non-critical */ }
     }
     return res.data;
   };

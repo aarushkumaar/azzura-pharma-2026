@@ -73,7 +73,7 @@ window.CustomerDashboard = (function () {
   /* ── Profile ── */
   async function loadProfile() {
     if (!_sb || !_user) return;
-    var r = await _sb.from('customer_profiles').select('*').eq('user_id', _user.id).single();
+    var r = await _sb.from('customer_profiles').select('*').eq('user_id', _user.id).maybeSingle();
     var profile = r.data || {};
     var nameEl  = document.getElementById('profile-name');
     var phoneEl = document.getElementById('profile-phone');
@@ -194,7 +194,7 @@ window.CustomerDashboard = (function () {
     var container = document.getElementById('wishlist-container');
     if (!container) return;
     container.innerHTML = '<p style="color:#6B7280;font-size:14px;">Loading wishlist...</p>';
-    var r = await _sb.from('customer_profiles').select('wishlist').eq('user_id', _user.id).single();
+    var r = await _sb.from('customer_profiles').select('wishlist').eq('user_id', _user.id).maybeSingle();
     var raw = r.data && r.data.wishlist ? r.data.wishlist : '[]';
     var ids = [];
     try { ids = JSON.parse(raw); } catch(_) {}

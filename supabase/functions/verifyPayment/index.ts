@@ -61,7 +61,7 @@ serve(async (req: Request) => {
     // Check if user owns the order
     const { data: order, error: orderErr } = await supabase
       .from('orders')
-      .select('customer_user_id, customer_id, total_amount')
+      .select('customer_user_id, customer_id, total_amount, payment_status, status, coupon_code')
       .eq('id', orderId)
       .single();
 
@@ -71,6 +71,15 @@ serve(async (req: Request) => {
 
     if (order.customer_user_id !== user.id) {
       throw new Error('Unauthorized: You do not have permission to verify this order.');
+    }
+
+    // Idempotency: if order is already paid (e.g. verified by webhook or previous call), exit early
+    if (order.payment_status === 'paid') {
+      console.log(`[verifyPayment] Order ${orderId} is already marked as paid. Returning success.`);
+      return new Response(JSON.stringify({ success: true, orderId }), {
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        status: 200,
+      });
     }
 
     // ---- Verify HMAC signature ----
@@ -181,6 +190,32 @@ serve(async (req: Request) => {
         });
       }
     } catch (_) { /* ignore — LTV update is non-critical */ }
+
+    // 5. Send order confirmation emails (customer + admin) — best-effort
+    try {
+      const { data: fullOrder } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
+        .single();
+
+      if (fullOrder) {
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
+        await fetch(`${supabaseUrl}/functions/v1/sendEmail`, {
+          method: 'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+          },
+          body: JSON.stringify({
+            type:  'order_confirmation',
+            order: fullOrder,
+          }),
+        });
+      }
+    } catch (emailErr) {
+      console.error('[verifyPayment] Failed to send order emails (non-critical):', emailErr);
+    }
 
     return new Response(JSON.stringify({ success: true, orderId }), {
       headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },

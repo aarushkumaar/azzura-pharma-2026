@@ -567,18 +567,21 @@ function setSubmitLoading(isLoading) {
 function initCheckout() {
   renderOrderSummary();
 
-  /* 1. Pre-fill address if logged in */
+  /* 1. Ensure authenticated customer & pre-fill address */
   if (window.getCustomerSession) {
     window.getCustomerSession().then(async function(session) {
-      if (session && session.user) {
-        var user = session.user;
-        var sb   = window.getCustomerSupabase();
+      if (!session || !session.user) {
+        window.location.replace('customer-auth.html?returnTo=' + encodeURIComponent(window.location.href));
+        return;
+      }
+      var user = session.user;
+      var sb   = typeof window.getCustomerSupabase === 'function' ? window.getCustomerSupabase() : null;
+      if (sb) {
+        var pr = await sb.from('customer_profiles').select('*').eq('user_id', user.id).maybeSingle();
+        var profile = (pr && pr.data) || {};
 
-        var pr   = await sb.from('customer_profiles').select('*').eq('user_id', user.id).single();
-        var profile = pr.data || {};
-
-        var addrRes = await sb.from('customer_addresses').select('*').eq('user_id', user.id).eq('is_default', true).single();
-        var addr    = addrRes.data || {};
+        var addrRes = await sb.from('customer_addresses').select('*').eq('user_id', user.id).eq('is_default', true).maybeSingle();
+        var addr    = (addrRes && addrRes.data) || {};
 
         var nameEl    = document.getElementById('ch-name');
         var phoneEl   = document.getElementById('ch-phone');
@@ -665,15 +668,24 @@ function initCheckout() {
     setSubmitLoading(true);
 
     var sb = typeof window.getCustomerSupabase === 'function' ? window.getCustomerSupabase() : null;
-    var userRes = sb ? await sb.auth.getUser() : null;
-    var userId = (userRes && userRes.data && userRes.data.user) ? userRes.data.user.id : null;
-
-    if (!userId) {
+    if (!sb) {
       setSubmitLoading(false);
-      showCheckoutError('You must be logged in to place an order. Please sign in or create an account.');
+      showCheckoutError('Authentication service unavailable. Please refresh and try again.');
+      return;
+    }
+
+    var sessionRes = await sb.auth.getSession();
+    var session = sessionRes && sessionRes.data ? sessionRes.data.session : null;
+    var user = session ? session.user : null;
+    var userId = user ? user.id : null;
+    var sessionToken = session ? session.access_token : null;
+
+    if (!userId || !sessionToken) {
+      setSubmitLoading(false);
+      showCheckoutError('You must be signed in to place an order. Redirecting to sign in…');
       setTimeout(function() {
         window.location.href = 'customer-auth.html?returnTo=' + encodeURIComponent(window.location.href);
-      }, 3000);
+      }, 1500);
       return;
     }
 
@@ -720,7 +732,7 @@ function initCheckout() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + accessToken
+          'Authorization': 'Bearer ' + sessionToken
         },
         body: JSON.stringify({
           orderId: savedOrderId,
@@ -759,7 +771,7 @@ function initCheckout() {
               method: 'POST',
               headers: { 
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
+                'Authorization': 'Bearer ' + sessionToken
               },
               body: JSON.stringify({
                 razorpay_payment_id: response.razorpay_payment_id,

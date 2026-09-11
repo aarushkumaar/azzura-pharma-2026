@@ -183,6 +183,7 @@
     .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: capitalize; letter-spacing: 0.03em; }
     .badge-pending   { background: #FFF3E0; color: #E65100; }
     .badge-confirmed { background: var(--color-primary-light); color: var(--color-primary); }
+    .badge-packed    { background: #E0F2FE; color: #0284C7; }
     .badge-shipped   { background: #F3E5F5; color: #7B1FA2; }
     .badge-delivered { background: #E8F5E9; color: #2E7D32; }
     .badge-cancelled { background: #FFEBEE; color: #C62828; }
@@ -581,6 +582,7 @@
           <button class="filter-tab active" data-status="all">All</button>
           <button class="filter-tab" data-status="pending">Pending</button>
           <button class="filter-tab" data-status="confirmed">Confirmed</button>
+          <button class="filter-tab" data-status="packed">Packed</button>
           <button class="filter-tab" data-status="shipped">Shipped</button>
           <button class="filter-tab" data-status="delivered">Delivered</button>
           <button class="filter-tab" data-status="cancelled">Cancelled</button>
@@ -1061,7 +1063,7 @@ function fmtDate(ts) {
 }
 function statusBadge(status) {
   var s = (status || 'pending').toLowerCase();
-  var cls = { pending:'badge-pending', confirmed:'badge-confirmed', shipped:'badge-shipped', delivered:'badge-delivered', cancelled:'badge-cancelled', payment_failed:'badge-cancelled' }[s] || 'badge-pending';
+  var cls = { pending:'badge-pending', confirmed:'badge-confirmed', packed:'badge-packed', shipped:'badge-shipped', delivered:'badge-delivered', cancelled:'badge-cancelled', payment_failed:'badge-cancelled' }[s] || 'badge-pending';
   return '<span class="badge ' + cls + '">' + esc(s.replace(/_/g,' ')) + '</span>';
 }
 function paymentBadge(payStatus, payMethod) {
@@ -1917,7 +1919,7 @@ function buildOrderDetail(o) {
   var statusSelect = '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;">'
     + '<span style="font-size:13px;font-weight:600;">Update Status:</span>'
     + '<select id="status-select-' + o.id + '" class="status-select" onchange="updateOrderStatus(' + o.id + ',this.value,this)">'
-    + ['pending','confirmed','shipped','delivered','cancelled'].map(function(s) {
+    + ['pending','confirmed','packed','shipped','delivered','cancelled'].map(function(s) {
         return '<option value="' + s + '" ' + ((o.status||'').toLowerCase()===s?'selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
       }).join('')
     + '</select>'
@@ -2000,6 +2002,11 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
   var idx = allOrders.findIndex(function(o) { return o.id === id; });
   if (idx !== -1) prevStatus = allOrders[idx].status || '';
 
+  // If status did not actually change, do nothing (prevents duplicate emails & DB writes)
+  if (prevStatus && prevStatus.toLowerCase() === (newStatus || '').toLowerCase()) {
+    return;
+  }
+
   // Show loading state
   if (sel)    { sel.disabled = true; }
   if (saving) { saving.style.display = 'inline'; }
@@ -2008,6 +2015,7 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
     var r = await sb.from('orders').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', id);
     if (r.error) throw r.error;
     // Update in-memory cache
+    var updatedOrder = Object.assign({}, (idx !== -1 ? allOrders[idx] : {}), { id: id, status: newStatus });
     if (idx !== -1) allOrders[idx].status = newStatus;
     // Update the status badge in the main row
     var mainRow = document.getElementById('order-row-' + id);
@@ -2015,7 +2023,30 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
       var cell = mainRow.querySelector('td:nth-child(5)');
       if (cell) cell.innerHTML = statusBadge(newStatus);
     }
+    // Refresh audit history
+    if (typeof loadAuditLog === 'function') loadAuditLog(id);
     showToast('Order status updated to ' + newStatus, 'success');
+
+    // Send status email to customer (best-effort, non-blocking)
+    try {
+      var session = (await sb.auth.getSession()).data.session;
+      var token = session ? session.access_token : SUPABASE_ANON_KEY;
+      fetch(SUPABASE_URL + '/functions/v1/sendEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          type: 'order_status',
+          order: updatedOrder,
+          oldStatus: prevStatus,
+          newStatus: newStatus
+        })
+      }).catch(function(e) { console.warn('[updateOrderStatus] Status email error:', e); });
+    } catch(emailErr) {
+      console.warn('[updateOrderStatus] Status email error:', emailErr);
+    }
   } catch(err) {
     // Revert select to actual DB value on failure
     if (sel && prevStatus) {

@@ -47,33 +47,6 @@ serve(async (req: Request) => {
       throw new Error('Server configuration error: RAZORPAY_KEY_ID must start with rzp_live_ or rzp_test_.');
     }
 
-    // Amount for Razorpay is in paise (1 INR = 100 paise)
-    const amountPaise = Math.round(amount * 100);
-
-    const razorpayRes = await fetch('https://api.razorpay.com/v1/orders', {
-      method:  'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Razorpay uses HTTP Basic Auth: Key ID : Key Secret
-        'Authorization': `Basic ${btoa(`${razorpayKeyId}:${razorpayKeySecret}`)}`,
-      },
-      body: JSON.stringify({
-        amount:          amountPaise,
-        currency:        currency,
-        receipt:         `azz_${orderId.toString().substring(0, 8)}`,
-        notes: {
-          azzurra_order_id: orderId.toString(),
-        },
-      }),
-    });
-
-    if (!razorpayRes.ok) {
-      const rzpErr = await razorpayRes.text();
-      throw new Error(`Razorpay API Error: ${rzpErr}`);
-    }
-
-    const razorpayOrder = await razorpayRes.json();
-
     // ---- Initialize Supabase admin client (bypasses RLS) ----
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,

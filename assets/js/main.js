@@ -354,10 +354,10 @@ window.updateProfileIcon = updateProfileIcon;
 
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
 
-      var url = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : ((window.__ENV__ && window.__ENV__.SUPABASE_URL) || 'https://ilduyhuvpiqhvbnocqxf.supabase.co')) + '/rest/v1/contact_messages';
+      var sbUrl = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : ((window.__ENV__ && window.__ENV__.SUPABASE_URL) || 'https://ilduyhuvpiqhvbnocqxf.supabase.co'));
       var key = (typeof SUPABASE_ANON_KEY !== 'undefined' && SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY : ((window.__ENV__ && window.__ENV__.SUPABASE_ANON_KEY) || ''));
 
-      fetch(url, {
+      fetch(sbUrl + '/rest/v1/contact_messages', {
         method: 'POST',
         headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ name: nameVal, email: emailVal, phone: phoneVal, subject: 'General Enquiry', message: messageVal })
@@ -366,6 +366,20 @@ window.updateProfileIcon = updateProfileIcon;
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send Message'; }
         if (res.ok) {
           if (success) { success.classList.add('show'); form.reset(); setTimeout(function(){ success.classList.remove('show'); }, 5000); }
+          // Trigger email notification via sendEmail Edge Function (best-effort, non-blocking)
+          fetch(sbUrl + '/functions/v1/sendEmail', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+            body: JSON.stringify({
+              type: 'contact_enquiry',
+              name: nameVal,
+              email: emailVal,
+              phone: phoneVal,
+              subject: 'General Enquiry',
+              message: messageVal,
+              submittedAt: new Date().toISOString()
+            })
+          }).catch(function(e) { console.warn('[Contact] Email notification failed:', e); });
         } else {
           alert('Failed to send message. Please try again.');
         }
