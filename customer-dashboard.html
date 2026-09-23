@@ -62,19 +62,49 @@
     .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 500px) { .form-row-2 { grid-template-columns: 1fr; } }
     /* Orders */
-    .orders-list { display: flex; flex-direction: column; gap: 12px; }
-    .order-card { background: #f8fbff; border: 1.5px solid #D1E3F8; border-radius: 12px; padding: 16px 18px; }
-    .order-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
-    .order-card__id   { font-family: monospace; font-size: 14px; font-weight: 700; color: #1A1A2E; }
+    .orders-list { display: flex; flex-direction: column; gap: 16px; }
+    .order-card { background: #f8fbff; border: 1.5px solid #D1E3F8; border-radius: 12px; padding: 18px 20px; transition: box-shadow 0.2s ease; }
+    .order-card:hover { box-shadow: 0 4px 16px rgba(26,95,168,0.06); }
+    .order-card__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+    .order-card__id   { font-family: monospace; font-size: 15px; font-weight: 700; color: #1A1A2E; }
     .order-card__date { font-size: 12px; color: #6B7280; }
-    .order-card__meta { font-size: 13px; color: #6B7280; margin-bottom: 8px; }
-    .order-card__footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .order-status { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; text-transform: capitalize; margin-left: auto; }
+    .order-card__meta { font-size: 13px; color: #4B5563; margin-bottom: 12px; }
+    .order-card__footer { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .order-status { font-size: 12px; font-weight: 600; padding: 3px 12px; border-radius: 20px; text-transform: capitalize; }
     .order-status--pending   { background: #FFF3E0; color: #E65100; }
     .order-status--confirmed { background: #E8F1FB; color: var(--color-primary); }
+    .order-status--packed    { background: #EDE9FE; color: #5B21B6; }
     .order-status--shipped   { background: #F3E5F5; color: #7B1FA2; }
     .order-status--delivered { background: #E8F5E9; color: #2E7D32; }
     .order-status--cancelled { background: #FFEBEE; color: #C62828; }
+    .track-toggle-btn { background: #FFFFFF; color: var(--color-primary); border: 1.5px solid #D1E3F8; border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; margin-left: auto; font-family: inherit; }
+    .track-toggle-btn:hover { background: #E8F1FB; border-color: var(--color-primary); }
+    .track-toggle-btn.open { background: var(--color-primary); color: #FFFFFF; border-color: var(--color-primary); }
+    /* Tracking Drawer */
+    .order-track-drawer { margin-top: 16px; padding-top: 16px; border-top: 1.5px solid #D1E3F8; }
+    .track-timeline-card { background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 20px; margin-bottom: 14px; }
+    .track-timeline-header { font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .track-progress-bar { display: flex; align-items: flex-start; justify-content: space-between; position: relative; }
+    .track-progress-bar::before { content: ""; position: absolute; top: 14px; left: 24px; right: 24px; height: 3px; background: #E2E8F0; z-index: 1; }
+    .track-step-node { display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; position: relative; z-index: 2; }
+    .track-step-dot { width: 30px; height: 30px; border-radius: 50%; background: #E2E8F0; color: #94A3B8; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; margin-bottom: 6px; border: 2px solid #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s; }
+    .track-step-node.done .track-step-dot { background: var(--color-primary, #1A5FA8); color: #FFFFFF; }
+    .track-step-node.current .track-step-dot { background: var(--color-primary, #1A5FA8); color: #FFFFFF; box-shadow: 0 0 0 4px rgba(26,95,168,0.20); }
+    .track-step-label { font-size: 11px; font-weight: 500; color: #94A3B8; }
+    .track-step-node.done .track-step-label { color: #1E293B; font-weight: 600; }
+    .track-step-node.current .track-step-label { color: var(--color-primary, #1A5FA8); font-weight: 700; }
+    .track-shipping-card { background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .track-field-title { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+    .track-field-val { font-size: 13px; color: #1E293B; font-weight: 600; }
+    .track-items-box { background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 16px; }
+    .track-items-title { font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+    .track-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #F1F5F9; font-size: 13px; }
+    .track-item-row:last-child { border-bottom: none; }
+    @media (max-width: 600px) {
+      .track-progress-bar::before { display: none; }
+      .track-progress-bar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .track-step-node { flex-direction: row; gap: 10px; text-align: left; }
+    }
     /* Wishlist */
     .wishlist-grid { display: flex; flex-direction: column; gap: 12px; }
     .wishlist-card { background: #f8fbff; border: 1.5px solid #D1E3F8; border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 16px; }

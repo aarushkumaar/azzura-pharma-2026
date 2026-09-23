@@ -80,8 +80,13 @@
     }
 
     // 2. Sync to customers table (by email) for Admin Panel Customers
+    var alreadyWelcomed = false;
     if (email) {
       try {
+        var custCheck = await sb.from('customers').select('id, welcome_email_sent').eq('email', email).maybeSingle();
+        if (custCheck && custCheck.data) {
+          alreadyWelcomed = (custCheck.data.welcome_email_sent === true);
+        }
         var custPayload = {
           name: name || email,
           email: email,
@@ -92,12 +97,16 @@
       } catch (_) {}
     }
 
-    // 3. For Google OAuth: send welcome email only on first account creation (never on re-login)
-    if (isBrandNewUser && user.app_metadata && user.app_metadata.provider === 'google' && email) {
-      var welcomeKey = 'azzurra_welcome_sent_' + user.id;
-      if (!localStorage.getItem(welcomeKey)) {
+    // 3. Welcome email on genuine first sign-in / registration (persisted in DB to prevent duplicates)
+    var shouldSendWelcome = (!alreadyWelcomed) && (isBrandNewUser || (extraData && extraData.isNewRegistration));
+    if (shouldSendWelcome && email) {
+      var welcomeLocalKey = 'azzurra_welcome_sent_' + (user.id || email);
+      if (!localStorage.getItem(welcomeLocalKey)) {
         try {
-          localStorage.setItem(welcomeKey, '1');
+          localStorage.setItem(welcomeLocalKey, '1');
+          // Persist flag to DB immediately to guard against race conditions and cross-browser logins
+          await sb.from('customers').update({ welcome_email_sent: true }).eq('email', email);
+
           var sessionRes = await sb.auth.getSession();
           var _token = (sessionRes && sessionRes.data && sessionRes.data.session) ? sessionRes.data.session.access_token : _KEY;
           if (_URL && _token) {
@@ -112,7 +121,7 @@
                 email: email,
                 name: name || email.split('@')[0]
               })
-            }).catch(function(e) { console.warn('[OAuth Welcome] email failed:', e); });
+            }).catch(function(e) { console.warn('[Welcome Email] failed:', e); });
           }
         } catch (_) {}
       }
@@ -145,27 +154,9 @@
       }
       throw res.error;
     }
-    /* Sync customer profile and customers table */
+    /* Sync customer profile and customers table (triggers DB-persisted welcome email) */
     if (res.data && res.data.user) {
-      await window.syncCustomerData(res.data.user, { name: fullName, email: email });
-      /* Send welcome email on account creation (best-effort, non-blocking) */
-      try {
-        var _token = (res.data.session && res.data.session.access_token) ? res.data.session.access_token : _KEY;
-        if (_URL && _token) {
-          fetch(_URL + '/functions/v1/sendEmail', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + _token
-            },
-            body: JSON.stringify({
-              type: 'welcome',
-              email: email,
-              name: fullName || (email ? email.split('@')[0] : '')
-            })
-          }).catch(function(e) { console.warn('[customerSignUp] Welcome email failed:', e); });
-        }
-      } catch(_) { /* non-critical */ }
+      await window.syncCustomerData(res.data.user, { name: fullName, email: email, isNewRegistration: true });
     }
     return res.data;
   };

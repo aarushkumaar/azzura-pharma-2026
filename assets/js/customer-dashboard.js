@@ -151,6 +151,26 @@ window.CustomerDashboard = (function () {
   }
 
   /* ── Orders ── */
+  function toggleTracking(orderId) {
+    var drawer = document.getElementById('order-track-' + orderId);
+    var btn = document.getElementById('track-btn-' + orderId);
+    if (!drawer) return;
+    var isOpen = drawer.style.display !== 'none';
+    if (isOpen) {
+      drawer.style.display = 'none';
+      if (btn) {
+        btn.classList.remove('open');
+        btn.innerHTML = '<span>🔍</span> Track Order';
+      }
+    } else {
+      drawer.style.display = 'block';
+      if (btn) {
+        btn.classList.add('open');
+        btn.innerHTML = '<span>▲</span> Hide Tracking';
+      }
+    }
+  }
+
   async function loadOrders() {
     if (!_sb || !_user) return;
     var container = document.getElementById('orders-container');
@@ -162,15 +182,72 @@ window.CustomerDashboard = (function () {
       .order('created_at', { ascending: false });
     var orders = r.data || [];
     if (!orders.length) {
-      container.innerHTML = '<p style="color:#6B7280;font-size:14px;">No orders yet. <a href="productss.html" style="color:var(--color-primary);">Start shopping</a></p>';
+      container.innerHTML = '<p style="color:#6B7280;font-size:14px;">No orders yet. <a href="productss.html" style="color:var(--color-primary);font-weight:600;">Start shopping</a></p>';
       return;
     }
+
+    var flowSteps = [
+      { key: 'pending',   label: 'Order Placed' },
+      { key: 'confirmed', label: 'Confirmed' },
+      { key: 'packed',    label: 'Packed' },
+      { key: 'shipped',   label: 'Shipped' },
+      { key: 'delivered', label: 'Delivered' }
+    ];
+
     container.innerHTML = '<div class="orders-list">'
       + orders.map(function(o) {
           var items = [];
           try { items = typeof o.items === 'string' ? JSON.parse(o.items) : (o.items || []); } catch(_) {}
           var itemsText = items.map(function(i){ return esc(i.name||'Product') + ' ×' + (i.quantity||1); }).join(', ');
-          var pmBadge = o.payment_method === 'cod' ? '<span style="background:#FFF3E0;color:#E65100;font-size:11px;padding:2px 8px;border-radius:12px;margin-left:6px;">COD</span>' : '';
+          var pmBadge = o.payment_method === 'cod' ? '<span style="background:#FFF3E0;color:#E65100;font-size:11px;padding:2px 8px;border-radius:12px;margin-left:6px;font-weight:600;">COD</span>' : '';
+
+          var currStatus = (o.status || 'pending').toLowerCase();
+          var currIdx = flowSteps.findIndex(function(s) { return s.key === currStatus; });
+          if (currIdx === -1 && currStatus !== 'cancelled') currIdx = 0;
+
+          var timelineHtml = '';
+          if (currStatus === 'cancelled') {
+            timelineHtml = '<div style="background:#FFF5F5;border:1.5px solid #FC8181;border-radius:10px;padding:12px 16px;color:#C62828;font-weight:600;font-size:13px;margin-bottom:14px;">❌ This order has been cancelled. Please contact support if you have questions.</div>';
+          } else {
+            timelineHtml = '<div class="track-timeline-card">'
+              + '<div class="track-timeline-header">'
+              + '<span>Fulfillment Progress</span>'
+              + '<span style="color:var(--color-primary);font-size:11px;font-weight:600;">Status: ' + esc(currStatus.toUpperCase()) + '</span>'
+              + '</div>'
+              + '<div class="track-progress-bar">'
+              + flowSteps.map(function(st, idx) {
+                  var isDone = idx <= currIdx;
+                  var isCur  = idx === currIdx;
+                  var nodeClass = isCur ? 'track-step-node current' : (isDone ? 'track-step-node done' : 'track-step-node');
+                  var icon = isDone ? (isCur ? '●' : '✓') : '○';
+                  return '<div class="' + nodeClass + '">'
+                    + '<div class="track-step-dot">' + icon + '</div>'
+                    + '<span class="track-step-label">' + st.label + '</span>'
+                    + '</div>';
+                }).join('')
+              + '</div>'
+              + '</div>';
+          }
+
+          var shippingHtml = '<div class="track-shipping-card">'
+            + '<div><div class="track-field-title">Shipping Address</div><div class="track-field-val">' + esc(o.address || o.shipping_address || '—') + '</div></div>'
+            + '<div><div class="track-field-title">Courier Partner</div><div class="track-field-val">' + (o.courier ? esc(o.courier) : '<span style="color:#94A3B8;font-weight:400;font-size:12px;">Assigned upon dispatch</span>') + '</div></div>'
+            + '<div><div class="track-field-title">Tracking Number / AWB</div><div class="track-field-val">' + (o.tracking_number ? '<code style="background:#F1F5F9;padding:2px 6px;border-radius:4px;font-size:12px;">' + esc(o.tracking_number) + '</code>' : '<span style="color:#94A3B8;font-weight:400;font-size:12px;">Generated upon packing</span>') + '</div></div>'
+            + '<div><div class="track-field-title">Payment</div><div class="track-field-val">' + esc((o.payment_method || 'Razorpay').toUpperCase()) + ' (' + esc(o.payment_status || 'paid') + ')</div></div>'
+            + '</div>';
+
+          var itemsBreakdownHtml = '<div class="track-items-box">'
+            + '<div class="track-items-title">Ordered Items (' + items.length + ')</div>'
+            + items.map(function(it) {
+                var itemPrice = Number(it.price || it.unit_price || 0);
+                var itemQty = Number(it.quantity || 1);
+                return '<div class="track-item-row">'
+                  + '<span><strong>' + esc(it.name || 'Product') + '</strong> <span style="color:#64748B;">× ' + itemQty + '</span></span>'
+                  + '<span style="font-weight:600;">&#8377;' + (itemPrice * itemQty).toLocaleString('en-IN') + '</span>'
+                  + '</div>';
+              }).join('')
+            + '</div>';
+
           return '<div class="order-card">'
             + '<div class="order-card__header">'
             + '<span class="order-card__id">Order #' + String(o.id).padStart(6,'0') + '</span>'
@@ -180,10 +257,17 @@ window.CustomerDashboard = (function () {
             + '<span class="order-card__items">' + itemsText + '</span>'
             + '</div>'
             + '<div class="order-card__footer">'
-            + '<strong style="color:var(--color-primary);">&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</strong>'
+            + '<strong style="color:var(--color-primary);font-size:15px;">&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</strong>'
             + pmBadge
             + '<span class="order-status order-status--' + (o.status||'pending') + '">' + esc(o.status||'pending') + '</span>'
-            + '</div></div>';
+            + '<button class="track-toggle-btn" id="track-btn-' + o.id + '" onclick="CustomerDashboard.toggleTracking(' + o.id + ')"><span>🔍</span> Track Order</button>'
+            + '</div>'
+            + '<div class="order-track-drawer" id="order-track-' + o.id + '" style="display:none;">'
+            + timelineHtml
+            + shippingHtml
+            + itemsBreakdownHtml
+            + '</div>'
+            + '</div>';
         }).join('')
       + '</div>';
   }
@@ -247,6 +331,7 @@ window.CustomerDashboard = (function () {
     deleteAddress:      deleteAddress,
     setDefaultAddress:  setDefaultAddress,
     changePassword:     changePassword,
+    toggleTracking:     toggleTracking,
     signOut:            signOut
   };
 })();

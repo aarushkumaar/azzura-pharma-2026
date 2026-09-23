@@ -805,6 +805,20 @@ function initCheckout() {
             upsertCustomer(formData);
             clearCart();
             if (typeof updateCartBadge === 'function') updateCartBadge();
+
+            /* Trigger Admin & Customer Order Notification Email (best-effort, non-blocking) */
+            fetch(_CHECKOUT_SUPABASE_URL + '/functions/v1/sendEmail', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + (sessionToken || _CHECKOUT_SUPABASE_ANON_KEY)
+              },
+              body: JSON.stringify({
+                type: 'order_notification',
+                orderId: savedOrderId
+              })
+            }).catch(function(e) { console.warn('[Checkout] Order email notification failed:', e); });
+
             showOrderSuccess(savedOrderId, response.razorpay_payment_id);
           } catch(err) {
             console.error('[Checkout] Post-payment verification failed:', err);

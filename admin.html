@@ -465,6 +465,7 @@
       <button class="sidebar-link" data-section="notify_me"><span class="nav-icon">🔔</span> Notify Me</button>
       <button class="sidebar-link" data-section="enquiries"><span class="nav-icon">✉️</span> Enquiries</button>
       <button class="sidebar-link" data-section="banners"><span class="nav-icon">🖼️</span> Banners</button>
+      <button class="sidebar-link" data-section="email_settings"><span class="nav-icon">📬</span> Email &amp; Notifications</button>
       <button class="sidebar-link" data-section="settings"><span class="nav-icon">&#9881;&#65039;</span> Settings</button>
     </nav>
     <div class="sidebar-bottom">
@@ -577,7 +578,10 @@
 
       <!-- SECTION: ORDERS -->
       <section class="admin-section" id="section-orders">
-        <div class="section-toolbar"><h2>Orders</h2></div>
+        <div class="section-toolbar">
+          <h2>Orders</h2>
+          <input type="text" class="toolbar-search" id="orders-search" placeholder="Search orders by ID, name, email, phone, status…" style="max-width:320px;" />
+        </div>
         <div class="filter-tabs" id="orders-filter-tabs">
           <button class="filter-tab active" data-status="all">All</button>
           <button class="filter-tab" data-status="pending">Pending</button>
@@ -604,7 +608,10 @@
 
       <!-- SECTION: CUSTOMERS -->
       <section class="admin-section" id="section-customers">
-        <div class="section-toolbar"><h2>Customers</h2></div>
+        <div class="section-toolbar">
+          <h2>Customers</h2>
+          <input type="text" class="toolbar-search" id="customers-search" placeholder="Search customers by name, email, phone, order ID…" style="max-width:320px;" />
+        </div>
         <div class="table-wrapper">
           <table>
             <thead>
@@ -718,6 +725,78 @@
               <tr class="loading-row"><td colspan="6"><div class="spinner"></div></td></tr>
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- SECTION: EMAIL SETTINGS & NOTIFICATIONS -->
+      <section class="admin-section" id="section-email_settings">
+        <div class="section-toolbar">
+          <h2>Email &amp; Notifications</h2>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:24px;margin-bottom:24px;">
+          <!-- Card 1: Admin Recipients -->
+          <div class="settings-card" style="margin:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h3 style="margin:0;">Admin Email Recipients</h3>
+              <span class="badge" style="background:#E8F1FB;color:var(--color-primary);" id="admin-recipients-count">0 active</span>
+            </div>
+            <p style="font-size:13px;color:var(--color-grey);margin-bottom:16px;">
+              Configured admin addresses receive immediate notifications for new orders, back-in-stock requests, and customer messages.
+            </p>
+            <div id="admin-recipients-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+              <div class="spinner" style="margin:16px auto;"></div>
+            </div>
+            <form id="add-recipient-form" style="display:flex;gap:8px;" onsubmit="event.preventDefault();AdminAddons.addEmailRecipient();">
+              <input type="email" id="input-new-recipient-email" placeholder="e.g. orders@azzurrapharma.com" required style="flex:1;padding:8px 12px;font-size:13px;border:1.5px solid var(--color-border);border-radius:6px;" />
+              <button type="submit" class="btn-primary" style="padding:8px 16px;font-size:13px;white-space:nowrap;">+ Add Email</button>
+            </form>
+          </div>
+
+          <!-- Card 2: Resend Testing Tool -->
+          <div class="settings-card" style="margin:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h3 style="margin:0;">Email System &amp; Testing</h3>
+              <span class="badge badge-confirmed" id="resend-status-badge">● Resend Ready</span>
+            </div>
+            <p style="font-size:13px;color:var(--color-grey);margin-bottom:16px;">
+              Verify live server-side Resend email delivery and notification routing. API keys are safely isolated on Supabase Edge Functions.
+            </p>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label" style="font-size:12px;">Send Test Email To:</label>
+              <input type="email" id="test-email-recipient" placeholder="admin@example.com" value="info@azzurrapharmaconutrition.com" style="width:100%;box-sizing:border-box;padding:8px 12px;font-size:13px;border:1.5px solid var(--color-border);border-radius:6px;" />
+            </div>
+            <button type="button" class="btn-primary" id="btn-send-test-email" onclick="AdminAddons.sendTestEmail()">Send Test Email</button>
+            <div id="test-email-result" style="margin-top:12px;display:none;font-size:13px;padding:10px 12px;border-radius:6px;"></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Email Activity / Delivery History -->
+        <div class="settings-card" style="max-width:100%;margin:0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+            <div>
+              <h3 style="margin:0 0 4px;">Email Delivery Activity</h3>
+              <p style="font-size:13px;color:var(--color-grey);margin:0;">Recent transactional emails, delivery statuses, and retry actions.</p>
+            </div>
+            <button class="btn-secondary" style="padding:6px 14px;font-size:12px;" onclick="AdminAddons.loadEmailLogs()">↻ Refresh Activity</button>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Recipient</th>
+                  <th>Type</th>
+                  <th>Related Order</th>
+                  <th>Sent At</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="email-logs-tbody">
+                <tr class="loading-row"><td colspan="6"><div class="spinner"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -1024,7 +1103,19 @@ window.showToast = function(message, type, autoDismiss) {
 
 /* ── NAVIGATION ── */
 var sectionLoaded = {};
-var sectionTitles = { dashboard:'Dashboard', products:'Products', orders:'Orders', customers:'Customers', settings:'Settings', coupons:'Coupons', notify_me:'Notify Me Requests', enquiries:'Customer Enquiries', banners:'Homepage Banners' };
+var sectionTitles = {
+  dashboard: 'Dashboard',
+  products: 'Products',
+  events: 'Events',
+  orders: 'Orders',
+  customers: 'Customers',
+  coupons: 'Coupons',
+  notify_me: 'Notify Me Requests',
+  enquiries: 'Customer Enquiries',
+  banners: 'Homepage Banners',
+  email_settings: 'Email & Notifications',
+  settings: 'Settings'
+};
 
 window.showSection = function(name) {
   document.querySelectorAll('.admin-section').forEach(function(s) { s.classList.remove('active'); });
@@ -1035,14 +1126,24 @@ window.showSection = function(name) {
   if (link) link.classList.add('active');
   var titleEl = document.getElementById('topbar-title');
   if (titleEl) titleEl.textContent = sectionTitles[name] || name;
-  if (!sectionLoaded[name]) {
-    sectionLoaded[name] = true;
-    if (name === 'dashboard') loadDashboard();
-    if (name === 'products')  loadProducts();
-    if (name === 'orders')    loadOrders();
-    if (name === 'customers') loadCustomers();
-    if (name === 'settings')  loadSettings();
+
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'products'  && !sectionLoaded[name]) loadProducts();
+  if (name === 'orders')    loadOrders();
+  if (name === 'customers') loadCustomers();
+  if (name === 'settings'  && !sectionLoaded[name]) loadSettings();
+  if (name === 'events'    && typeof window._loadEventsTable === 'function') window._loadEventsTable();
+
+  // Custom sections handled by AdminAddons
+  if (window.AdminAddons) {
+    if (name === 'coupons'   && typeof window.AdminAddons.loadCoupons === 'function') window.AdminAddons.loadCoupons();
+    if (name === 'banners'   && typeof window.AdminAddons.loadBanners === 'function') window.AdminAddons.loadBanners();
+    if (name === 'notify_me' && typeof window.AdminAddons.loadNotifyRequests === 'function') window.AdminAddons.loadNotifyRequests();
+    if (name === 'enquiries' && typeof window.AdminAddons.loadEnquiries === 'function') window.AdminAddons.loadEnquiries();
+    if (name === 'email_settings' && typeof window.AdminAddons.loadEmailSettings === 'function') window.AdminAddons.loadEmailSettings();
   }
+
+  sectionLoaded[name] = true;
   closeMobileSidebar();
 };
 
@@ -1857,14 +1958,15 @@ window.doImport = async function() {
 };
 
 /* ── ORDERS ── */
-var allOrders    = [];
-var ordersFilter = 'all';
+var allOrders         = [];
+var ordersFilter      = 'all';
+var ordersSearchQuery = '';
 
 async function loadOrders() {
   var tbody = document.getElementById('orders-tbody');
   if (tbody) tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><div class="spinner"></div></td></tr>';
   try {
-    var r = await sb.from('orders').select('*').order('created_at',{ascending:false});
+    var r = await sb.from('orders').select('*').order('created_at', { ascending: false });
     if (r.error) throw r.error;
     allOrders = r.data || [];
     renderOrders();
@@ -1876,20 +1978,37 @@ async function loadOrders() {
 }
 
 function renderOrders() {
-  var tbody    = document.getElementById('orders-tbody');
+  var tbody = document.getElementById('orders-tbody');
   if (!tbody) return;
-  var filtered = ordersFilter === 'all' ? allOrders : allOrders.filter(function(o) { return (o.status||'').toLowerCase() === ordersFilter; });
+  var filtered = allOrders;
+  if (ordersFilter !== 'all') {
+    filtered = filtered.filter(function(o) { return (o.status || '').toLowerCase() === ordersFilter; });
+  }
+  if (ordersSearchQuery) {
+    var q = ordersSearchQuery.toLowerCase();
+    filtered = filtered.filter(function(o) {
+      return String(o.id).toLowerCase().includes(q)
+        || (o.customer_name || '').toLowerCase().includes(q)
+        || (o.customer_email || '').toLowerCase().includes(q)
+        || (o.customer_phone || '').toLowerCase().includes(q)
+        || (o.status || '').toLowerCase().includes(q)
+        || (o.courier || '').toLowerCase().includes(q)
+        || (o.tracking_number || '').toLowerCase().includes(q);
+    });
+  }
+
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128230;</div><p>No ' + (ordersFilter!=='all'?ordersFilter+' ':'') + 'orders found</p></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">&#128230;</div><p>No ' + (ordersFilter !== 'all' ? ordersFilter + ' ' : '') + 'orders found</p></div></td></tr>';
     return;
   }
+
   tbody.innerHTML = filtered.map(function(o) {
     var itemCount = countItems(o.items);
     return '<tr id="order-row-' + o.id + '" class="order-main-row" style="cursor:pointer;" onclick="toggleOrderDetail(' + o.id + ')">' 
       + '<td style="font-size:12px;color:var(--color-grey);font-family:monospace;">#' + String(o.id).slice(-8) + '</td>'
-      + '<td style="font-weight:600;">' + esc(o.customer_name||'—') + '</td>'
-      + '<td>' + itemCount + ' item' + (itemCount!==1?'s':'') + '</td>'
-      + '<td>&#8377;' + Number(o.total_amount||0).toLocaleString('en-IN') + '</td>'
+      + '<td style="font-weight:600;">' + esc(o.customer_name || '—') + '</td>'
+      + '<td>' + itemCount + ' item' + (itemCount !== 1 ? 's' : '') + '</td>'
+      + '<td>&#8377;' + Number(o.total_amount || 0).toLocaleString('en-IN') + '</td>'
       + '<td>' + statusBadge(o.status) + '</td>'
       + '<td>' + paymentBadge(o.payment_status, o.payment_method) + '</td>'
       + '<td style="font-size:13px;color:var(--color-grey);">' + fmtDate(o.created_at) + '</td>'
@@ -1899,6 +2018,14 @@ function renderOrders() {
   }).join('');
 }
 
+var ordSearchInput = document.getElementById('orders-search');
+if (ordSearchInput) {
+  ordSearchInput.addEventListener('input', function() {
+    ordersSearchQuery = this.value.trim();
+    renderOrders();
+  });
+}
+
 function buildOrderDetail(o) {
   var itemsHtml = '';
   try {
@@ -1906,7 +2033,7 @@ function buildOrderDetail(o) {
     if (Array.isArray(items) && items.length) {
       itemsHtml = '<div class="order-items-list">'
         + items.map(function(it) {
-            return '<div class="order-item-row"><span>' + esc(it.name||it.product_name||'Item') + '</span><span>Qty: ' + (it.quantity||it.qty||1) + ' &nbsp;&middot;&nbsp; &#8377;' + Number(it.price||it.unit_price||0).toLocaleString('en-IN') + '</span></div>';
+            return '<div class="order-item-row"><span>' + esc(it.name || it.product_name || 'Item') + '</span><span>Qty: ' + (it.quantity || it.qty || 1) + ' &nbsp;&middot;&nbsp; &#8377;' + Number(it.price || it.unit_price || 0).toLocaleString('en-IN') + '</span></div>';
           }).join('')
         + '</div>';
     }
@@ -1935,32 +2062,117 @@ function buildOrderDetail(o) {
     + couponHtml
     + '</div>';
 
-  var statusSelect = '<div style="display:flex;align-items:center;gap:12px;margin-top:8px;">'
+  /* ── Visual Fulfillment Timeline ── */
+  var currStatus = (o.status || 'pending').toLowerCase();
+  var flowSteps = [
+    { key: 'pending',   label: 'Order Placed' },
+    { key: 'confirmed', label: 'Confirmed' },
+    { key: 'packed',    label: 'Packed' },
+    { key: 'shipped',   label: 'Shipped' },
+    { key: 'delivered', label: 'Delivered' }
+  ];
+  var currIdx = flowSteps.findIndex(function(s) { return s.key === currStatus; });
+  if (currIdx === -1 && currStatus !== 'cancelled') currIdx = 0;
+
+  var timelineHtml = '';
+  if (currStatus === 'cancelled') {
+    timelineHtml = '<div style="background:#FFF5F5;border:1.5px solid #FC8181;border-radius:8px;padding:12px 16px;color:#C62828;font-weight:600;font-size:14px;margin-bottom:16px;">❌ This order has been CANCELLED</div>';
+  } else {
+    timelineHtml = '<div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:16px;margin-bottom:16px;">'
+      + '<div style="font-size:12px;font-weight:700;color:var(--color-grey);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Fulfillment Progress</div>'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;position:relative;">'
+      + flowSteps.map(function(st, idx) {
+          var isDone   = idx <= currIdx;
+          var isCur    = idx === currIdx;
+          var circleBg = isDone ? 'var(--color-primary, #1A5FA8)' : '#E2E8F0';
+          var textCol  = isDone ? 'var(--color-primary, #1A5FA8)' : '#94A3B8';
+          var icon     = isDone ? (isCur ? '●' : '✓') : '○';
+          return '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;z-index:2;">'
+            + '<div style="width:28px;height:28px;border-radius:50%;background:' + circleBg + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:4px;">' + icon + '</div>'
+            + '<span style="font-size:11px;font-weight:' + (isCur ? '700' : '500') + ';color:' + textCol + ';">' + st.label + '</span>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+      + '</div>';
+  }
+
+  /* ── Shipping & Tracking Inputs ── */
+  var courier = esc(o.courier || '');
+  var tracking = esc(o.tracking_number || '');
+  var internalNotes = esc(o.internal_notes || '');
+
+  var shippingBlock = '<div class="order-detail-group" style="margin-top:12px;">'
+    + '<h4>Shipping &amp; Courier Partner</h4>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">'
+    + '<div><label style="font-size:12px;color:var(--color-grey);display:block;margin-bottom:4px;">Courier Partner</label><input type="text" id="courier-input-' + o.id + '" value="' + courier + '" placeholder="e.g. BlueDart, Delhivery, FedEx" style="padding:6px 10px;font-size:13px;width:100%;box-sizing:border-box;border:1.5px solid var(--color-border);border-radius:6px;" /></div>'
+    + '<div><label style="font-size:12px;color:var(--color-grey);display:block;margin-bottom:4px;">Tracking Number / AWB</label><input type="text" id="tracking-input-' + o.id + '" value="' + tracking + '" placeholder="e.g. BD987654321IN" style="padding:6px 10px;font-size:13px;width:100%;box-sizing:border-box;border:1.5px solid var(--color-border);border-radius:6px;" /></div>'
+    + '</div>'
+    + '<button class="btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="saveOrderTracking(' + o.id + ')">Save Tracking Info</button>'
+    + '</div>';
+
+  /* ── Internal Notes ── */
+  var notesBlock = '<div class="order-detail-group" style="margin-top:12px;">'
+    + '<h4>Internal Order Notes <span style="font-size:11px;font-weight:400;color:var(--color-grey);">(not visible to customer)</span></h4>'
+    + '<textarea id="order-notes-' + o.id + '" rows="2" style="width:100%;box-sizing:border-box;padding:8px;font-size:13px;border:1.5px solid var(--color-border);border-radius:6px;resize:vertical;" placeholder="Add private notes for packing/operations...">' + internalNotes + '</textarea>'
+    + '<button class="btn-secondary" style="padding:4px 12px;font-size:12px;margin-top:6px;" onclick="saveOrderNotes(' + o.id + ')">Save Note</button>'
+    + '</div>';
+
+  var statusSelect = '<div style="display:flex;align-items:center;gap:12px;margin-top:14px;background:#F8FAFC;padding:10px 14px;border-radius:8px;">'
     + '<span style="font-size:13px;font-weight:600;">Update Status:</span>'
     + '<select id="status-select-' + o.id + '" class="status-select" onchange="updateOrderStatus(' + o.id + ',this.value,this)">'
     + ['pending','confirmed','packed','shipped','delivered','cancelled'].map(function(s) {
-        return '<option value="' + s + '" ' + ((o.status||'').toLowerCase()===s?'selected':'') + '>' + s.charAt(0).toUpperCase()+s.slice(1) + '</option>';
+        return '<option value="' + s + '" ' + ((o.status || '').toLowerCase() === s ? 'selected' : '') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
       }).join('')
     + '</select>'
     + '<span id="status-saving-' + o.id + '" style="font-size:12px;color:var(--color-grey);display:none;">Saving…</span>'
     + '</div>';
 
   var auditSection = '<div class="order-detail-group" style="margin-top:16px;border-top:1px solid #E5E7EB;padding-top:16px;">'
-    + '<h4 style="margin-bottom:8px;">Order History</h4>'
+    + '<h4 style="margin-bottom:8px;">Order Audit History</h4>'
     + '<div id="audit-log-' + o.id + '" style="font-size:13px;color:var(--color-grey);">Loading history…</div>'
     + '</div>';
 
-  // Kick off async audit load
   setTimeout(function() { loadAuditLog(o.id); }, 0);
 
-  return '<div class="order-detail-grid">'
-    + '<div class="order-detail-group"><h4>Customer</h4><p>' + esc(o.customer_name||'—') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_email||'—') + '</p><p style="font-size:13px;color:var(--color-grey);">' + formatPhone(o.customer_phone) + '</p></div>'
-    + '<div class="order-detail-group"><h4>Delivery Address</h4><p style="font-size:13px;">' + esc(o.address||'—') + '</p></div>'
+  return timelineHtml
+    + '<div class="order-detail-grid">'
+    + '<div class="order-detail-group"><h4>Customer</h4><p>' + esc(o.customer_name || '—') + '</p><p style="font-size:13px;color:var(--color-grey);">' + esc(o.customer_email || '—') + '</p><p style="font-size:13px;color:var(--color-grey);">' + formatPhone(o.customer_phone) + '</p></div>'
+    + '<div class="order-detail-group"><h4>Delivery Address</h4><p style="font-size:13px;">' + esc(o.address || o.shipping_address || '—') + '</p></div>'
     + paymentBlock
-    + '</div>' + itemsHtml
+    + '</div>'
+    + shippingBlock
+    + notesBlock
+    + itemsHtml
     + statusSelect
     + auditSection;
 }
+
+window.saveOrderTracking = async function(id) {
+  var courier = document.getElementById('courier-input-' + id).value.trim();
+  var tracking = document.getElementById('tracking-input-' + id).value.trim();
+  try {
+    var r = await sb.from('orders').update({ courier: courier, tracking_number: tracking }).eq('id', id);
+    if (r.error) throw r.error;
+    var idx = allOrders.findIndex(function(x) { return x.id === id; });
+    if (idx !== -1) { allOrders[idx].courier = courier; allOrders[idx].tracking_number = tracking; }
+    showToast('✓ Tracking info saved', 'success');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  }
+};
+
+window.saveOrderNotes = async function(id) {
+  var notes = document.getElementById('order-notes-' + id).value.trim();
+  try {
+    var r = await sb.from('orders').update({ internal_notes: notes }).eq('id', id);
+    if (r.error) throw r.error;
+    var idx = allOrders.findIndex(function(x) { return x.id === id; });
+    if (idx !== -1) { allOrders[idx].internal_notes = notes; }
+    showToast('✓ Internal note saved', 'success');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  }
+};
 
 async function loadAuditLog(orderId) {
   var container = document.getElementById('audit-log-' + orderId);
@@ -2017,7 +2229,6 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
   var sel     = selectEl || document.getElementById('status-select-' + id);
   var saving  = document.getElementById('status-saving-' + id);
   var prevStatus = '';
-  // Find the current status in allOrders to allow revert
   var idx = allOrders.findIndex(function(o) { return o.id === id; });
   if (idx !== -1) prevStatus = allOrders[idx].status || '';
 
@@ -2033,16 +2244,13 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
   try {
     var r = await sb.from('orders').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', id);
     if (r.error) throw r.error;
-    // Update in-memory cache
     var updatedOrder = Object.assign({}, (idx !== -1 ? allOrders[idx] : {}), { id: id, status: newStatus });
     if (idx !== -1) allOrders[idx].status = newStatus;
-    // Update the status badge in the main row
     var mainRow = document.getElementById('order-row-' + id);
     if (mainRow) {
       var cell = mainRow.querySelector('td:nth-child(5)');
       if (cell) cell.innerHTML = statusBadge(newStatus);
     }
-    // Refresh audit history
     if (typeof loadAuditLog === 'function') loadAuditLog(id);
     showToast('Order status updated to ' + newStatus, 'success');
 
@@ -2067,7 +2275,6 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
       console.warn('[updateOrderStatus] Status email error:', emailErr);
     }
   } catch(err) {
-    // Revert select to actual DB value on failure
     if (sel && prevStatus) {
       var opts = sel.options;
       for (var i = 0; i < opts.length; i++) {
@@ -2092,20 +2299,54 @@ if (ordersFilterTabs) ordersFilterTabs.addEventListener('click', function(e) {
 });
 
 /* ── CUSTOMERS ── */
+var allCustomersData     = [];
+var customerOrdersByEmail = {};
+var customerNotifysByEmail = {};
+var customerEnquiriesByEmail = {};
+var customerEmailLogsByEmail = {};
+var customersSearchQuery = '';
+
 async function loadCustomers() {
   var tbody = document.getElementById('customers-tbody');
   if (tbody) tbody.innerHTML = '<tr class="loading-row"><td colspan="5"><div class="spinner"></div></td></tr>';
   try {
-    var r = await sb.from('customers').select('*').order('first_seen',{ascending:false});
-    if (r.error) throw r.error;
-    var r2 = await sb.from('orders').select('id,customer_email,created_at');
-    var ordersByEmail = {};
-    (r2.data||[]).forEach(function(o) {
-      var em = (o.customer_email||'').toLowerCase();
-      if (!ordersByEmail[em]) ordersByEmail[em] = [];
-      ordersByEmail[em].push(o);
+    var rCust = await sb.from('customers').select('*').order('created_at', { ascending: false });
+    if (rCust.error) throw rCust.error;
+    allCustomersData = rCust.data || [];
+
+    var rOrd = await sb.from('orders').select('*').order('created_at', { ascending: false });
+    customerOrdersByEmail = {};
+    (rOrd.data || []).forEach(function(o) {
+      var em = (o.customer_email || '').toLowerCase().trim();
+      if (!customerOrdersByEmail[em]) customerOrdersByEmail[em] = [];
+      customerOrdersByEmail[em].push(o);
     });
-    renderCustomers(r.data||[], ordersByEmail);
+
+    var rNot = await sb.from('notify_me_requests').select('*').order('created_at', { ascending: false });
+    customerNotifysByEmail = {};
+    (rNot.data || []).forEach(function(n) {
+      var em = (n.email || '').toLowerCase().trim();
+      if (!customerNotifysByEmail[em]) customerNotifysByEmail[em] = [];
+      customerNotifysByEmail[em].push(n);
+    });
+
+    var rEnq = await sb.from('contact_messages').select('*').order('created_at', { ascending: false });
+    customerEnquiriesByEmail = {};
+    (rEnq.data || []).forEach(function(m) {
+      var em = (m.email || '').toLowerCase().trim();
+      if (!customerEnquiriesByEmail[em]) customerEnquiriesByEmail[em] = [];
+      customerEnquiriesByEmail[em].push(m);
+    });
+
+    var rLogs = await sb.from('email_logs').select('*').order('created_at', { ascending: false });
+    customerEmailLogsByEmail = {};
+    (rLogs.data || []).forEach(function(l) {
+      var em = (l.recipient || '').toLowerCase().trim();
+      if (!customerEmailLogsByEmail[em]) customerEmailLogsByEmail[em] = [];
+      customerEmailLogsByEmail[em].push(l);
+    });
+
+    renderCustomers();
   } catch(err) {
     var t2 = document.getElementById('customers-tbody');
     if (t2) t2.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128101;</div><p>No customers yet</p></div></td></tr>';
@@ -2113,38 +2354,171 @@ async function loadCustomers() {
   }
 }
 
-function renderCustomers(customers, ordersByEmail) {
+function renderCustomers() {
   var tbody = document.getElementById('customers-tbody');
   if (!tbody) return;
-  if (!customers.length) {
-    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128101;</div><p>No customers yet</p></div></td></tr>';
+
+  var filtered = allCustomersData;
+  if (customersSearchQuery) {
+    var q = customersSearchQuery.toLowerCase();
+    filtered = filtered.filter(function(c) {
+      var em = (c.email || '').toLowerCase();
+      var name = (c.name || (c.first_name ? c.first_name + ' ' + (c.last_name||'') : '')).toLowerCase();
+      var phone = (c.phone || '').toLowerCase();
+      var custOrders = customerOrdersByEmail[em] || [];
+      var orderMatches = custOrders.some(function(o) { return String(o.id).toLowerCase().includes(q); });
+      return name.includes(q) || em.includes(q) || phone.includes(q) || orderMatches;
+    });
+  }
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">&#128101;</div><p>No customers found</p></div></td></tr>';
     return;
   }
-  tbody.innerHTML = customers.map(function(c) {
-    var email  = (c.email||'').toLowerCase();
-    var orders = ordersByEmail[email] || [];
-    var lastTs = orders.length ? orders.reduce(function(a,b) { return a.created_at > b.created_at ? a : b; }).created_at : (c.last_activity || c.first_seen || c.created_at || null);
+
+  tbody.innerHTML = filtered.map(function(c) {
+    var email   = (c.email || '').toLowerCase().trim();
+    var orders  = customerOrdersByEmail[email] || [];
+    var notifys = customerNotifysByEmail[email] || [];
+    var enqs    = customerEnquiriesByEmail[email] || [];
+    var emails  = customerEmailLogsByEmail[email] || [];
+    var name    = c.name || (c.first_name ? c.first_name + ' ' + (c.last_name || '') : '') || '—';
+    var lastTs  = orders.length ? orders[0].created_at : (c.last_activity || c.first_seen || c.created_at || null);
+
     return '<tr id="cust-row-' + c.id + '" style="cursor:pointer;" onclick="toggleCustDetail(' + c.id + ')">'
-      + '<td style="font-weight:600;">' + esc(c.name||'—') + '</td>'
-      + '<td style="font-size:13px;">' + esc(c.email||'—') + '</td>'
+      + '<td style="font-weight:600;">' + esc(name) + '</td>'
+      + '<td style="font-size:13px;">' + esc(c.email || '—') + '</td>'
       + '<td style="font-size:13px;">' + formatPhone(c.phone) + '</td>'
-      + '<td>' + orders.length + '</td>'
+      + '<td><span class="badge" style="background:#E8F1FB;color:var(--color-primary);font-weight:700;">' + orders.length + '</span></td>'
       + '<td style="font-size:13px;color:var(--color-grey);">' + fmtDate(lastTs) + '</td>'
       + '</tr>'
-      + '<tr id="cust-detail-' + c.id + '" class="customer-detail-row" style="display:none;"><td colspan="5">' + buildCustDetail(c, orders) + '</td></tr>';
+      + '<tr id="cust-detail-' + c.id + '" class="customer-detail-row" style="display:none;"><td colspan="5">' + buildCustDetail(c, orders, notifys, enqs, emails) + '</td></tr>';
   }).join('');
 }
 
-function buildCustDetail(c, orders) {
-  if (!orders.length) return '<div style="padding:12px;font-size:14px;color:var(--color-grey);">No orders for this customer.</div>';
-  return '<div style="padding:8px 0;">'
-    + '<div style="font-size:13px;font-weight:600;margin-bottom:8px;">Order History (' + orders.length + ')</div>'
-    + '<div class="order-items-list">'
-    + orders.map(function(o) {
-        return '<div class="order-item-row"><span style="font-size:12px;color:var(--color-grey);font-family:monospace;">#' + String(o.id).slice(-8) + '</span><span style="font-size:13px;">' + fmtDate(o.created_at) + '</span></div>';
-      }).join('')
-    + '</div></div>';
+var custSearchInput = document.getElementById('customers-search');
+if (custSearchInput) {
+  custSearchInput.addEventListener('input', function() {
+    customersSearchQuery = this.value.trim();
+    renderCustomers();
+  });
 }
+
+function buildCustDetail(c, orders, notifys, enquiries, emailLogs) {
+  var name  = esc(c.name || (c.first_name ? c.first_name + ' ' + (c.last_name || '') : '') || 'Customer');
+  var email = esc(c.email || '');
+  var phone = formatPhone(c.phone);
+  var ltv   = Number(c.total_lifetime_value || 0);
+  if (!ltv && orders.length) {
+    ltv = orders.reduce(function(sum, o) { return sum + Number(o.total_amount || 0); }, 0);
+  }
+  var notes = esc(c.internal_notes || '');
+
+  // 1. Orders table
+  var ordersHtml = '<div style="font-size:13px;color:var(--color-grey);padding:6px 0;">No orders placed yet.</div>';
+  if (orders.length) {
+    ordersHtml = '<div class="table-wrapper" style="margin-top:8px;box-shadow:none;border:1px solid #E2E8F0;">'
+      + '<table style="margin:0;">'
+      + '<thead><tr style="background:#F8FAFC;"><th style="padding:6px 10px;font-size:11px;">Order ID</th><th style="padding:6px 10px;font-size:11px;">Date</th><th style="padding:6px 10px;font-size:11px;">Amount</th><th style="padding:6px 10px;font-size:11px;">Status</th><th style="padding:6px 10px;font-size:11px;">Payment</th><th style="padding:6px 10px;font-size:11px;">Actions</th></tr></thead>'
+      + '<tbody>'
+      + orders.map(function(o) {
+          return '<tr>'
+            + '<td style="font-family:monospace;font-size:12px;font-weight:700;">#' + String(o.id).slice(-8) + '</td>'
+            + '<td style="font-size:12px;">' + fmtDate(o.created_at) + '</td>'
+            + '<td style="font-size:12px;font-weight:600;">₹' + Number(o.total_amount || 0).toLocaleString('en-IN') + '</td>'
+            + '<td>' + statusBadge(o.status) + '</td>'
+            + '<td>' + paymentBadge(o.payment_status, o.payment_method) + '</td>'
+            + '<td><button class="btn-secondary" style="padding:2px 8px;font-size:11px;" onclick="event.stopPropagation();viewCustomerOrder(' + o.id + ')">Open Order</button></td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table></div>';
+  }
+
+  // 2. Notify Me Requests
+  var notifysHtml = notifys && notifys.length
+    ? '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;">' + notifys.map(function(n) {
+        return '<span class="badge" style="background:#FEF3C7;color:#92400E;font-size:12px;">🔔 ' + esc(n.product_name) + ' (' + fmtDate(n.created_at) + ')</span>';
+      }).join('') + '</div>'
+    : '<span style="font-size:12px;color:var(--color-grey);">No notification requests</span>';
+
+  // 3. Enquiries
+  var enqsHtml = enquiries && enquiries.length
+    ? '<div style="margin-top:6px;display:flex;flex-direction:column;gap:6px;">' + enquiries.map(function(m) {
+        return '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:8px 10px;font-size:12px;">'
+          + '<div style="display:flex;justify-content:space-between;font-weight:600;"><span>' + esc(m.subject || 'Enquiry') + '</span><span style="color:var(--color-grey);font-size:11px;">' + fmtDate(m.created_at) + '</span></div>'
+          + '<div style="margin-top:2px;color:#475569;">' + esc(m.message) + '</div>'
+          + '</div>';
+      }).join('') + '</div>'
+    : '<span style="font-size:12px;color:var(--color-grey);">No enquiries submitted</span>';
+
+  // 4. Email History
+  var emailsHtml = emailLogs && emailLogs.length
+    ? '<div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">' + emailLogs.map(function(l) {
+        var statusBadge = l.status === 'sent'
+          ? '<span class="badge badge-confirmed" style="font-size:11px;">Sent</span>'
+          : '<span class="badge badge-cancelled" style="font-size:11px;">Failed</span>';
+        return '<div style="display:flex;justify-content:space-between;align-items:center;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:6px 10px;font-size:12px;">'
+          + '<div><strong>' + esc(l.email_type) + '</strong> &nbsp;&middot;&nbsp; <span style="color:var(--color-grey);">' + fmtDate(l.sent_at) + '</span></div>'
+          + '<div style="display:flex;align-items:center;gap:8px;">' + statusBadge + '<button class="btn-secondary" style="padding:2px 8px;font-size:11px;" onclick="event.stopPropagation();AdminAddons.resendEmailLog(' + l.id + ')">↺ Resend</button></div>'
+          + '</div>';
+      }).join('') + '</div>'
+    : '<span style="font-size:12px;color:var(--color-grey);">No recorded email logs</span>';
+
+  return '<div style="padding:16px;background:#F8FAFC;border-radius:8px;border:1.5px solid #E2E8F0;margin:6px 0;">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">'
+    + '<div><h4 style="margin:0 0 2px;font-size:16px;">' + name + '</h4><span style="font-size:12px;color:var(--color-grey);">' + email + ' &nbsp;&middot;&nbsp; ' + phone + '</span></div>'
+    + '<div style="display:flex;gap:8px;">'
+    + (c.email ? '<a href="mailto:' + c.email + '" class="btn-secondary" style="padding:4px 12px;font-size:12px;text-decoration:none;">✉️ Email Customer</a>' : '')
+    + '<button class="btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="filterOrdersByCustomer(\'' + (c.email || '').replace(/'/g, "\\'") + '\')">📦 View Orders (' + orders.length + ')</button>'
+    + '</div>'
+    + '</div>'
+    + '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:var(--color-grey);text-transform:uppercase;">Order History</div>' + ordersHtml + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">'
+    + '<div><div style="font-size:12px;font-weight:700;color:var(--color-grey);text-transform:uppercase;">Back-in-Stock Requests</div>' + notifysHtml + '</div>'
+    + '<div><div style="font-size:12px;font-weight:700;color:var(--color-grey);text-transform:uppercase;">Customer Enquiries</div>' + enqsHtml + '</div>'
+    + '</div>'
+    + '<div style="margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:var(--color-grey);text-transform:uppercase;">Email Delivery History</div>' + emailsHtml + '</div>'
+    + '<div>'
+    + '<div style="font-size:12px;font-weight:700;color:var(--color-grey);text-transform:uppercase;margin-bottom:4px;">Internal Admin Notes <small style="font-weight:400;color:#94A3B8;">(private to staff)</small></div>'
+    + '<textarea id="cust-note-' + c.id + '" rows="2" style="width:100%;box-sizing:border-box;padding:8px;font-size:13px;border:1.5px solid var(--color-border);border-radius:6px;resize:vertical;" placeholder="Add private notes regarding this customer...">' + notes + '</textarea>'
+    + '<button class="btn-secondary" style="padding:4px 12px;font-size:12px;margin-top:6px;" onclick="saveCustomerNotes(' + c.id + ')">Save Customer Note</button>'
+    + '</div>'
+    + '</div>';
+}
+
+window.viewCustomerOrder = function(orderId) {
+  window.showSection('orders');
+  setTimeout(function() {
+    var row = document.getElementById('order-row-' + orderId);
+    if (row) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.toggleOrderDetail(orderId);
+    }
+  }, 200);
+};
+
+window.filterOrdersByCustomer = function(customerEmail) {
+  window.showSection('orders');
+  var ordSearch = document.getElementById('orders-search');
+  if (ordSearch) {
+    ordSearch.value = customerEmail;
+    ordersSearchQuery = customerEmail;
+    renderOrders();
+  }
+};
+
+window.saveCustomerNotes = async function(id) {
+  var note = document.getElementById('cust-note-' + id).value.trim();
+  try {
+    var r = await sb.from('customers').update({ internal_notes: note }).eq('id', id);
+    if (r.error) throw r.error;
+    var idx = allCustomersData.findIndex(function(x) { return x.id === id; });
+    if (idx !== -1) { allCustomersData[idx].internal_notes = note; }
+    showToast('✓ Customer note saved', 'success');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+  }
+};
 
 window.toggleCustDetail = function(id) {
   var det = document.getElementById('cust-detail-' + id);
@@ -2587,13 +2961,21 @@ function makeImageUploadZone(opts) {
   }
 
   async function handleFile(file) {
-    if (!file || !file.type.startsWith('image/')) return;
+    if (!file || !file.type.startsWith('image/')) {
+      if (window.showToast) window.showToast('Please select a valid image file (PNG, JPG, WebP).', 'warning');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      if (window.showToast) window.showToast('Image file too large. Maximum size is 10 MB.', 'warning');
+      return;
+    }
     setUploadingState(true);
     try {
       var blob    = (typeof toWebP === 'function') ? await toWebP(file) : file;
       var name    = file.name.replace(/\.[^.]+$/, '') + '_' + Date.now();
       var url     = await uploadToCloudinary(blob, opts.folder || 'events', name);
       showPreview(url);
+      if (window.showToast) window.showToast('✓ Image uploaded successfully', 'success');
     } catch(err) {
       if (window.showToast) window.showToast('Upload failed: ' + err.message, 'error');
       else alert('Upload failed: ' + err.message);
