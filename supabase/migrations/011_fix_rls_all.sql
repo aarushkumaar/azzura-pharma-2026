@@ -21,6 +21,20 @@ FOR INSERT
 TO anon, authenticated 
 WITH CHECK (true);
 
+DROP POLICY IF EXISTS "notify_me: auth read" ON public.notify_me_requests;
+CREATE POLICY "notify_me: auth read" 
+ON public.notify_me_requests 
+FOR SELECT 
+TO authenticated 
+USING (true);
+
+DROP POLICY IF EXISTS "notify_me: auth delete" ON public.notify_me_requests;
+CREATE POLICY "notify_me: auth delete" 
+ON public.notify_me_requests 
+FOR DELETE 
+TO authenticated 
+USING (true);
+
 -- 3. HOMEPAGE BANNERS
 -- Allow public to read enabled banners for the homepage carousel.
 DROP POLICY IF EXISTS "homepage_banners: public read" ON public.homepage_banners;

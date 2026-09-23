@@ -110,6 +110,8 @@
         document.getElementById('banner-form').reset();
         document.getElementById('form-banner-id').value = '';
         document.getElementById('banner-panel-title').textContent = 'Add Banner';
+        // Reset the image upload zone
+        if (window.bannerImgUploadZone) window.bannerImgUploadZone.setImage('');
         openCustomPanel('banner-panel');
       });
     }
@@ -469,6 +471,9 @@
       document.getElementById('form-banner-link').value = b.link_url || '';
       document.getElementById('form-banner-order').value = b.display_order;
       document.getElementById('form-banner-enabled').checked = !!b.is_enabled;
+
+      // Populate image upload zone with existing image
+      if (window.bannerImgUploadZone) window.bannerImgUploadZone.setImage(b.image_url || '');
 
       document.getElementById('banner-panel-title').textContent = 'Edit Banner: ' + (b.title || 'Untitled');
       openCustomPanel('banner-panel');

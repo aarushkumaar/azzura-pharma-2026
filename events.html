@@ -152,6 +152,9 @@
   <script>
   /* ============================================================
      EVENTS PAGE — fetch & render events from Supabase
+     Fetches ALL active events in one request, then splits
+     upcoming vs past in JS. Null-date events always show
+     as upcoming/notices. Events without images render cleanly.
   ============================================================ */
   (async function initEventsPage() {
     var SUPA_URL = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
@@ -189,10 +192,10 @@
       return days + 'd ' + hrs + 'h ' + mins + 'm ' + secs + 's';
     }
 
-    /* ── Fetch events ── */
-    async function fetchEvents(filter) {
+    /* ── Fetch ALL active events at once ── */
+    async function fetchAllEvents() {
       try {
-        var url = SUPA_URL + '/rest/v1/events?' + filter + '&is_active=eq.true&order=date.' + (filter.includes('gte') ? 'asc' : 'desc');
+        var url = SUPA_URL + '/rest/v1/events?is_active=eq.true&order=created_at.desc';
         var res = await fetch(url, {
           headers: {
             'apikey':        SUPA_KEY,
@@ -208,41 +211,51 @@
       }
     }
 
-    /* ── Render upcoming event card ── */
+    /* ── Render upcoming / notice card ── */
     function renderUpcomingCard(ev) {
-      var imgHtml = ev.banner_image_url
-        ? '<img src="' + ev.banner_image_url + '" alt="' + ev.title + '" class="event-banner-image" loading="lazy" />'
-        : '<div class="event-banner-placeholder">' + (ev.title || 'Event') + '</div>';
+      var hasImage = !!ev.banner_image_url;
+
+      var imgSection = hasImage
+        ? '<div><img src="' + ev.banner_image_url + '" alt="' + (ev.title || 'Event') + '" class="event-banner-image" loading="lazy" /></div>'
+        : '';
+
+      var dateBadge = ev.date
+        ? '<span class="event-date-badge">' + formatShortDate(ev.date) + '</span>'
+        : '<span class="event-date-badge" style="background:var(--color-accent-light,#e8f4fd);color:var(--color-primary);">Notice / Announcement</span>';
 
       var regBtn = ev.registration_url
         ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="event-register-btn">Register / Learn More →</a>'
-        : '<span class="event-register-btn disabled">Coming Soon</span>';
+        : '';
 
-      var countdownMs = getCountdown(ev.date);
+      var countdownMs = ev.date ? getCountdown(ev.date) : null;
       var countdownHtml = countdownMs !== null
         ? '<div class="event-countdown" data-target="' + new Date(ev.date + 'T00:00:00').getTime() + '">Starts in: ' + formatCountdown(countdownMs) + '</div>'
         : '';
 
-      return '<article class="event-banner-card fade-up">' +
+      var cardStyle = hasImage ? '' : 'style="grid-template-columns:1fr;"';
+
+      return '<article class="event-banner-card fade-up" ' + cardStyle + '>' +
         '<div>' +
-          '<span class="event-date-badge">' + formatShortDate(ev.date) + '</span>' +
+          dateBadge +
           '<span class="event-type-tag">' + (ev.event_type || 'Event') + '</span>' +
           '<h3 class="event-title">' + (ev.title || '') + '</h3>' +
-          '<p class="event-desc">' + (ev.short_description || '') + '</p>' +
+          (ev.short_description ? '<p class="event-desc">' + ev.short_description + '</p>' : '') +
           (ev.location ? '<p class="event-meta">📍 ' + ev.location + (ev.city ? ', ' + ev.city : '') + '</p>' : '') +
           (ev.time ? '<p class="event-meta">🕐 ' + ev.time + '</p>' : '') +
           countdownHtml +
           regBtn +
         '</div>' +
-        '<div>' + imgHtml + '</div>' +
+        imgSection +
       '</article>';
     }
 
     /* ── Render past event card ── */
     function renderPastCard(ev) {
-      var imgHtml = ev.banner_image_url
-        ? '<img src="' + ev.banner_image_url + '" alt="' + ev.title + '" class="past-event-img" loading="lazy" />'
-        : '<div class="past-event-img-placeholder">No Image</div>';
+      var hasImage = !!ev.banner_image_url;
+
+      var imgHtml = hasImage
+        ? '<img src="' + ev.banner_image_url + '" alt="' + (ev.title || 'Event') + '" class="past-event-img" loading="lazy" />'
+        : '<div class="past-event-img-placeholder" style="display:flex;align-items:center;justify-content:center;background:var(--color-light,#f5f7fa);min-height:120px;border-radius:8px 8px 0 0;font-size:32px;">🗓️</div>';
 
       return '<div class="past-event-card">' +
         imgHtml +
@@ -261,8 +274,19 @@
     var upcomingEl = document.getElementById('upcoming-events-container');
     var pastEl     = document.getElementById('past-events-container');
 
-    var upcoming = await fetchEvents('date=gte.' + today);
-    var past     = await fetchEvents('date=lt.' + today);
+    var all = await fetchAllEvents();
+
+    // Split: upcoming = date >= today OR date is null; past = date < today
+    var upcoming = all.filter(function(ev) { return !ev.date || ev.date >= today; });
+    var past     = all.filter(function(ev) { return !!ev.date && ev.date < today; });
+
+    // Sort upcoming: null-date first, then by date asc
+    upcoming.sort(function(a, b) {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return -1;
+      if (!b.date) return 1;
+      return a.date > b.date ? 1 : -1;
+    });
 
     // Upcoming
     if (upcomingEl) {

@@ -1157,8 +1157,26 @@
                 })
               });
               success = res.ok;
+              if (success) {
+                fetch(SUPABASE_URL + '/functions/v1/sendEmail', {
+                  method: 'POST',
+                  headers: {
+                    'apikey':        SUPABASE_ANON_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type':  'application/json'
+                  },
+                  body: JSON.stringify({
+                    type:        'notify_me',
+                    productId:   Number(product.id),
+                    productName: product.name || '',
+                    email:       email,
+                    requestedAt: new Date().toISOString()
+                  })
+                }).catch(function(e) { console.warn('[Product] Notify email failed:', e); });
+              }
             } catch(_) {}
           }
+
           
           if (success) {
             notifyMsg.textContent = '✓ Notification request saved!';

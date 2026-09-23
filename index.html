@@ -33,9 +33,53 @@
       object-fit: cover;
       cursor: pointer;
     }
+    /* Announcement Top Bar */
+    #announcement-topbar {
+      display: none;
+      width: 100%;
+      background: linear-gradient(90deg, var(--color-primary, #4A6FA5), var(--color-accent, #2563EB));
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 500;
+      text-align: center;
+      padding: 9px 16px;
+      position: relative;
+      z-index: 1001;
+      letter-spacing: 0.01em;
+    }
+    #announcement-topbar a {
+      color: #fff;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    #announcement-topbar a:hover {
+      opacity: 0.85;
+    }
+    #announcement-topbar .anc-close {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.8);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 4px;
+    }
+    #announcement-topbar .anc-close:hover {
+      color: #fff;
+    }
   </style>
 </head>
 <body class="has-main-nav">
+
+  <!-- Announcement Top Bar (populated by JS; hidden until active notices exist) -->
+  <div id="announcement-topbar" role="banner" aria-live="polite">
+    <span id="announcement-topbar-text"></span>
+    <button class="anc-close" id="announcement-topbar-close" aria-label="Close announcement">&times;</button>
+  </div>
 
   <!-- ========================================================
        NAVBAR
@@ -877,7 +921,9 @@
   <script>
   /* ============================================================
      HOMEPAGE EVENTS BANNER
-     Fetch featured events and render the banner strip.
+     Fetch featured active events and render the banner strip.
+     Also renders the announcement top bar for notices.
+     Now correctly handles null-date events (notices/announcements).
      Hidden completely if no featured events exist.
   ============================================================ */
   (async function loadFeaturedEvents() {
@@ -885,8 +931,8 @@
     var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
 
     try {
-      var today = new Date().toISOString().split('T')[0];
-      var url = SUPA_URL + '/rest/v1/events?is_featured=eq.true&is_active=eq.true&date=gte.' + today + '&order=date.asc&limit=3';
+      // Fetch ALL featured + active events; filter client-side so null-date events are included
+      var url = SUPA_URL + '/rest/v1/events?is_featured=eq.true&is_active=eq.true&order=created_at.desc&limit=5';
       var res = await fetch(url, {
         headers: {
           'apikey': SUPA_KEY,
@@ -895,10 +941,37 @@
         }
       });
       if (!res.ok) return;
-      var events = await res.json();
+      var allFeatured = await res.json();
+      if (!allFeatured || allFeatured.length === 0) return;
+
+      var today = new Date().toISOString().split('T')[0];
+
+      // Only show events that are upcoming (date >= today) OR have no date (standing notices)
+      var events = allFeatured.filter(function(ev) {
+        return !ev.date || ev.date >= today;
+      });
+
       if (!events || events.length === 0) return;
 
-      // Render slides
+      // ── Announcement Top Bar (for the most-recent notice without a date) ──
+      var announcementEl = document.getElementById('announcement-topbar');
+      var announcementText = document.getElementById('announcement-topbar-text');
+      var announcementClose = document.getElementById('announcement-topbar-close');
+      var topNotice = events.find(function(ev) { return !ev.date; });
+
+      if (topNotice && announcementEl && announcementText) {
+        var noticeMsg = topNotice.title || 'New Announcement';
+        if (topNotice.short_description) noticeMsg += ' — ' + topNotice.short_description.substring(0, 80) + (topNotice.short_description.length > 80 ? '…' : '');
+        announcementText.innerHTML = '📢 ' + noticeMsg + ' &nbsp;<a href="events.html">Learn More →</a>';
+        announcementEl.style.display = 'block';
+        if (announcementClose) {
+          announcementClose.addEventListener('click', function() {
+            announcementEl.style.display = 'none';
+          });
+        }
+      }
+
+      // ── Events Banner Strip ──
       var carousel = document.getElementById('events-banner-carousel');
       var dotsContainer = document.getElementById('events-banner-dots');
       var strip = document.getElementById('homepage-events-banner');
@@ -914,11 +987,11 @@
         var slide = document.createElement('div');
         slide.className = 'events-banner-slide' + (i === 0 ? ' active' : '');
         slide.innerHTML =
-          '<span class="events-banner-label">🗓 UPCOMING EVENT</span>' +
+          '<span class="events-banner-label">' + (ev.date ? '🗓 UPCOMING EVENT' : '📢 NOTICE') + '</span>' +
           '<div class="events-banner-title">' + (ev.title || '') + '</div>' +
           '<div class="events-banner-meta">' +
           (ev.date ? '📅 ' + formatDate(ev.date) : '') +
-          (ev.city ? ' &nbsp;·&nbsp; 📍 ' + ev.city : '') +
+          (ev.city ? (ev.date ? ' &nbsp;·&nbsp; ' : '') + '📍 ' + ev.city : '') +
           '</div>' +
           '<a href="events.html" class="events-banner-btn">Learn More →</a>';
         carousel.appendChild(slide);

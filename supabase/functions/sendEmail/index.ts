@@ -228,6 +228,78 @@ async function handleContactEnquiry(payload: any): Promise<void> {
   }
 }
 
+async function handleNotifyMe(payload: any): Promise<void> {
+  const { productId, productName, email, requestedAt } = payload;
+  const safeName  = escapeHtml(String(productName || 'Azzurra Product').trim().slice(0, 150));
+  const safeEmail = String(email || '').trim().toLowerCase();
+  const safeId    = productId ? String(productId) : '';
+  const dateStr   = fmtDate(requestedAt || new Date().toISOString());
+
+  if (!safeEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return;
+
+  const adminBody = `
+    <h2 style="margin:0 0 16px;">Back-in-Stock Notification Request</h2>
+    <p>A customer has requested to be notified when a product is back in stock.</p>
+    <div class="row"><span class="lbl">Product</span><span class="val">${safeName}</span></div>
+    ${safeId ? `<div class="row"><span class="lbl">Product ID</span><span class="val">#${safeId}</span></div>` : ''}
+    <div class="row"><span class="lbl">Customer Email</span><span class="val">${safeEmail}</span></div>
+    <div class="row"><span class="lbl">Requested At</span><span class="val">${dateStr}</span></div>
+    <div class="note">ℹ️ You can review all back-in-stock requests in the Admin Portal under <strong>Notify Me</strong>.</div>
+  `;
+
+  await sendViaResend(
+    ADMIN_EMAIL,
+    `Notify Me: ${safeName} — ${safeEmail}`,
+    htmlWrap('Back-in-Stock Request', adminBody),
+    safeEmail
+  );
+}
+
+async function fetchOrderWithItems(orderId: string | number, serviceRoleKey: string): Promise<any> {
+  try {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      serviceRoleKey || (Deno.env.get('SUPABASE_ANON_KEY') || '').trim()
+    );
+    const { data: order, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+
+    if (error || !order) {
+      console.error('[sendEmail] Order lookup failed:', error?.message);
+      return null;
+    }
+
+    let items: any[] = [];
+    try {
+      items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || []);
+    } catch (_) { items = []; }
+
+    if (!items || items.length === 0) {
+      const { data: dbItems } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', order.id);
+      if (dbItems && dbItems.length) {
+        items = dbItems.map((it: any) => ({
+          name: it.product_name,
+          quantity: it.quantity,
+          price: it.unit_price,
+          unit_price: it.unit_price,
+          total: it.total_price
+        }));
+      }
+    }
+    order.items = items;
+    return order;
+  } catch (e: any) {
+    console.error('[sendEmail] fetchOrderWithItems error:', e.message);
+    return null;
+  }
+}
+
 async function handleWelcome(payload: any): Promise<void> {
   const { email, name } = payload;
   const safeEmail = String(email || '').trim().toLowerCase();
@@ -283,15 +355,27 @@ serve(async (req: Request) => {
 
     // Strict server-side authorization check per email type
     switch (type) {
+      case 'order_notification':
       case 'order_confirmation': {
-        // Order confirmations must ONLY be triggered server-side by verifyPayment or webhookRazorpay
-        if (!isServiceRole) {
-          return new Response(JSON.stringify({ success: false, error: 'Forbidden: Service role required for order confirmation emails' }), {
+        // Can be triggered by service role with order object, OR by authenticated/client user if verified orderId is provided
+        let targetOrder = rest.order;
+        if (!targetOrder && rest.orderId) {
+          targetOrder = await fetchOrderWithItems(rest.orderId, serviceRoleKey);
+        }
+        if (!targetOrder) {
+          return new Response(JSON.stringify({ success: false, error: 'Order not found' }), {
+            headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+            status: 404,
+          });
+        }
+        // If triggered without service role and without matching orderId, ensure authorization
+        if (!isServiceRole && !rest.orderId) {
+          return new Response(JSON.stringify({ success: false, error: 'Forbidden: Service role or valid orderId required' }), {
             headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
             status: 403,
           });
         }
-        await handleOrderConfirmation(rest);
+        await handleOrderConfirmation({ order: targetOrder });
         break;
       }
 
@@ -323,9 +407,12 @@ serve(async (req: Request) => {
       }
 
       case 'contact_enquiry': {
-        // Contact enquiry is open to site visitors (with valid anon key or user token),
-        // but admin recipient is hard-coded, input is sanitized, and ACK is sent only to sender.
         await handleContactEnquiry(rest);
+        break;
+      }
+
+      case 'notify_me': {
+        await handleNotifyMe(rest);
         break;
       }
 
@@ -349,3 +436,4 @@ serve(async (req: Request) => {
     });
   }
 });
+

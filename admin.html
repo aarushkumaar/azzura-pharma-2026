@@ -925,8 +925,27 @@
         <input type="text" id="form-banner-title" placeholder="e.g. Clinical Nutrition Offer" />
       </div>
       <div class="form-group">
-        <label class="form-label">Image URL <span class="req">*</span></label>
-        <input type="text" id="form-banner-image" required placeholder="Paste Cloudinary URL" />
+        <label class="form-label">Banner Image <span class="req">*</span></label>
+        <!-- Hidden field stores the final uploaded URL -->
+        <input type="hidden" id="form-banner-image" />
+        <!-- Upload Zone -->
+        <div id="banner-img-upload-zone" class="img-upload-zone" style="border:2px dashed var(--color-border,#e0e0e0);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;" tabindex="0" role="button" aria-label="Upload banner image">
+          <div id="banner-img-preview-wrap" style="display:none;position:relative;margin-bottom:10px;">
+            <img id="banner-img-preview" src="" alt="Banner Preview" style="max-width:100%;max-height:160px;border-radius:8px;object-fit:cover;display:block;margin:0 auto;" />
+          </div>
+          <div id="banner-img-placeholder" style="color:var(--color-grey);">
+            <div style="font-size:32px;margin-bottom:8px;">🖼️</div>
+            <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Drag &amp; drop image here</div>
+            <div style="font-size:12px;">or <span style="color:var(--color-primary);text-decoration:underline;">click to browse</span></div>
+            <div style="font-size:11px;color:var(--color-grey);margin-top:6px;">PNG, JPG, WebP — auto-converted to WebP</div>
+          </div>
+          <div id="banner-img-actions" style="display:none;margin-top:10px;gap:8px;justify-content:center;align-items:center;">
+            <button type="button" id="banner-img-replace-btn" class="btn-secondary" style="padding:4px 12px;font-size:13px;">Replace</button>
+            <button type="button" id="banner-img-remove-btn" class="btn-secondary" style="padding:4px 12px;font-size:13px;color:var(--color-red,#e53e3e);border-color:var(--color-red,#e53e3e);">Remove</button>
+          </div>
+          <div id="banner-img-uploading" style="display:none;color:var(--color-primary);font-size:13px;margin-top:8px;">⏳ Uploading…</div>
+          <input type="file" id="banner-img-file-input" accept="image/*" style="display:none;" />
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Link URL</label>
@@ -2260,8 +2279,27 @@ showSection('dashboard');
         <input type="url" id="ev-registration-url" placeholder="https://…" />
       </div>
       <div class="form-group">
-        <label class="form-label">Banner Image URL</label>
-        <input type="url" id="ev-banner-image-url" placeholder="https://res.cloudinary.com/…" />
+        <label class="form-label">Banner Image</label>
+        <!-- Hidden field stores the final uploaded URL -->
+        <input type="hidden" id="ev-banner-image-url" />
+        <!-- Upload Zone -->
+        <div id="ev-img-upload-zone" class="img-upload-zone" style="border:2px dashed var(--color-border,#e0e0e0);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;" tabindex="0" role="button" aria-label="Upload event banner image">
+          <div id="ev-img-preview-wrap" style="display:none;position:relative;margin-bottom:10px;">
+            <img id="ev-img-preview" src="" alt="Banner Preview" style="max-width:100%;max-height:180px;border-radius:8px;object-fit:cover;display:block;margin:0 auto;" />
+          </div>
+          <div id="ev-img-placeholder" style="color:var(--color-grey);">
+            <div style="font-size:32px;margin-bottom:8px;">🖼️</div>
+            <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Drag &amp; drop image here</div>
+            <div style="font-size:12px;">or <span style="color:var(--color-primary);text-decoration:underline;">click to browse</span></div>
+            <div style="font-size:11px;color:var(--color-grey);margin-top:6px;">PNG, JPG, WebP — auto-converted to WebP</div>
+          </div>
+          <div id="ev-img-actions" style="display:none;margin-top:10px;gap:8px;justify-content:center;align-items:center;">
+            <button type="button" id="ev-img-replace-btn" class="btn-secondary" style="padding:4px 12px;font-size:13px;">Replace</button>
+            <button type="button" id="ev-img-remove-btn" class="btn-secondary" style="padding:4px 12px;font-size:13px;color:var(--color-red,#e53e3e);border-color:var(--color-red,#e53e3e);">Remove</button>
+          </div>
+          <div id="ev-img-uploading" style="display:none;color:var(--color-primary);font-size:13px;margin-top:8px;">⏳ Uploading…</div>
+          <input type="file" id="ev-img-file-input" accept="image/*" style="display:none;" />
+        </div>
       </div>
       <div style="display:flex;gap:24px;margin-bottom:16px;">
         <label class="toggle-switch">
@@ -2329,6 +2367,8 @@ showSection('dashboard');
     document.getElementById('ev-is-featured').checked = false;
     document.getElementById('ev-delete-btn').style.display = 'none';
     document.getElementById('ev-save-btn').textContent = 'Save Event';
+    // Reset upload zone
+    if (window.evImgUploadZone) window.evImgUploadZone.setImage('');
   }
 
   function fillEventForm(ev) {
@@ -2346,6 +2386,8 @@ showSection('dashboard');
     document.getElementById('ev-is-active').checked = ev.is_active !== false;
     document.getElementById('ev-is-featured').checked = !!ev.is_featured;
     document.getElementById('ev-delete-btn').style.display = '';
+    // Populate upload zone preview
+    if (window.evImgUploadZone) window.evImgUploadZone.setImage(ev.banner_image_url || '');
   }
 
   function formatShortDate(d) {
@@ -2491,6 +2533,148 @@ showSection('dashboard');
     });
   });
 
+}());
+</script>
+
+<script>
+/* ============================================================
+   IMAGE UPLOAD ZONES — Event Panel & Banner Panel
+   Reuses toWebP() and uploadToCloudinary() defined above.
+   Exposes:
+     window.evImgUploadZone.setImage(url)      — for clearEventForm / fillEventForm
+     window.bannerImgUploadZone.setImage(url)  — for editBanner in admin-addons
+============================================================ */
+function makeImageUploadZone(opts) {
+  /* opts: {
+       zoneId, previewWrapId, previewImgId, placeholderId,
+       actionsId, uploadingId, fileInputId, hiddenInputId,
+       replaceBtn, removeBtn, folder
+     }
+  */
+  var zone       = document.getElementById(opts.zoneId);
+  var prevWrap   = document.getElementById(opts.previewWrapId);
+  var prevImg    = document.getElementById(opts.previewImgId);
+  var placeholder = document.getElementById(opts.placeholderId);
+  var actions    = document.getElementById(opts.actionsId);
+  var uploadingEl = document.getElementById(opts.uploadingId);
+  var fileInput  = document.getElementById(opts.fileInputId);
+  var hidden     = document.getElementById(opts.hiddenInputId);
+  var replaceBtn = document.getElementById(opts.replaceBtn);
+  var removeBtn  = document.getElementById(opts.removeBtn);
+
+  if (!zone || !hidden) return { setImage: function(){} };
+
+  function showPreview(url) {
+    if (!url) {
+      prevImg.src = '';
+      prevWrap.style.display = 'none';
+      placeholder.style.display = '';
+      actions.style.display = 'none';
+      hidden.value = '';
+      return;
+    }
+    prevImg.src = url;
+    prevWrap.style.display = '';
+    placeholder.style.display = 'none';
+    actions.style.display = 'flex';
+    hidden.value = url;
+  }
+
+  function setUploadingState(loading) {
+    uploadingEl.style.display = loading ? '' : 'none';
+    zone.style.pointerEvents  = loading ? 'none' : '';
+    zone.style.opacity        = loading ? '0.7' : '';
+  }
+
+  async function handleFile(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    setUploadingState(true);
+    try {
+      var blob    = (typeof toWebP === 'function') ? await toWebP(file) : file;
+      var name    = file.name.replace(/\.[^.]+$/, '') + '_' + Date.now();
+      var url     = await uploadToCloudinary(blob, opts.folder || 'events', name);
+      showPreview(url);
+    } catch(err) {
+      if (window.showToast) window.showToast('Upload failed: ' + err.message, 'error');
+      else alert('Upload failed: ' + err.message);
+    } finally {
+      setUploadingState(false);
+    }
+  }
+
+  // Click on zone or placeholder opens file chooser
+  zone.addEventListener('click', function(e) {
+    if (e.target === replaceBtn || e.target === removeBtn) return;
+    fileInput.click();
+  });
+  zone.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+  });
+
+  // Drag-over styling
+  zone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    zone.style.borderColor = 'var(--color-primary, #4A6FA5)';
+    zone.style.background  = 'rgba(74,111,165,0.05)';
+  });
+  zone.addEventListener('dragleave', function() {
+    zone.style.borderColor = '';
+    zone.style.background  = '';
+  });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zone.style.borderColor = '';
+    zone.style.background  = '';
+    var f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+
+  // File input change
+  fileInput.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      handleFile(this.files[0]);
+      this.value = '';
+    }
+  });
+
+  // Replace button
+  if (replaceBtn) replaceBtn.addEventListener('click', function(e) { e.stopPropagation(); fileInput.click(); });
+
+  // Remove button
+  if (removeBtn) removeBtn.addEventListener('click', function(e) { e.stopPropagation(); showPreview(''); });
+
+  return { setImage: showPreview };
+}
+
+// Wire the two zones once DOM is ready
+(function() {
+  window.evImgUploadZone = makeImageUploadZone({
+    zoneId:         'ev-img-upload-zone',
+    previewWrapId:  'ev-img-preview-wrap',
+    previewImgId:   'ev-img-preview',
+    placeholderId:  'ev-img-placeholder',
+    actionsId:      'ev-img-actions',
+    uploadingId:    'ev-img-uploading',
+    fileInputId:    'ev-img-file-input',
+    hiddenInputId:  'ev-banner-image-url',
+    replaceBtn:     'ev-img-replace-btn',
+    removeBtn:      'ev-img-remove-btn',
+    folder:         'events'
+  });
+
+  window.bannerImgUploadZone = makeImageUploadZone({
+    zoneId:         'banner-img-upload-zone',
+    previewWrapId:  'banner-img-preview-wrap',
+    previewImgId:   'banner-img-preview',
+    placeholderId:  'banner-img-placeholder',
+    actionsId:      'banner-img-actions',
+    uploadingId:    'banner-img-uploading',
+    fileInputId:    'banner-img-file-input',
+    hiddenInputId:  'form-banner-image',
+    replaceBtn:     'banner-img-replace-btn',
+    removeBtn:      'banner-img-remove-btn',
+    folder:         'banners'
+  });
 }());
 </script>
 

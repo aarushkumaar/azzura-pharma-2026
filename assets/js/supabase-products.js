@@ -291,6 +291,26 @@
     })
       .then(function (res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
+        
+        // Trigger admin email notification via Resend (best-effort, non-blocking)
+        fetch(SUPABASE_URL + '/functions/v1/sendEmail', {
+          method: 'POST',
+          headers: {
+            'apikey':        SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type':  'application/json'
+          },
+          body: JSON.stringify({
+            type:        'notify_me',
+            productId:   Number(productId),
+            productName: productName || '',
+            email:       email,
+            requestedAt: new Date().toISOString()
+          })
+        }).catch(function(e) {
+          console.warn('[Azzurra] Notify Me admin email notification failed:', e);
+        });
+
         return true;
       })
       .catch(function (err) {
@@ -300,3 +320,4 @@
   };
 
 })();
+
