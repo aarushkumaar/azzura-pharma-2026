@@ -217,16 +217,71 @@
        UPCOMING EVENTS SECTION
        ======================================================== -->
   <div class="events-section">
-    <h2 class="heading-xl" style="margin-bottom:32px;">Upcoming Events</h2>
+    <!-- ── 1. FEATURED / MAIN EVENT SECTION ── -->
+    <div id="featured-event-container" style="display:none;margin-bottom:48px;">
+      <!-- Populated by JS if a featured event exists -->
+    </div>
+
+    <!-- ── 2. UPCOMING EVENTS ── -->
+    <h2 class="heading-xl" id="upcoming-heading" style="margin-bottom:32px;">Upcoming Events</h2>
     <div id="upcoming-events-container">
       <!-- Populated by JS -->
       <div style="text-align:center;padding:40px;"><span style="font-size:24px;">⏳</span><p style="color:var(--color-grey);margin-top:12px;">Loading events…</p></div>
     </div>
 
-    <!-- ── PAST EVENTS ── -->
+    <!-- ── 3. PAST EVENTS ── -->
     <h2 class="heading-xl" style="margin-top:64px;margin-bottom:32px;">Past Events</h2>
     <div id="past-events-container" class="past-events-grid">
       <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ── 4. EVENT DETAIL LIGHTBOX MODAL ── -->
+  <div id="event-detail-modal" class="edm-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="edm-modal">
+      <button type="button" class="edm-close" id="edm-close-btn" aria-label="Close event details">&times;</button>
+      <div class="edm-hero-img-wrap">
+        <img id="edm-hero-img" class="edm-hero-img" src="" alt="Event Image" />
+        <button type="button" class="edm-nav-btn prev" id="edm-prev-btn" aria-label="Previous photo" style="display:none;">‹</button>
+        <button type="button" class="edm-nav-btn next" id="edm-next-btn" aria-label="Next photo" style="display:none;">›</button>
+      </div>
+      <div id="edm-gallery-bar" class="edm-gallery-bar" style="display:none;"></div>
+      <div class="edm-content">
+        <div class="edm-header-row">
+          <span id="edm-type-tag" class="edm-tag">Conference</span>
+          <span id="edm-featured-badge" class="edm-featured-badge" style="display:none;">★ Featured Event</span>
+        </div>
+        <h2 id="edm-title" class="edm-title"></h2>
+        <div class="edm-info-grid">
+          <div class="edm-info-item" id="edm-date-wrap">
+            <span class="edm-info-icon">📅</span>
+            <div><strong style="display:block;font-size:11px;color:#64748b;letter-spacing:0.5px;">DATE</strong><span id="edm-date">—</span></div>
+          </div>
+          <div class="edm-info-item" id="edm-time-wrap">
+            <span class="edm-info-icon">🕐</span>
+            <div><strong style="display:block;font-size:11px;color:#64748b;letter-spacing:0.5px;">TIME</strong><span id="edm-time">—</span></div>
+          </div>
+          <div class="edm-info-item" id="edm-location-wrap">
+            <span class="edm-info-icon">📍</span>
+            <div><strong style="display:block;font-size:11px;color:#64748b;letter-spacing:0.5px;">LOCATION</strong><span id="edm-location">—</span></div>
+          </div>
+          <div class="edm-info-item" id="edm-venue-wrap">
+            <span class="edm-info-icon">🏛️</span>
+            <div><strong style="display:block;font-size:11px;color:#64748b;letter-spacing:0.5px;">VENUE</strong><span id="edm-venue">—</span></div>
+          </div>
+        </div>
+        <div id="edm-short-desc-wrap" style="display:none;margin-bottom:16px;">
+          <p id="edm-short-desc" style="font-size:15px;color:#334155;font-weight:500;line-height:1.6;font-style:italic;"></p>
+        </div>
+        <div id="edm-desc-wrap" style="display:none;">
+          <div class="edm-desc-heading">About This Event</div>
+          <div id="edm-desc" class="edm-desc-text"></div>
+        </div>
+        <div class="edm-actions">
+          <a id="edm-reg-btn" href="#" target="_blank" rel="noopener" class="edm-btn-register" style="display:none;">Register / Learn More →</a>
+          <button type="button" class="btn-secondary" id="edm-dismiss-btn" style="padding:11px 24px;border-radius:100px;font-size:14px;cursor:pointer;">Close</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -367,6 +422,56 @@
       return imgs.filter(function(u) { return typeof u === 'string' && u.trim().length > 0; });
     }
 
+    var allEvents = [];
+    var currentModalEv = null;
+    var currentPhotoIdx = 0;
+
+    /* ── Render Featured / Main Event Spotlight Section ── */
+    function renderFeaturedSection(ev) {
+      var container = document.getElementById('featured-event-container');
+      if (!container) return;
+      if (!ev) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+
+      var imgs = getEventImages(ev);
+      var heroImgUrl = imgs.length ? imgs[0] : '';
+      var imgHtml = heroImgUrl
+        ? '<div style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')"><img src="' + heroImgUrl + '" alt="' + (ev.title || 'Featured Event') + '" class="event-banner-image" style="border-radius:12px;box-shadow:0 8px 24px rgba(26,95,168,0.14);" loading="eager" /></div>'
+        : '';
+
+      var dateBadge = ev.date
+        ? '<span class="event-date-badge" style="background:#e0f2fe;color:#0369a1;font-weight:700;">📅 ' + formatShortDate(ev.date) + '</span>'
+        : '<span class="event-date-badge" style="background:#fef3c7;color:#92400e;">📢 Announcement</span>';
+
+      container.innerHTML =
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">' +
+          '<h2 class="heading-xl" style="margin:0;">★ Featured Event</h2>' +
+          '<span style="font-size:12px;font-weight:700;background:linear-gradient(135deg,#1A5FA8,#2563EB);color:#fff;padding:3px 12px;border-radius:100px;letter-spacing:0.5px;text-transform:uppercase;">Spotlight</span>' +
+        '</div>' +
+        '<article class="event-banner-card fade-up" style="border-left:5px solid var(--color-primary);background:linear-gradient(180deg,#ffffff,#f8fafc);box-shadow:0 8px 30px rgba(26,95,168,0.12);">' +
+          '<div>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">' +
+              dateBadge +
+              '<span class="event-type-tag" style="margin-left:0;">' + (ev.event_type || 'Event') + '</span>' +
+            '</div>' +
+            '<h3 class="event-title" style="font-size:clamp(22px,2.8vw,28px);cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')">' + (ev.title || '') + '</h3>' +
+            (ev.short_description ? '<p class="event-desc" style="font-size:15px;line-height:1.7;">' + ev.short_description + '</p>' : '') +
+            (ev.location ? '<p class="event-meta">📍 ' + ev.location + (ev.city ? ', ' + ev.city : '') + '</p>' : '') +
+            (ev.time ? '<p class="event-meta">🕐 ' + ev.time + '</p>' : '') +
+            '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">' +
+              '<button type="button" class="btn btn--primary" style="padding:10px 24px;border-radius:100px;cursor:pointer;font-size:14px;" onclick="window._openEventModal(' + ev.id + ')">View Full Details &amp; Gallery &rarr;</button>' +
+              (ev.registration_url ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="btn btn--outline" style="padding:10px 22px;border-radius:100px;font-size:14px;">Register &rarr;</a>' : '') +
+            '</div>' +
+          '</div>' +
+          imgHtml +
+        '</article>';
+
+      container.style.display = 'block';
+    }
+
     /* ── Render upcoming / notice card ── */
     function renderUpcomingCard(ev) {
       var imgs = getEventImages(ev);
@@ -374,7 +479,7 @@
       var imgSection = '';
 
       if (imgs.length === 1) {
-        imgSection = '<div><img src="' + imgs[0] + '" alt="' + (ev.title || 'Event') + '" class="event-banner-image" loading="lazy" /></div>';
+        imgSection = '<div style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')"><img src="' + imgs[0] + '" alt="' + (ev.title || 'Event') + '" class="event-banner-image" loading="lazy" /></div>';
       } else if (imgs.length > 1) {
         var slidesHtml = imgs.map(function(url, idx) {
           var isMain = (idx === 0);
@@ -390,7 +495,7 @@
 
         imgSection = '<div>' +
           '<div class="event-slideshow" data-auto-slide="true">' +
-            '<div class="event-slides-track">' + slidesHtml + '</div>' +
+            '<div class="event-slides-track" style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')">' + slidesHtml + '</div>' +
             '<button type="button" class="event-slide-btn prev" aria-label="Previous photo">‹</button>' +
             '<button type="button" class="event-slide-btn next" aria-label="Next photo">›</button>' +
             '<div class="event-slide-dots">' + dotsHtml + '</div>' +
@@ -403,8 +508,8 @@
         ? '<span class="event-date-badge">' + formatShortDate(ev.date) + '</span>'
         : '<span class="event-date-badge" style="background:var(--color-accent-light,#e8f4fd);color:var(--color-primary);">Notice / Announcement</span>';
 
-      var regBtn = ev.registration_url
-        ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="event-register-btn">Register / Learn More →</a>'
+      var featuredTag = ev.is_featured
+        ? '<span style="display:inline-block;background:linear-gradient(135deg,#1A5FA8,#2563EB);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;margin-left:6px;">Featured</span>'
         : '';
 
       var countdownMs = ev.date ? getCountdown(ev.date) : null;
@@ -418,12 +523,16 @@
         '<div>' +
           dateBadge +
           '<span class="event-type-tag">' + (ev.event_type || 'Event') + '</span>' +
-          '<h3 class="event-title">' + (ev.title || '') + '</h3>' +
+          featuredTag +
+          '<h3 class="event-title" style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')">' + (ev.title || '') + '</h3>' +
           (ev.short_description ? '<p class="event-desc">' + ev.short_description + '</p>' : '') +
           (ev.location ? '<p class="event-meta">📍 ' + ev.location + (ev.city ? ', ' + ev.city : '') + '</p>' : '') +
           (ev.time ? '<p class="event-meta">🕐 ' + ev.time + '</p>' : '') +
           countdownHtml +
-          regBtn +
+          '<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">' +
+            '<button type="button" class="event-register-btn" style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')">View Details &amp; Photos &rarr;</button>' +
+            (ev.registration_url ? '<a href="' + ev.registration_url + '" target="_blank" rel="noopener" class="event-register-btn" style="background:var(--color-primary);color:#fff;">Register &rarr;</a>' : '') +
+          '</div>' +
         '</div>' +
         imgSection +
       '</article>';
@@ -434,44 +543,34 @@
       var imgs = getEventImages(ev);
       var imgHtml = '';
 
-      if (imgs.length === 1) {
-        imgHtml = '<img src="' + imgs[0] + '" alt="' + (ev.title || 'Event') + '" class="past-event-img" loading="lazy" />';
-      } else if (imgs.length > 1) {
-        var pSlidesHtml = imgs.map(function(url, idx) {
-          return '<div class="event-slide-item' + (idx === 0 ? ' active' : '') + '">' +
-            '<img src="' + url + '" alt="' + (ev.title || 'Past event') + '" loading="lazy" style="filter:grayscale(30%);" />' +
-          '</div>';
-        }).join('');
-
-        var pDotsHtml = imgs.map(function(_, idx) {
-          return '<button type="button" class="event-slide-dot' + (idx === 0 ? ' active' : '') + '" data-slide-to="' + idx + '" aria-label="Photo ' + (idx + 1) + '"></button>';
-        }).join('');
-
-        imgHtml = '<div class="past-event-slideshow event-slideshow" data-auto-slide="true">' +
-          '<div class="event-slides-track">' + pSlidesHtml + '</div>' +
-          '<button type="button" class="event-slide-btn prev" aria-label="Previous">‹</button>' +
-          '<button type="button" class="event-slide-btn next" aria-label="Next">›</button>' +
-          '<div class="event-slide-dots">' + pDotsHtml + '</div>' +
-          '<div class="event-slide-counter">1 / ' + imgs.length + '</div>' +
-        '</div>';
+      if (imgs.length >= 1) {
+        imgHtml = '<img src="' + imgs[0] + '" alt="' + (ev.title || 'Event') + '" class="past-event-img" loading="lazy" style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')" />';
       } else {
-        imgHtml = '<div class="past-event-img-placeholder" style="display:flex;align-items:center;justify-content:center;background:var(--color-light,#f5f7fa);min-height:120px;border-radius:8px 8px 0 0;font-size:32px;">🗓️</div>';
+        imgHtml = '<div class="past-event-img-placeholder" style="display:flex;align-items:center;justify-content:center;background:var(--color-light,#f5f7fa);min-height:120px;border-radius:8px 8px 0 0;font-size:32px;cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')">🗓️</div>';
       }
 
-      return '<div class="past-event-card">' +
+      var photoCountBadge = (imgs.length > 1)
+        ? '<span style="font-size:11px;background:rgba(15,23,42,0.8);color:#fff;padding:2px 8px;border-radius:100px;margin-left:8px;">📷 ' + imgs.length + ' photos</span>'
+        : '';
+
+      return '<div class="past-event-card" style="cursor:pointer;" onclick="window._openEventModal(' + ev.id + ')">' +
         imgHtml +
         '<div class="past-event-body">' +
-          '<span class="past-event-concluded">Event Concluded</span>' +
+          '<div style="display:flex;align-items:center;margin-bottom:6px;">' +
+            '<span class="past-event-concluded">Event Concluded</span>' +
+            photoCountBadge +
+          '</div>' +
           '<div class="past-event-title">' + (ev.title || '') + '</div>' +
           '<div class="past-event-meta">' +
             (ev.date ? '📅 ' + formatDate(ev.date) : '') +
             (ev.city ? ' · 📍 ' + ev.city : '') +
           '</div>' +
+          '<span style="display:inline-block;margin-top:10px;font-size:13px;color:var(--color-primary);font-weight:600;">View Recap &amp; Gallery &rarr;</span>' +
         '</div>' +
       '</div>';
     }
 
-    /* ── Setup Event Slideshow Controller ── */
+    /* ── Setup Event Slideshow Controller (for card carousels) ── */
     function initEventSlideshows() {
       document.querySelectorAll('.event-slideshow').forEach(function(slider) {
         if (slider.__slideshowInit) return;
@@ -569,15 +668,207 @@
       });
     }
 
+    /* ── EVENT DETAIL LIGHTBOX MODAL CONTROLLER ── */
+    var modalBackdrop = document.getElementById('event-detail-modal');
+    var modalHeroImg   = document.getElementById('edm-hero-img');
+    var modalGallery   = document.getElementById('edm-gallery-bar');
+    var modalPrevBtn   = document.getElementById('edm-prev-btn');
+    var modalNextBtn   = document.getElementById('edm-next-btn');
+    var modalTitle     = document.getElementById('edm-title');
+    var modalTypeTag   = document.getElementById('edm-type-tag');
+    var modalFtrBadge  = document.getElementById('edm-featured-badge');
+    var modalDate      = document.getElementById('edm-date');
+    var modalTime      = document.getElementById('edm-time');
+    var modalLoc       = document.getElementById('edm-location');
+    var modalVenue     = document.getElementById('edm-venue');
+    var modalShortWrap = document.getElementById('edm-short-desc-wrap');
+    var modalShortDesc = document.getElementById('edm-short-desc');
+    var modalDescWrap  = document.getElementById('edm-desc-wrap');
+    var modalDesc      = document.getElementById('edm-desc');
+    var modalRegBtn    = document.getElementById('edm-reg-btn');
+    var modalCloseBtn  = document.getElementById('edm-close-btn');
+    var modalDismissBtn= document.getElementById('edm-dismiss-btn');
+
+    function openEventDetailModal(evId) {
+      if (!modalBackdrop) return;
+      var ev = allEvents.find(function(x) { return String(x.id) === String(evId); });
+      if (!ev) return;
+
+      currentModalEv = ev;
+      currentPhotoIdx = 0;
+      var imgs = getEventImages(ev);
+
+      // Hero photo
+      if (imgs.length) {
+        modalHeroImg.src = imgs[0];
+        modalHeroImg.style.display = 'block';
+      } else {
+        modalHeroImg.src = '';
+        modalHeroImg.style.display = 'none';
+      }
+
+      // Title & Badges
+      if (modalTitle) modalTitle.textContent = ev.title || 'Untitled Event';
+      if (modalTypeTag) modalTypeTag.textContent = ev.event_type || 'Event';
+      if (modalFtrBadge) modalFtrBadge.style.display = ev.is_featured ? 'inline-block' : 'none';
+
+      // Meta
+      if (modalDate) modalDate.textContent = ev.date ? formatDate(ev.date) : 'Standing Notice';
+      if (modalTime) modalTime.textContent = ev.time || 'Not specified';
+      if (modalLoc) modalLoc.textContent = ev.city || ev.location || 'India';
+      if (modalVenue) modalVenue.textContent = ev.venue || (ev.location || '—');
+
+      // Short & Full Description
+      if (modalShortDesc && modalShortWrap) {
+        if (ev.short_description) {
+          modalShortDesc.textContent = ev.short_description;
+          modalShortWrap.style.display = 'block';
+        } else {
+          modalShortWrap.style.display = 'none';
+        }
+      }
+
+      if (modalDesc && modalDescWrap) {
+        if (ev.description) {
+          modalDesc.textContent = ev.description;
+          modalDescWrap.style.display = 'block';
+        } else {
+          modalDescWrap.style.display = 'none';
+        }
+      }
+
+      // Registration button
+      if (modalRegBtn) {
+        if (ev.registration_url) {
+          modalRegBtn.href = ev.registration_url;
+          modalRegBtn.style.display = 'inline-flex';
+        } else {
+          modalRegBtn.style.display = 'none';
+        }
+      }
+
+      // Gallery Thumbnail Bar
+      if (modalGallery) {
+        if (imgs.length > 1) {
+          modalGallery.innerHTML = imgs.map(function(url, idx) {
+            return '<div class="edm-gallery-thumb' + (idx === 0 ? ' active' : '') + '" data-photo-idx="' + idx + '" title="Photo ' + (idx + 1) + '">' +
+              '<img src="' + url + '" alt="Thumbnail ' + (idx + 1) + '" />' +
+            '</div>';
+          }).join('');
+
+          modalGallery.querySelectorAll('.edm-gallery-thumb').forEach(function(th) {
+            th.addEventListener('click', function() {
+              var idx = parseInt(this.dataset.photoIdx, 10);
+              setModalPhoto(idx);
+            });
+          });
+
+          modalGallery.style.display = 'flex';
+          if (modalPrevBtn) modalPrevBtn.style.display = 'flex';
+          if (modalNextBtn) modalNextBtn.style.display = 'flex';
+        } else {
+          modalGallery.innerHTML = '';
+          modalGallery.style.display = 'none';
+          if (modalPrevBtn) modalPrevBtn.style.display = 'none';
+          if (modalNextBtn) modalNextBtn.style.display = 'none';
+        }
+      }
+
+      function setModalPhoto(idx) {
+        var eventPhotos = getEventImages(currentModalEv);
+        if (!eventPhotos.length) return;
+        if (idx < 0) idx = eventPhotos.length - 1;
+        if (idx >= eventPhotos.length) idx = 0;
+        currentPhotoIdx = idx;
+
+        modalHeroImg.style.opacity = '0';
+        setTimeout(function() {
+          modalHeroImg.src = eventPhotos[currentPhotoIdx];
+          modalHeroImg.style.opacity = '1';
+        }, 150);
+
+        if (modalGallery) {
+          modalGallery.querySelectorAll('.edm-gallery-thumb').forEach(function(th, i) {
+            th.classList.toggle('active', i === currentPhotoIdx);
+          });
+        }
+      }
+
+      if (modalPrevBtn) {
+        modalPrevBtn.onclick = function(e) {
+          e.stopPropagation();
+          setModalPhoto(currentPhotoIdx - 1);
+        };
+      }
+
+      if (modalNextBtn) {
+        modalNextBtn.onclick = function(e) {
+          e.stopPropagation();
+          setModalPhoto(currentPhotoIdx + 1);
+        };
+      }
+
+      modalBackdrop.classList.add('open');
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      // Update URL query string without reloading page
+      try {
+        var newUrl = window.location.pathname + '?event=' + encodeURIComponent(ev.id);
+        window.history.replaceState({ eventId: ev.id }, '', newUrl);
+      } catch(_) {}
+    }
+
+    function closeEventDetailModal() {
+      if (!modalBackdrop) return;
+      modalBackdrop.classList.remove('open');
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      currentModalEv = null;
+
+      // Clean URL back to events.html
+      try {
+        window.history.replaceState({}, '', window.location.pathname);
+      } catch(_) {}
+    }
+
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeEventDetailModal);
+    if (modalDismissBtn) modalDismissBtn.addEventListener('click', closeEventDetailModal);
+    if (modalBackdrop) {
+      modalBackdrop.addEventListener('click', function(e) {
+        if (e.target === modalBackdrop) closeEventDetailModal();
+      });
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (!modalBackdrop || !modalBackdrop.classList.contains('open')) return;
+      if (e.key === 'Escape') closeEventDetailModal();
+      if (e.key === 'ArrowLeft' && modalPrevBtn && modalPrevBtn.style.display !== 'none') modalPrevBtn.click();
+      if (e.key === 'ArrowRight' && modalNextBtn && modalNextBtn.style.display !== 'none') modalNextBtn.click();
+    });
+
+    // Expose globally so inline onclick handlers work smoothly
+    window._openEventModal = openEventDetailModal;
+    window._closeEventModal = closeEventDetailModal;
+
     /* ── Load and render ── */
     var upcomingEl = document.getElementById('upcoming-events-container');
     var pastEl     = document.getElementById('past-events-container');
 
-    var all = await fetchAllEvents();
+    allEvents = await fetchAllEvents();
+
+    // Find primary featured active event for Spotlight
+    var featuredCandidate = allEvents.find(function(ev) {
+      return ev.is_featured === true && (!ev.date || ev.date >= today);
+    });
+
+    if (featuredCandidate) {
+      renderFeaturedSection(featuredCandidate);
+    }
 
     // Split: upcoming = date >= today OR date is null; past = date < today
-    var upcoming = all.filter(function(ev) { return !ev.date || ev.date >= today; });
-    var past     = all.filter(function(ev) { return !!ev.date && ev.date < today; });
+    var upcoming = allEvents.filter(function(ev) { return !ev.date || ev.date >= today; });
+    var past     = allEvents.filter(function(ev) { return !!ev.date && ev.date < today; });
 
     // Sort upcoming: null-date first, then by date asc
     upcoming.sort(function(a, b) {
@@ -624,6 +915,13 @@
         pastEl.innerHTML = past.map(renderPastCard).join('');
         initEventSlideshows();
       }
+    }
+
+    // Check if URL has ?event=ID to auto-open modal (from Homepage popup link)
+    var urlParams = new URLSearchParams(window.location.search);
+    var eventParam = urlParams.get('event');
+    if (eventParam) {
+      openEventDetailModal(eventParam);
     }
   }());
   </script>

@@ -422,9 +422,128 @@ window.updateProfileIcon = updateProfileIcon;
 
 
 /* ============================================================
-   10. INIT ON DOM READY
+   10. HOMEPAGE FEATURED EVENT POPUP
+   Driven by Supabase: events WHERE is_featured=true AND is_active=true
+   Shows an elegant, Azzurra-styled popup modal on the homepage.
+   Dismissal stored in sessionStorage per event ID.
+   ============================================================ */
+function initHomepageFeaturedEventPopup() {
+  var isHomepage = document.getElementById('hero') ||
+                   window.location.pathname.endsWith('index.html') ||
+                   window.location.pathname === '/' ||
+                   window.location.pathname.endsWith('/azzura/') ||
+                   window.location.pathname.endsWith('/azzura');
+  if (!isHomepage) return;
+
+  var SUPA_URL = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL ? SUPABASE_URL : ((window.__ENV__ && window.__ENV__.SUPABASE_URL) || 'https://ilduyhuvpiqhvbnocqxf.supabase.co'));
+  var SUPA_KEY = (typeof SUPABASE_ANON_KEY !== 'undefined' && SUPABASE_ANON_KEY ? SUPABASE_ANON_KEY : ((window.__ENV__ && window.__ENV__.SUPABASE_ANON_KEY) || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg'));
+
+  fetch(SUPA_URL + '/rest/v1/events?is_featured=eq.true&is_active=eq.true&order=display_order.asc,created_at.desc&limit=1', {
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Accept': 'application/json'
+    }
+  })
+  .then(function(res) {
+    if (!res.ok) return null;
+    return res.json();
+  })
+  .then(function(events) {
+    if (!events || !events.length) return;
+    var ev = events[0];
+
+    // Check if dismissed in this session
+    var storageKey = 'azzurra_fep_dismissed_' + ev.id;
+    if (sessionStorage.getItem(storageKey)) return;
+
+    // Resolve main image
+    var imgUrl = ev.banner_image_url;
+    if (!imgUrl && ev.images) {
+      try {
+        var imgs = Array.isArray(ev.images) ? ev.images : JSON.parse(ev.images || '[]');
+        if (imgs && imgs.length) imgUrl = imgs[0];
+      } catch(_) {}
+    }
+    if (!imgUrl) return; // Only show popup if an image exists
+
+    // Format date
+    var dateStr = '';
+    if (ev.date) {
+      try {
+        var dt = new Date(ev.date + 'T00:00:00');
+        dateStr = dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      } catch(_) { dateStr = ev.date; }
+    }
+
+    var locationStr = ev.city || ev.location || '';
+    var metaHtml = '';
+    if (dateStr) metaHtml += '<span>📅 ' + dateStr + '</span>';
+    if (locationStr) metaHtml += '<span>📍 ' + locationStr + '</span>';
+    if (ev.event_type) metaHtml += '<span>🏷️ ' + ev.event_type + '</span>';
+
+    var backdrop = document.createElement('div');
+    backdrop.className = 'fep-backdrop';
+    backdrop.setAttribute('role', 'dialog');
+    backdrop.setAttribute('aria-modal', 'true');
+    backdrop.setAttribute('aria-label', ev.title || 'Featured Event');
+
+    backdrop.innerHTML =
+      '<div class="fep-card">' +
+        '<div class="fep-img-wrap">' +
+          '<img src="' + imgUrl + '" alt="' + (ev.title || 'Featured Event') + '" loading="eager" />' +
+          '<span class="fep-badge">★ Featured Event</span>' +
+          '<button type="button" class="fep-close-btn" aria-label="Close featured event popup">&times;</button>' +
+        '</div>' +
+        '<div class="fep-body">' +
+          (metaHtml ? '<div class="fep-meta">' + metaHtml + '</div>' : '') +
+          '<h3 class="fep-title">' + (ev.title || 'Upcoming Event') + '</h3>' +
+          (ev.short_description ? '<p class="fep-desc">' + ev.short_description + '</p>' : '') +
+          '<div class="fep-actions">' +
+            '<a href="events.html?event=' + ev.id + '" class="fep-btn-primary">View Event Details &rarr;</a>' +
+            '<button type="button" class="fep-btn-secondary fep-dismiss-btn">Maybe Later</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    function closePopup() {
+      backdrop.classList.remove('open');
+      try { sessionStorage.setItem(storageKey, '1'); } catch(_) {}
+      setTimeout(function() {
+        if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+      }, 350);
+    }
+
+    var closeBtn = backdrop.querySelector('.fep-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closePopup);
+    var dismissBtn = backdrop.querySelector('.fep-dismiss-btn');
+    if (dismissBtn) dismissBtn.addEventListener('click', closePopup);
+
+    backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) closePopup();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && backdrop.classList.contains('open')) closePopup();
+    });
+
+    document.body.appendChild(backdrop);
+
+    // Smooth entrance after slight delay
+    setTimeout(function() {
+      backdrop.classList.add('open');
+    }, 650);
+  })
+  .catch(function(err) {
+    console.warn('[Azzurra] Featured event popup error:', err);
+  });
+}
+
+/* ============================================================
+   11. INIT ON DOM READY
    ============================================================ */
 document.addEventListener('DOMContentLoaded', function() {
   initNavbar();
   updateCartBadge();
+  initHomepageFeaturedEventPopup();
 });

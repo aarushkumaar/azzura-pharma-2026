@@ -2975,6 +2975,7 @@ body.has-main-nav {
   align-items: center;
   justify-content: center;
   min-height: 480px;
+  align-self: stretch;
 }
 
 /* ---- Animated blue rule: draws left-to-right ---- */
@@ -3698,4 +3699,498 @@ body.has-main-nav {
   /* 3% opacity */
   pointer-events: none;
   z-index: 0;
+}
+
+/* ============================================================
+   HERO BANNER SLIDER (HOMEPAGE FIX)
+   Ensures banner slider fills .hero__visual-col without collapse
+   ============================================================ */
+.hero-banner-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  overflow: hidden;
+  border-radius: 20px;
+  display: block;
+  box-shadow: 0 12px 36px rgba(26,95,168,0.12);
+}
+
+.hero-banner-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-banner-slide.active {
+  opacity: 1;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.hero-banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  display: block;
+}
+
+/* ============================================================
+   FEATURED EVENT HOMEPAGE POPUP
+   Appears smoothly driven by Supabase is_featured event
+   ============================================================ */
+.fep-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.fep-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fep-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 520px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.3);
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fep-backdrop.open .fep-card {
+  transform: translateY(0) scale(1);
+}
+
+.fep-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 230px;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.fep-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fep-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: linear-gradient(135deg, #1A5FA8, #2563EB);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  z-index: 2;
+}
+
+.fep-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.7);
+  color: #fff;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.fep-close-btn:hover {
+  background: #E53E3E;
+  transform: scale(1.1);
+}
+
+.fep-body {
+  padding: 22px 26px 24px;
+}
+
+.fep-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.fep-title {
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+  line-height: 1.35;
+}
+
+.fep-desc {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fep-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.fep-btn-primary {
+  flex: 1;
+  background: var(--color-primary, #1A5FA8);
+  color: #fff;
+  text-align: center;
+  padding: 12px 20px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(26, 95, 168, 0.25);
+  display: block;
+}
+
+.fep-btn-primary:hover {
+  background: #154D8A;
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+.fep-btn-secondary {
+  padding: 12px 18px;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.fep-btn-secondary:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* ============================================================
+   EVENT DETAIL MODAL & LIGHTBOX GALLERY
+   ============================================================ */
+.edm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  overflow-y: auto;
+}
+
+.edm-backdrop.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.edm-modal {
+  position: relative;
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 820px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+  transform: translateY(20px) scale(0.98);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.edm-backdrop.open .edm-modal {
+  transform: translateY(0) scale(1);
+}
+
+.edm-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.7);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.edm-close:hover {
+  background: #E53E3E;
+  transform: scale(1.1);
+}
+
+.edm-hero-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  background: #0b1120;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edm-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0a0f1d;
+  display: block;
+  transition: opacity 0.25s ease;
+}
+
+.edm-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.65);
+  color: #fff;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.edm-nav-btn:hover {
+  background: rgba(26, 95, 168, 0.95);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.edm-nav-btn.prev { left: 12px; }
+.edm-nav-btn.next { right: 12px; }
+
+.edm-gallery-bar {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.edm-gallery-thumb {
+  flex: 0 0 66px;
+  height: 66px;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  opacity: 0.6;
+  transition: border-color 0.2s, opacity 0.2s, transform 0.2s;
+  background: #000;
+}
+
+.edm-gallery-thumb.active {
+  border-color: var(--color-primary, #1A5FA8);
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.edm-gallery-thumb:hover {
+  opacity: 1;
+}
+
+.edm-gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.edm-content {
+  padding: 26px 30px 32px;
+}
+
+.edm-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.edm-tag {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+.edm-featured-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #1A5FA8, #2563EB);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+}
+
+.edm-title {
+  font-family: var(--font-heading, "Outfit", sans-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.edm-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border-radius: 12px;
+  margin-bottom: 22px;
+  border: 1px solid #e2e8f0;
+}
+
+.edm-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #334155;
+}
+
+.edm-info-icon {
+  font-size: 16px;
+  color: var(--color-primary, #1A5FA8);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.edm-desc-heading {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.edm-desc-text {
+  font-size: 14.5px;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 26px;
+  white-space: pre-line;
+}
+
+.edm-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.edm-btn-register {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-primary, #1A5FA8);
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 14px rgba(26,95,168,0.25);
+}
+
+.edm-btn-register:hover {
+  background: #154D8A;
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .edm-hero-img-wrap { height: 230px; }
+  .edm-content { padding: 18px 20px 24px; }
+  .edm-title { font-size: 19px; }
+  .fep-card { max-width: 100%; }
 }
