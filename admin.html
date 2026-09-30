@@ -2982,11 +2982,73 @@ showSection('dashboard');
 <script>
 /* ============================================================
    IMAGE UPLOAD ZONES — Event Panel & Banner Panel
-   Reuses toWebP() and uploadToCloudinary() defined above.
+   Self-contained: embeds its own toWebP + upload helpers
+   so there is NO dependency on external script scope.
    Exposes:
-     window.evImgUploadZone.setImage(url)      — for clearEventForm / fillEventForm
-     window.bannerImgUploadZone.setImage(url)  — for editBanner in admin-addons
+     window.evImgUploadZone.setImage(url)      — clearEventForm / fillEventForm
+     window.bannerImgUploadZone.setImage(url)  — editBanner in admin-addons
 ============================================================ */
+
+/* ── Self-contained toWebP ── */
+function _zoneToWebP(file) {
+  return new Promise(function(resolve) {
+    if (!file || !file.type || !file.type.startsWith('image/')) return resolve(file);
+    if (file.type === 'image/webp') return resolve(file);
+    var objUrl = URL.createObjectURL(file);
+    if (typeof createImageBitmap === 'function') {
+      createImageBitmap(file, { imageOrientation: 'from-image' })
+        .then(function(bmp) {
+          var canvas = document.createElement('canvas');
+          canvas.width = bmp.width; canvas.height = bmp.height;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(bmp, 0, 0);
+          bmp.close();
+          URL.revokeObjectURL(objUrl);
+          canvas.toBlob(function(blob) { resolve(blob || file); }, 'image/webp', 0.88);
+        })
+        .catch(function() { URL.revokeObjectURL(objUrl); resolve(file); });
+    } else {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width; canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        URL.revokeObjectURL(objUrl);
+        canvas.toBlob(function(blob) { resolve(blob || file); }, 'image/webp', 0.88);
+      };
+      img.onerror = function() { URL.revokeObjectURL(objUrl); resolve(file); };
+      img.src = objUrl;
+    }
+  });
+}
+
+/* ── Self-contained Cloudinary upload for events/banners ──
+   Folder mapping:  'events'  → azzura_events
+                    'banners' → azzura_banners
+                    other     → azzura_<folder>
+*/
+async function _zoneUploadToCloudinary(blob, folder) {
+  var CLOUD_NAME = 'dfiskvjbl';
+  var PRESET     = 'azzura';
+  var targetFolder = (folder === 'events')  ? 'azzura_events'
+                   : (folder === 'banners') ? 'azzura_banners'
+                   : ('azzura_' + (folder || 'events'));
+  var fd = new FormData();
+  fd.append('file',          blob);
+  fd.append('upload_preset', PRESET);
+  fd.append('folder',        targetFolder);
+  var res  = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', { method: 'POST', body: fd });
+  var data = await res.json();
+  if (!res.ok || data.error) throw new Error(data.error ? data.error.message : 'Cloudinary upload failed (HTTP ' + res.status + ')');
+  return data.secure_url || ('https://res.cloudinary.com/' + CLOUD_NAME + '/image/upload/' + data.public_id);
+}
+
+/* ── Upload Zone Factory ── */
 function makeImageUploadZone(opts) {
   /* opts: {
        zoneId, previewWrapId, previewImgId, placeholderId,
@@ -2994,39 +3056,39 @@ function makeImageUploadZone(opts) {
        replaceBtn, removeBtn, folder
      }
   */
-  var zone       = document.getElementById(opts.zoneId);
-  var prevWrap   = document.getElementById(opts.previewWrapId);
-  var prevImg    = document.getElementById(opts.previewImgId);
+  var zone        = document.getElementById(opts.zoneId);
+  var prevWrap    = document.getElementById(opts.previewWrapId);
+  var prevImg     = document.getElementById(opts.previewImgId);
   var placeholder = document.getElementById(opts.placeholderId);
-  var actions    = document.getElementById(opts.actionsId);
+  var actions     = document.getElementById(opts.actionsId);
   var uploadingEl = document.getElementById(opts.uploadingId);
-  var fileInput  = document.getElementById(opts.fileInputId);
-  var hidden     = document.getElementById(opts.hiddenInputId);
-  var replaceBtn = document.getElementById(opts.replaceBtn);
-  var removeBtn  = document.getElementById(opts.removeBtn);
+  var fileInput   = document.getElementById(opts.fileInputId);
+  var hidden      = document.getElementById(opts.hiddenInputId);
+  var replaceBtn  = document.getElementById(opts.replaceBtn);
+  var removeBtn   = document.getElementById(opts.removeBtn);
 
   if (!zone || !hidden) return { setImage: function(){} };
 
   function showPreview(url) {
     if (!url) {
-      prevImg.src = '';
-      prevWrap.style.display = 'none';
-      placeholder.style.display = '';
-      actions.style.display = 'none';
+      if (prevImg)     prevImg.src = '';
+      if (prevWrap)    prevWrap.style.display = 'none';
+      if (placeholder) placeholder.style.display = '';
+      if (actions)     actions.style.display = 'none';
       hidden.value = '';
       return;
     }
-    prevImg.src = url;
-    prevWrap.style.display = '';
-    placeholder.style.display = 'none';
-    actions.style.display = 'flex';
+    if (prevImg)     prevImg.src = url;
+    if (prevWrap)    prevWrap.style.display = '';
+    if (placeholder) placeholder.style.display = 'none';
+    if (actions)     actions.style.display = 'flex';
     hidden.value = url;
   }
 
   function setUploadingState(loading) {
-    uploadingEl.style.display = loading ? '' : 'none';
-    zone.style.pointerEvents  = loading ? 'none' : '';
-    zone.style.opacity        = loading ? '0.7' : '';
+    if (uploadingEl) uploadingEl.style.display = loading ? '' : 'none';
+    zone.style.pointerEvents = loading ? 'none' : '';
+    zone.style.opacity       = loading ? '0.7'  : '';
   }
 
   async function handleFile(file) {
@@ -3035,25 +3097,24 @@ function makeImageUploadZone(opts) {
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      if (window.showToast) window.showToast('Image file too large. Maximum size is 10 MB.', 'warning');
+      if (window.showToast) window.showToast('Image too large. Maximum 10 MB.', 'warning');
       return;
     }
     setUploadingState(true);
     try {
-      var blob    = (typeof toWebP === 'function') ? await toWebP(file) : file;
-      var name    = file.name.replace(/\.[^.]+$/, '') + '_' + Date.now();
-      var url     = await uploadToCloudinary(blob, opts.folder || 'events', name);
+      var blob = await _zoneToWebP(file);
+      var url  = await _zoneUploadToCloudinary(blob, opts.folder || 'events');
       showPreview(url);
       if (window.showToast) window.showToast('✓ Image uploaded successfully', 'success');
     } catch(err) {
-      if (window.showToast) window.showToast('Upload failed: ' + err.message, 'error');
-      else alert('Upload failed: ' + err.message);
+      var msg = err && err.message ? err.message : String(err);
+      if (window.showToast) window.showToast('Upload failed: ' + msg, 'error');
+      else alert('Upload failed: ' + msg);
     } finally {
       setUploadingState(false);
     }
   }
 
-  // Click on zone or placeholder opens file chooser
   zone.addEventListener('click', function(e) {
     if (e.target === replaceBtn || e.target === removeBtn) return;
     fileInput.click();
@@ -3061,8 +3122,6 @@ function makeImageUploadZone(opts) {
   zone.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
   });
-
-  // Drag-over styling
   zone.addEventListener('dragover', function(e) {
     e.preventDefault();
     zone.style.borderColor = 'var(--color-primary, #4A6FA5)';
@@ -3079,20 +3138,11 @@ function makeImageUploadZone(opts) {
     var f = e.dataTransfer.files && e.dataTransfer.files[0];
     if (f) handleFile(f);
   });
-
-  // File input change
   fileInput.addEventListener('change', function() {
-    if (this.files && this.files[0]) {
-      handleFile(this.files[0]);
-      this.value = '';
-    }
+    if (this.files && this.files[0]) { handleFile(this.files[0]); this.value = ''; }
   });
-
-  // Replace button
   if (replaceBtn) replaceBtn.addEventListener('click', function(e) { e.stopPropagation(); fileInput.click(); });
-
-  // Remove button
-  if (removeBtn) removeBtn.addEventListener('click', function(e) { e.stopPropagation(); showPreview(''); });
+  if (removeBtn)  removeBtn.addEventListener('click',  function(e) { e.stopPropagation(); showPreview(''); });
 
   return { setImage: showPreview };
 }

@@ -626,13 +626,20 @@ serve(async (req: Request) => {
     }
 
     const serviceRoleKey = (Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '').trim();
-    const isServiceRole = Boolean(serviceRoleKey && token === serviceRoleKey);
+    const supabaseUrl    = (Deno.env.get('SUPABASE_URL') || '').trim();
+    const supabaseKey    = serviceRoleKey || (Deno.env.get('SUPABASE_ANON_KEY') || '').trim();
+    const isServiceRole  = Boolean(serviceRoleKey && token === serviceRoleKey);
+
+    if (!supabaseUrl) {
+      console.error('[sendEmail] SUPABASE_URL is not set');
+      return new Response(JSON.stringify({ success: false, error: 'Server misconfiguration: SUPABASE_URL not set' }), {
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
 
     // Initializing supabase client with service role so it can query/log to DB
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      serviceRoleKey || (Deno.env.get('SUPABASE_ANON_KEY') || '').trim()
-    );
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     let user: any = null;
     if (!isServiceRole) {
