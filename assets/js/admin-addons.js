@@ -6,10 +6,23 @@
 'use strict';
 
 (function () {
+  var SUPABASE_URL = (typeof window !== 'undefined' && window.SUPABASE_URL) || 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
+  var SUPABASE_ANON_KEY = (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
+
   var sb = null;
 
   function getSupabase() {
-    return sb || window.adminSupabase || null;
+    if (sb) return sb;
+    if (typeof window !== 'undefined' && window.adminSupabase) {
+      sb = window.adminSupabase;
+      return sb;
+    }
+    if (typeof window !== 'undefined' && window.supabase) {
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window.adminSupabase = sb;
+      return sb;
+    }
+    return null;
   }
 
   // Helper: escape html

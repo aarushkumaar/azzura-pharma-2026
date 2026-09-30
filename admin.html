@@ -23,6 +23,8 @@
     (async function authGuard() {
       var SUPABASE_URL      = 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
       var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg';
+      window.SUPABASE_URL   = SUPABASE_URL;
+      window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
 
       // Create client and expose it globally so the main script can reuse it
       var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1132,15 +1134,41 @@ window.showSection = function(name) {
   if (name === 'orders')    loadOrders();
   if (name === 'customers') loadCustomers();
   if (name === 'settings'  && !sectionLoaded[name]) loadSettings();
-  if (name === 'events'    && typeof window._loadEventsTable === 'function') window._loadEventsTable();
+  if (name === 'events') {
+    if (typeof window._loadEventsTable === 'function') {
+      window._loadEventsTable();
+    } else {
+      var evTimer = setInterval(function() {
+        if (typeof window._loadEventsTable === 'function') {
+          clearInterval(evTimer);
+          window._loadEventsTable();
+        }
+      }, 50);
+      setTimeout(function() { clearInterval(evTimer); }, 2500);
+    }
+  }
 
   // Custom sections handled by AdminAddons
-  if (window.AdminAddons) {
-    if (name === 'coupons'   && typeof window.AdminAddons.loadCoupons === 'function') window.AdminAddons.loadCoupons();
-    if (name === 'banners'   && typeof window.AdminAddons.loadBanners === 'function') window.AdminAddons.loadBanners();
-    if (name === 'notify_me' && typeof window.AdminAddons.loadNotifyRequests === 'function') window.AdminAddons.loadNotifyRequests();
-    if (name === 'enquiries' && typeof window.AdminAddons.loadEnquiries === 'function') window.AdminAddons.loadEnquiries();
-    if (name === 'email_settings' && typeof window.AdminAddons.loadEmailSettings === 'function') window.AdminAddons.loadEmailSettings();
+  var addonMap = {
+    coupons: 'loadCoupons',
+    banners: 'loadBanners',
+    notify_me: 'loadNotifyRequests',
+    enquiries: 'loadEnquiries',
+    email_settings: 'loadEmailSettings'
+  };
+  if (addonMap[name]) {
+    var fnName = addonMap[name];
+    if (window.AdminAddons && typeof window.AdminAddons[fnName] === 'function') {
+      window.AdminAddons[fnName]();
+    } else {
+      var addonTimer = setInterval(function() {
+        if (window.AdminAddons && typeof window.AdminAddons[fnName] === 'function') {
+          clearInterval(addonTimer);
+          window.AdminAddons[fnName]();
+        }
+      }, 50);
+      setTimeout(function() { clearInterval(addonTimer); }, 3000);
+    }
   }
 
   sectionLoaded[name] = true;
@@ -2099,15 +2127,24 @@ function buildOrderDetail(o) {
   /* ── Shipping & Tracking Inputs ── */
   var courier = esc(o.courier || '');
   var tracking = esc(o.tracking_number || '');
+  var trackingUrl = esc(o.tracking_url || '');
   var internalNotes = esc(o.internal_notes || '');
 
+  var trackingLinkHtml = o.tracking_url
+    ? '<a href="' + esc(o.tracking_url) + '" target="_blank" rel="noopener" style="font-size:12px;color:var(--color-primary);font-weight:600;display:inline-block;margin-top:6px;text-decoration:none;">Track Shipment ↗</a>'
+    : '';
+
   var shippingBlock = '<div class="order-detail-group" style="margin-top:12px;">'
-    + '<h4>Shipping &amp; Courier Partner</h4>'
-    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;">'
-    + '<div><label style="font-size:12px;color:var(--color-grey);display:block;margin-bottom:4px;">Courier Partner</label><input type="text" id="courier-input-' + o.id + '" value="' + courier + '" placeholder="e.g. BlueDart, Delhivery, FedEx" style="padding:6px 10px;font-size:13px;width:100%;box-sizing:border-box;border:1.5px solid var(--color-border);border-radius:6px;" /></div>'
+    + '<h4>Shipping &amp; Courier Tracking</h4>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:8px;">'
+    + '<div><label style="font-size:12px;color:var(--color-grey);display:block;margin-bottom:4px;">Courier Partner</label><input type="text" id="courier-input-' + o.id + '" value="' + courier + '" placeholder="e.g. BlueDart, Delhivery" style="padding:6px 10px;font-size:13px;width:100%;box-sizing:border-box;border:1.5px solid var(--color-border);border-radius:6px;" /></div>'
     + '<div><label style="font-size:12px;color:var(--color-grey);display:block;margin-bottom:4px;">Tracking Number / AWB</label><input type="text" id="tracking-input-' + o.id + '" value="' + tracking + '" placeholder="e.g. BD987654321IN" style="padding:6px 10px;font-size:13px;width:100%;box-sizing:border-box;border:1.5px solid var(--color-border);border-radius:6px;" /></div>'
+    + '<div><label style="font-size:12px;color:var(--color-grey);display:block;margin-bottom:4px;">Tracking URL</label><input type="url" id="tracking-url-input-' + o.id + '" value="' + trackingUrl + '" placeholder="https://..." style="padding:6px 10px;font-size:13px;width:100%;box-sizing:border-box;border:1.5px solid var(--color-border);border-radius:6px;" /></div>'
     + '</div>'
+    + '<div style="display:flex;gap:12px;align-items:center;">'
     + '<button class="btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="saveOrderTracking(' + o.id + ')">Save Tracking Info</button>'
+    + trackingLinkHtml
+    + '</div>'
     + '</div>';
 
   /* ── Internal Notes ── */
@@ -2150,11 +2187,21 @@ function buildOrderDetail(o) {
 window.saveOrderTracking = async function(id) {
   var courier = document.getElementById('courier-input-' + id).value.trim();
   var tracking = document.getElementById('tracking-input-' + id).value.trim();
+  var trackingUrlEl = document.getElementById('tracking-url-input-' + id);
+  var trackingUrl = trackingUrlEl ? trackingUrlEl.value.trim() : '';
   try {
-    var r = await sb.from('orders').update({ courier: courier, tracking_number: tracking }).eq('id', id);
+    var r = await sb.from('orders').update({
+      courier: courier,
+      tracking_number: tracking,
+      tracking_url: trackingUrl || null
+    }).eq('id', id);
     if (r.error) throw r.error;
     var idx = allOrders.findIndex(function(x) { return x.id === id; });
-    if (idx !== -1) { allOrders[idx].courier = courier; allOrders[idx].tracking_number = tracking; }
+    if (idx !== -1) {
+      allOrders[idx].courier = courier;
+      allOrders[idx].tracking_number = tracking;
+      allOrders[idx].tracking_url = trackingUrl || null;
+    }
     showToast('✓ Tracking info saved', 'success');
   } catch(e) {
     showToast('Save failed: ' + e.message, 'error');
@@ -2257,8 +2304,9 @@ window.updateOrderStatus = async function(id, newStatus, selectEl) {
     // Send status email to customer (best-effort, non-blocking)
     try {
       var session = (await sb.auth.getSession()).data.session;
-      var token = session ? session.access_token : SUPABASE_ANON_KEY;
-      fetch(SUPABASE_URL + '/functions/v1/sendEmail', {
+      var token = session ? session.access_token : (window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsZHV5aHV2cGlxaHZibm9jcXhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MTMxNTUsImV4cCI6MjA5NjM4OTE1NX0.uuC8dKajsnSSaiTx_wxNeapKPl4EV20s5phcRS-TaZg');
+      var supaUrl = window.SUPABASE_URL || 'https://ilduyhuvpiqhvbnocqxf.supabase.co';
+      fetch(supaUrl + '/functions/v1/sendEmail', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2615,6 +2663,7 @@ showSection('dashboard');
         <label class="form-label">Event Type</label>
         <select id="ev-type">
           <option value="Conference">Conference</option>
+          <option value="Notice">Notice / Announcement</option>
           <option value="CME">CME</option>
           <option value="Workshop">Workshop</option>
           <option value="Symposium">Symposium</option>
@@ -2632,21 +2681,35 @@ showSection('dashboard');
         <label class="form-label">Full Description</label>
         <textarea id="ev-description" rows="4" placeholder="Full event details…"></textarea>
       </div>
-      <div class="form-group">
-        <label class="form-label">Event Date <span class="req">*</span></label>
-        <input type="date" id="ev-date" required />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Event Date <span style="font-size:11px;font-weight:400;color:var(--color-grey);">(optional for notices)</span></label>
+          <input type="date" id="ev-date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time (optional)</label>
+          <input type="text" id="ev-time" placeholder="e.g. 9:00 AM – 5:00 PM" />
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Time (optional)</label>
-        <input type="text" id="ev-time" placeholder="e.g. 9:00 AM – 5:00 PM" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">Location / Address</label>
+          <input type="text" id="ev-location" placeholder="e.g. Sector 10, DLF" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Venue</label>
+          <input type="text" id="ev-venue" placeholder="e.g. Hotel Taj, Hall A" />
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Location / Venue</label>
-        <input type="text" id="ev-location" placeholder="e.g. Hotel Taj, Hall A" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">City</label>
-        <input type="text" id="ev-city" placeholder="e.g. New Delhi" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">City</label>
+          <input type="text" id="ev-city" placeholder="e.g. New Delhi" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Display Order</label>
+          <input type="number" id="ev-display-order" value="0" min="0" placeholder="0 = highest priority" />
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Registration / Info URL</label>
@@ -2734,7 +2797,9 @@ showSection('dashboard');
     document.getElementById('ev-date').value = '';
     document.getElementById('ev-time').value = '';
     document.getElementById('ev-location').value = '';
+    document.getElementById('ev-venue').value = '';
     document.getElementById('ev-city').value = '';
+    document.getElementById('ev-display-order').value = '0';
     document.getElementById('ev-registration-url').value = '';
     document.getElementById('ev-banner-image-url').value = '';
     document.getElementById('ev-is-active').checked = true;
@@ -2754,7 +2819,9 @@ showSection('dashboard');
     document.getElementById('ev-date').value = ev.date || '';
     document.getElementById('ev-time').value = ev.time || '';
     document.getElementById('ev-location').value = ev.location || '';
+    document.getElementById('ev-venue').value = ev.venue || '';
     document.getElementById('ev-city').value = ev.city || '';
+    document.getElementById('ev-display-order').value = (ev.display_order != null) ? ev.display_order : '0';
     document.getElementById('ev-registration-url').value = ev.registration_url || '';
     document.getElementById('ev-banner-image-url').value = ev.banner_image_url || '';
     document.getElementById('ev-is-active').checked = ev.is_active !== false;
@@ -2851,7 +2918,9 @@ showSection('dashboard');
           date:              document.getElementById('ev-date').value || null,
           time:              document.getElementById('ev-time').value.trim() || null,
           location:          document.getElementById('ev-location').value.trim() || null,
+          venue:             document.getElementById('ev-venue').value.trim() || null,
           city:              document.getElementById('ev-city').value.trim() || null,
+          display_order:     parseInt(document.getElementById('ev-display-order').value, 10) || 0,
           registration_url:  document.getElementById('ev-registration-url').value.trim() || null,
           banner_image_url:  document.getElementById('ev-banner-image-url').value.trim() || null,
           is_active:         document.getElementById('ev-is-active').checked,

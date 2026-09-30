@@ -141,8 +141,92 @@
     return base + (finalTransformsStr ? finalTransformsStr + '/' : '') + restOfPath.join('/');
   }
 
+  /**
+   * Converts an image File to a WebP Blob using canvas.
+   * Preserves transparency and orientation where supported.
+   */
+  function toWebP(file) {
+    return new Promise(function(resolve) {
+      if (!file || !file.type || !file.type.startsWith('image/')) return resolve(file);
+      if (file.type === 'image/webp') return resolve(file);
+
+      var url = URL.createObjectURL(file);
+      if (typeof createImageBitmap === 'function') {
+        createImageBitmap(file, { imageOrientation: 'from-image' }).then(function(bmp) {
+          var canvas = document.createElement('canvas');
+          canvas.width  = bmp.width;
+          canvas.height = bmp.height;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(bmp, 0, 0);
+          bmp.close();
+          canvas.toBlob(function(blob) {
+            resolve(blob || file);
+          }, 'image/webp', 0.88);
+        }).catch(function() {
+          resolve(file);
+        });
+      } else {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          canvas.width  = img.width;
+          canvas.height = img.height;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          URL.revokeObjectURL(url);
+          canvas.toBlob(function(blob) {
+            resolve(blob || file);
+          }, 'image/webp', 0.88);
+        };
+        img.onerror = function() { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+      }
+    });
+  }
+
+  /**
+   * Upload to Cloudinary using unsigned preset 'azzura'.
+   * Handles products, events, and banners cleanly.
+   */
+  async function uploadToCloudinary(blob, folder, baseName) {
+    var CLOUD_NAME = 'dfiskvjbl';
+    var PRESET     = 'azzura';
+    var fd = new FormData();
+    fd.append('file', blob);
+    fd.append('upload_preset', PRESET);
+
+    if (folder) {
+      var targetFolder = folder;
+      if (!targetFolder.startsWith('azzura_')) {
+        if (targetFolder === 'events' || targetFolder === 'banners') {
+          targetFolder = 'azzura_' + targetFolder;
+        } else {
+          targetFolder = 'azzura_products/' + targetFolder;
+        }
+      }
+      fd.append('folder', targetFolder);
+    }
+
+    var res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {
+      method: 'POST',
+      body: fd
+    });
+    var data = await res.json();
+    if (!res.ok || data.error) {
+      throw new Error(data.error ? data.error.message : 'Cloudinary upload failed (HTTP ' + res.status + ')');
+    }
+    return data.secure_url || ('https://res.cloudinary.com/' + CLOUD_NAME + '/image/upload/' + data.public_id);
+  }
+
   // Export
   global.cldUrl = cldUrl;
   global.cldRotateUrl = cldRotateUrl;
+  global.toWebP = toWebP;
+  global.uploadToCloudinary = uploadToCloudinary;
 
 })(typeof window !== 'undefined' ? window : this);
+
